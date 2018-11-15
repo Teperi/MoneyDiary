@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">MoneyDiary</string>
+    <string name="dateTitle">날짜</string>
+
+    <!--입력 창 사용 string-->
+    <string name="accountTitle">계좌</string>
+    <string name="categoryTitle">분류</string>
+    <string name="priceTitle">금액</string>
+    <string name="usageTitle">내역</string>
+    <string name="inputComplete">입력 완료</string>
+    <string name="inputCancel">취소</string>
+</resources>

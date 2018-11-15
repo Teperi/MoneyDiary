@@ -1,0 +1,43 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!--가계부 입력창 스타일-->
+    <!--수입, 지출, 입력, 수정 모두 사용가능하게 만들 예정-->
+
+    <!--입력창 내 LinearLayout 스타일 설정-->
+    <!--가운데 정렬, 가로 쓰기-->
+    <style name="InputLinearLayoutStyle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!--입력창 내 소제목 스타일-->
+    <!--글씨크기 20sp, 마진 10dp-->
+    <style name="InputSubclassTextStyle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <!--입력창 내 입력값 받는 부분 스타일-->
+    <!--글씨크기 15sp, 줄 수 13-->
+    <!--추후 구현필요 기능 : 1줄 제한-->
+    <style name="InputSubclassEditTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:ems">13</item>
+    </style>
+
+
+</resources>

@@ -20,6 +20,8 @@
         <activity android:name=".SpendCreateInput">
 
         </activity>
+
+        <activity android:name=".test"/>
     </application>
 
 </manifest>

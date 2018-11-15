@@ -13,8 +13,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/Base.ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/Base.ThemeOverlay.AppCompat.Light"
-        />
+        app:popupTheme="@style/Base.ThemeOverlay.AppCompat.Light" />
 
 
     <ScrollView
@@ -22,180 +21,150 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop">
 
         <android.support.v7.widget.CardView
             android:id="@+id/inputCreateSpendCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.flexbox.FlexboxLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-
+                app:alignContent="center"
+                app:alignItems="center"
                 app:flexWrap="wrap"
                 app:justifyContent="space_around"
-                app:alignItems="center"
-                app:alignContent="center">
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/inputCreateSpendTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_margin="8dp"
+                    android:gravity="center"
                     android:text="수입 입력"
                     android:textSize="25sp"
 
-                    app:layout_order="1"
-                    app:layout_flexBasisPercent="100%"/>
+                    app:layout_flexBasisPercent="100%"
+                    app:layout_order="1" />
 
-                <LinearLayout
-                    style="@style/InputLinearLayoutStyle"
-                    >
+                <LinearLayout style="@style/InputLinearLayoutStyle">
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassDateTitle"
                         style="@style/InputSubclassTextStyle"
-                        android:text="@string/dateTitle"
-                        />
-
+                        android:text="@string/dateTitle" />
 
 
                     <EditText
                         android:id="@+id/inputCreateSpendSubclassDateEdit"
                         style="@style/InputSubclassEditTextStyle"
-                        android:inputType="date"/>
+                        android:inputType="date" />
 
                     <Button
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_margin="8dp"
-                        />
-
-
+                        android:layout_margin="8dp" />
 
 
                 </LinearLayout>
 
-                <LinearLayout
-                    style="@style/InputLinearLayoutStyle"
-                    >
+                <LinearLayout style="@style/InputLinearLayoutStyle">
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassAccountTitle"
                         style="@style/InputSubclassTextStyle"
-                        android:text="@string/accountTitle"
-                        />
-
+                        android:text="@string/accountTitle" />
 
 
                     <EditText
                         android:id="@+id/inputCreateSpendSubclassAccountEdit"
                         style="@style/InputSubclassEditTextStyle"
-                        android:inputType="text"/>
-
-
+                        android:inputType="text" />
 
 
                     <Space
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_margin="8dp"
-                        />
+                        android:layout_margin="8dp" />
 
                 </LinearLayout>
 
-                <LinearLayout
-                    style="@style/InputLinearLayoutStyle"
-                    >
+                <LinearLayout style="@style/InputLinearLayoutStyle">
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassCategoryTitle"
                         style="@style/InputSubclassTextStyle"
-                        android:text="@string/categoryTitle"
-                        />
-
+                        android:text="@string/categoryTitle" />
 
 
                     <EditText
                         android:id="@+id/inputCreateSpendSubclassCategoryEdit"
                         style="@style/InputSubclassEditTextStyle"
-                        android:inputType="text"/>
+                        android:inputType="text" />
 
 
                     <Space
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_margin="8dp"
-                        />
+                        android:layout_margin="8dp" />
 
                 </LinearLayout>
 
-                <LinearLayout
-                    style="@style/InputLinearLayoutStyle"
-                    >
+                <LinearLayout style="@style/InputLinearLayoutStyle">
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassPriceTitle"
                         style="@style/InputSubclassTextStyle"
-                        android:text="@string/priceTitle"
-                        />
-
+                        android:text="@string/priceTitle" />
 
 
                     <EditText
                         android:id="@+id/inputCreateSpendSubclassPriceEdit"
                         style="@style/InputSubclassEditTextStyle"
-                        android:inputType="number"/>
+                        android:inputType="number" />
 
 
                     <Space
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_margin="8dp"
-                        />
+                        android:layout_margin="8dp" />
 
                 </LinearLayout>
 
 
-                <LinearLayout
-                    style="@style/InputLinearLayoutStyle"
-                    >
+                <LinearLayout style="@style/InputLinearLayoutStyle">
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassUsageTitle"
                         style="@style/InputSubclassTextStyle"
-                        android:text="@string/usageTitle"
-                        />
-
+                        android:text="@string/usageTitle" />
 
 
                     <EditText
                         android:id="@+id/inputCreateSpendSubclassUsageEdit"
                         style="@style/InputSubclassEditTextStyle"
-                        android:inputType="text"/>
+                        android:inputType="text" />
 
 
                     <Space
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_margin="8dp"
-                        />
+                        android:layout_margin="8dp" />
 
                 </LinearLayout>
 
@@ -210,15 +179,14 @@
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
-                        android:text="@string/inputComplete"
-                        />
+                        android:text="@string/inputComplete" />
 
                     <Button
                         android:id="@+id/spendingCancel"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
-                        android:text="@string/inputCancel"/>
+                        android:text="@string/inputCancel" />
 
                 </LinearLayout>
 
@@ -228,8 +196,6 @@
         </android.support.v7.widget.CardView>
 
     </ScrollView>
-
-
 
 
 </android.support.constraint.ConstraintLayout>

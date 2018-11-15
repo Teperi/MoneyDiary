@@ -7,20 +7,33 @@
         android:id="@+id/actionSearch"
         android:icon="@drawable/outline_search_24"
         android:title="Search"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/actionAdd"
         android:icon="@drawable/outline_add_24"
         android:title="Add"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
 
     <item
-        android:id="@+id/expandedMenu"
-        android:title=""
-        app:showAsAction="never"/>
+        android:id="@+id/actionnotice"
+        android:title="공지사항"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/actionmyblog"
+        android:title="개발자 블로그"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/actionmyemail"
+        android:title="개발자 이메일"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/actionappintroduce"
+        android:title="앱 소개"
+        app:showAsAction="never" />
 
 
 </menu>

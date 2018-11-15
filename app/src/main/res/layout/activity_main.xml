@@ -19,7 +19,7 @@
         android:id="@+id/calender1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/spendingInput"
+        app:layout_constraintBottom_toTopOf="@id/testbutton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/my_toolbarTop">
@@ -28,12 +28,12 @@
 
 
     <Button
-        android:id="@+id/spendingInput"
+        android:id="@+id/testbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
 
-        android:text="수입 입력 창 이동"
+        android:text="날짜입력받기 연습"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

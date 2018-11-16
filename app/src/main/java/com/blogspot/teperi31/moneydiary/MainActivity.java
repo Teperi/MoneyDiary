@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,8 +24,17 @@ public class MainActivity extends AppCompatActivity {
 	int saveDateDay = 0;
 	
 	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		Log.d("TestAppActivity","onStop");
+	}
 	
-	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.d("TestAppActivity","onDestroy");
+	}
 	
 	// Date 타입을 String 으로 바꿔주는 기능을 가진 함수
 	// yyyy-MM-dd 형식으로 변경하는 틀을 저장함
@@ -78,6 +88,17 @@ public class MainActivity extends AppCompatActivity {
 		});
 		
 		
+		findViewById(R.id.testbutton2).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				
+				//날짜
+				Intent intent = new Intent(MainActivity.this,Recyclerviewtest.class);
+				startActivity(intent);
+			}
+		});
 		
 
 		

@@ -22,6 +22,7 @@
         </activity>
 
         <activity android:name=".test"/>
+        <activity android:name=".Recyclerviewtest"/>
     </application>
 
 </manifest>

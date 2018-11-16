@@ -35,9 +35,22 @@
 
         android:text="날짜입력받기 연습"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/testbutton2"
         app:layout_constraintStart_toStartOf="parent"
 
+        app:layout_constraintTop_toBottomOf="@id/calender1" />
+
+
+    <Button
+        android:id="@+id/testbutton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+
+        android:text="리사이클러뷰버튼"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/testbutton"
         app:layout_constraintTop_toBottomOf="@id/calender1" />
 
 

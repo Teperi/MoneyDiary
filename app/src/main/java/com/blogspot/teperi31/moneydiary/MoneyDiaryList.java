@@ -26,7 +26,7 @@ public class MoneyDiaryList implements Serializable {
 		this.MDListCategory = category;
 		this.MDListPrice = price;
 		this.MDListUsage = usage;
-		this.MDListDate = (String) (year + "-" + month + "-" + day);
+		this.MDListDate = (String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day));
 	}
 	
 	@Override

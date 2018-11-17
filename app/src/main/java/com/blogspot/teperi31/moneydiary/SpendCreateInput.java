@@ -11,7 +11,7 @@ public class SpendCreateInput extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.inputcreatespend);
 		
-		Toolbar myToolbar = findViewById(R.id.my_toolbarTop);
+		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_main);
 		setActionBar(myToolbar);
 	}
 }

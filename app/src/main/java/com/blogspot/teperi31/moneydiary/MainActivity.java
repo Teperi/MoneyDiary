@@ -38,14 +38,14 @@ public class MainActivity extends AppCompatActivity {
 	
 	// Date 타입을 String 으로 바꿔주는 기능을 가진 함수
 	// yyyy-MM-dd 형식으로 변경하는 틀을 저장함
-	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-mm-dd");
+	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		Toolbar myToolbar = findViewById(R.id.my_toolbarTop);
+		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_main);
 		setSupportActionBar(myToolbar);
 		
 		

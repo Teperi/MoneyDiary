@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbarTop"
+        android:id="@+id/my_toolbarTop_main"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -22,7 +22,7 @@
         app:layout_constraintBottom_toTopOf="@id/testbutton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop">
+        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop_main">
 
     </CalendarView>
 

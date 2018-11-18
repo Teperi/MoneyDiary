@@ -40,10 +40,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                app:alignContent="center"
+                app:flexDirection="row"
+
+                app:alignContent="stretch"
                 app:alignItems="center"
                 app:flexWrap="wrap"
-                app:justifyContent="space_around"
+                app:justifyContent="center"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -67,19 +69,26 @@
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassDateTitle"
                         style="@style/InputSubclassTextStyle"
-                        android:text="@string/dateTitle" />
+                        android:text="@string/dateTitle"
+                        android:layout_gravity="start|center_vertical"/>
 
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/inputCreateSpendSubclassDateYearSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
 
-                    <EditText
-                        android:id="@+id/inputCreateSpendSubclassDateEdit"
-                        style="@style/InputSubclassEditTextStyle"
-                        android:inputType="date" />
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/inputCreateSpendSubclassDateMonthSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
 
-                    <Button
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_margin="8dp" />
-
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/inputCreateSpendSubclassDateDaySpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
 
                 </LinearLayout>
 
@@ -91,16 +100,11 @@
                         android:text="@string/accountTitle" />
 
 
-                    <EditText
-                        android:id="@+id/inputCreateSpendSubclassAccountEdit"
-                        style="@style/InputSubclassEditTextStyle"
-                        android:inputType="text" />
-
-
-                    <Space
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_margin="8dp" />
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/inputCreateSpendSubclassAccountSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
 
                 </LinearLayout>
 
@@ -117,12 +121,6 @@
                         style="@style/InputSubclassEditTextStyle"
                         android:inputType="text" />
 
-
-                    <Space
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_margin="8dp" />
-
                 </LinearLayout>
 
                 <LinearLayout style="@style/InputLinearLayoutStyle">
@@ -137,12 +135,6 @@
                         android:id="@+id/inputCreateSpendSubclassPriceEdit"
                         style="@style/InputSubclassEditTextStyle"
                         android:inputType="number" />
-
-
-                    <Space
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_margin="8dp" />
 
                 </LinearLayout>
 
@@ -159,12 +151,6 @@
                         android:id="@+id/inputCreateSpendSubclassUsageEdit"
                         style="@style/InputSubclassEditTextStyle"
                         android:inputType="text" />
-
-
-                    <Space
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_margin="8dp" />
 
                 </LinearLayout>
 

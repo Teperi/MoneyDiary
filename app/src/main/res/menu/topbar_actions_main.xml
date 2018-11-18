@@ -16,24 +16,18 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/actionnotice"
-        android:title="공지사항"
+        android:id="@+id/actionmyblog"
+        android:title="개발자 블로그"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/actionmyblog"
-        android:title="개발자 블로그"
+        android:id="@+id/actionmyphone"
+        android:title="개발자 전화"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/actionmyemail"
         android:title="개발자 이메일"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/actionappintroduce"
-        android:title="앱 소개"
-        app:showAsAction="never" />
-
 
 </menu>

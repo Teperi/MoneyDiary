@@ -29,12 +29,14 @@ public class SpendCreateInput extends AppCompatActivity {
 	
 	
 	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.inputcreatespend);
 		
-		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_main);
+		
+		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_basic);
 		setActionBar(myToolbar);
 		
 		// 년도 스피너
@@ -150,6 +152,10 @@ public class SpendCreateInput extends AppCompatActivity {
 							inputUsageText.getText().toString());
 					Intent i = new Intent(SpendCreateInput.this ,RecyclerviewMoneyFlow.class);
 					i.putExtra("InputCreateSpend", obj);
+					// 스택 관리
+					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					
 					startActivity(i);
 				}
 				
@@ -177,7 +183,7 @@ public class SpendCreateInput extends AppCompatActivity {
 				});
 				
 				AlertDialog canclepopup = cancelaction.create();
-				canclepopup.setTitle("TEST");
+				canclepopup.setTitle("경고");
 				canclepopup.setMessage("지출 기록을 그만 하시겠습니까?");
 				canclepopup.show();
 				

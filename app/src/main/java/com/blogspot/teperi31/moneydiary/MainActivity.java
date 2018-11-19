@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		
 		// action bar 생성
-		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_main);
+		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_basic);
 		setSupportActionBar(myToolbar);
 		
 		
@@ -65,16 +66,12 @@ public class MainActivity extends AppCompatActivity {
 		});
 		
 		// 버튼 누를 시 화면 전환
+		// 다이어리 이동
 		findViewById(R.id.testbutton1).setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-//
-//				//날짜
-//				Intent intent = new Intent(MainActivity.this, test.class);
-//				intent.putExtra("saveDate", saveDate);
-//				startActivity(intent);
 				
 				Intent i = new Intent(MainActivity.this, RecyclerviewDairy.class);
 				startActivity(i);
@@ -83,14 +80,12 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 		
-		
+		// 가계부 이동
 		findViewById(R.id.testbutton2).setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
-				
-				//날짜
 				Intent intent = new Intent(MainActivity.this, RecyclerviewMoneyFlow.class);
 				startActivity(intent);
 			}
@@ -156,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
 					startActivity(actionTelIntent);
 				} else {
 					Toast.makeText(this, "이 기능은 통화 권한 설정이 필요합니다.", Toast.LENGTH_SHORT).show();
+					
+					Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+					Uri uri = Uri.fromParts("package", getPackageName(), null);
+					intent.setData(uri);
+					startActivity(intent);
 				}
 				return;
 			}

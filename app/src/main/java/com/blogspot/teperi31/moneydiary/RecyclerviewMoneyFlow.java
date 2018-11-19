@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,10 +33,6 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 0;
 	
 	
-	
-	
-	
-	
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
 	ArrayList<DataMoneyFlow> mfList;
@@ -42,15 +40,18 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
+		
+		
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recyclerview_moneyflow);
+		
+		
 		
 		
 		// 액션 바 삽입
 		Toolbar myToolbar = findViewById(R.id.toolbarTop_List_moneyflow);
 		setSupportActionBar(myToolbar);
-		
-		
 		
 		
 		mRecyclerView = findViewById(R.id.moneyflow_recycler_view);
@@ -65,21 +66,21 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		// 데이터 입력
 		mfList = new ArrayList<>();
-		mfList.add(new DataMoneyFlow("입금" ,2018, 10, 25, "현금", "월급", 200000, "월급"));
-		mfList.add(new DataMoneyFlow("이체" ,2018, 10, 25, "체크카드", "이체", 150000, "월급이체"));
-		mfList.add(new DataMoneyFlow("출금" ,2018, 10, 26, "체크카드", "점심", 6000, "백채김치찌개"));
-		mfList.add(new DataMoneyFlow("출금" ,2018, 10, 26, "체크카드", "회식", 10000, "한신포차"));
-		mfList.add(new DataMoneyFlow("출금" ,2018, 10, 27, "현금", "점심", 5000, "할매순대국"));
-		mfList.add(new DataMoneyFlow("출금" ,2018, 11, 1, "체크카드", "저녁", 10000, "국물떡볶이"));
-		mfList.add(new DataMoneyFlow("출금" ,2018, 11, 1, "현금", "저녁", 7000, "피자스쿨"));
-		mfList.add(new DataMoneyFlow("출금" ,2018, 11, 2, "현금", "간식", 7000, "GS25"));
-		mfList.add(new DataMoneyFlow("출금" ,2018, 11, 2, "체크카드", "영화", 10000, "CGV"));
+		mfList.add(new DataMoneyFlow("입금", 2018, 10, 25, "현금", "월급", 200000, "월급"));
+		mfList.add(new DataMoneyFlow("이체", 2018, 10, 25, "체크카드", "이체", 150000, "월급이체"));
+		mfList.add(new DataMoneyFlow("출금", 2018, 10, 26, "체크카드", "점심", 6000, "백채김치찌개"));
+		mfList.add(new DataMoneyFlow("출금", 2018, 10, 26, "체크카드", "회식", 10000, "한신포차"));
+		mfList.add(new DataMoneyFlow("출금", 2018, 10, 27, "현금", "점심", 5000, "할매순대국"));
+		mfList.add(new DataMoneyFlow("출금", 2018, 11, 1, "체크카드", "저녁", 10000, "국물떡볶이"));
+		mfList.add(new DataMoneyFlow("출금", 2018, 11, 1, "현금", "저녁", 7000, "피자스쿨"));
+		mfList.add(new DataMoneyFlow("출금", 2018, 11, 2, "현금", "간식", 7000, "GS25"));
+		mfList.add(new DataMoneyFlow("출금", 2018, 11, 2, "체크카드", "영화", 10000, "CGV"));
 		
 		// 데이터가 입력되었을 때 저장
 		Intent InputCreateSpendIntent = getIntent();
 		
 		// 새로운 지출 데이터가 들어오면 저장시킴
-		if(InputCreateSpendIntent.getSerializableExtra("InputCreateSpend") != null){
+		if (InputCreateSpendIntent.getSerializableExtra("InputCreateSpend") != null) {
 			DataMoneyFlow InputCreateSpend = (DataMoneyFlow) InputCreateSpendIntent.getSerializableExtra("InputCreateSpend");
 			mfList.add(InputCreateSpend);
 			
@@ -89,8 +90,10 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 					return Collator.getInstance().compare(o1.MFListDate, o2.MFListDate);
 				}
 			});
-		
+			
 		}
+		
+		
 		
 		//내 어댑터와 데이터 연결
 		AdapterMFRecycler myAdapter = new AdapterMFRecycler(mfList);
@@ -108,7 +111,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		// 수입 및 지출 계산
 		for (int i = 0; i < mfList.size(); i++) {
-			if(mfList.get(i).MFListType.equals("입금")){
+			if (mfList.get(i).MFListType.equals("입금")) {
 				moneyflowDepositint += mfList.get(i).MFListPrice;
 			} else if (mfList.get(i).MFListType.equals("출금")) {
 				moneyflowWithdrawint += mfList.get(i).MFListPrice;
@@ -125,7 +128,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		moneyflowDeposittext.setTextColor(Color.parseColor("#c62828"));
 		moneyflowWithdrawtext.setTextColor(Color.parseColor("#1a237e"));
-		
+
 
 //
 	}
@@ -176,7 +179,33 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+		
+		
 	}
 	
-	
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		switch (requestCode) {
+			case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					Intent actionTelIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:010-2061-3823"));
+					Toast.makeText(this, "개발자에게 전화를 합니다.", Toast.LENGTH_SHORT).show();
+					startActivity(actionTelIntent);
+				} else {
+					Toast.makeText(this, "이 기능은 통화 권한 설정이 필요합니다.", Toast.LENGTH_SHORT).show();
+					
+					Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+					Uri uri = Uri.fromParts("package", getPackageName(), null);
+					intent.setData(uri);
+					startActivity(intent);
+				}
+				return;
+			}
+			default:
+				super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		}
+	}
 }
+	
+	
+

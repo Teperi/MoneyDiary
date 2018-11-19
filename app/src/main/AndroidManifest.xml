@@ -26,7 +26,8 @@
         </activity>
 
         <activity android:name=".test"/>
-        <activity android:name=".Recyclerviewtest"/>
+        <activity android:name=".RecyclerviewMoneyFlow"/>
+        <activity android:name=".RecyclerviewDairy"/>
     </application>
 
 </manifest>

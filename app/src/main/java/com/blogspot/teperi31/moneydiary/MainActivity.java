@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,19 +30,6 @@ public class MainActivity extends AppCompatActivity {
 	
 	// 전화 걸기 권한 허용 요청
 	final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 0;
-	
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-		Log.d("TestAppActivity", "onStop");
-	}
-	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		Log.d("TestAppActivity", "onDestroy");
-	}
 	
 	// Date 타입을 String 으로 바꿔주는 기능을 가진 함수
 	// yyyy-MM-dd 형식으로 변경하는 틀을 저장함
@@ -79,16 +65,21 @@ public class MainActivity extends AppCompatActivity {
 		});
 		
 		// 버튼 누를 시 화면 전환
-		findViewById(R.id.testbutton).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.testbutton1).setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				
+//
+//				//날짜
+//				Intent intent = new Intent(MainActivity.this, test.class);
+//				intent.putExtra("saveDate", saveDate);
+//				startActivity(intent);
 				
-				//날짜
-				Intent intent = new Intent(MainActivity.this, test.class);
-				intent.putExtra("saveDate", saveDate);
-				startActivity(intent);
+				Intent i = new Intent(MainActivity.this, RecyclerviewDairy.class);
+				startActivity(i);
+				
+				
 			}
 		});
 		
@@ -100,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 				
 				
 				//날짜
-				Intent intent = new Intent(MainActivity.this, Recyclerviewtest.class);
+				Intent intent = new Intent(MainActivity.this, RecyclerviewMoneyFlow.class);
 				startActivity(intent);
 			}
 		});
@@ -121,15 +112,6 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.actionSearch:
-				Toast.makeText(this, "검색", Toast.LENGTH_SHORT).show();
-				return true;
-			
-			case R.id.actionAdd:
-				Intent i = new Intent(MainActivity.this, SpendCreateInput.class);
-				startActivity(i);
-				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
-				return true;
 			
 			case R.id.actionmyblog:
 				Toast.makeText(this, "개발자 블로그로 연결합니다.", Toast.LENGTH_SHORT).show();

@@ -19,39 +19,53 @@
         android:id="@+id/calender1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/testbutton"
+        app:layout_constraintBottom_toTopOf="@id/buttonlayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/my_toolbarTop_main">
 
     </CalendarView>
 
-
-    <Button
-        android:id="@+id/testbutton"
+    <LinearLayout
+        android:id="@+id/buttonlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
 
-        android:text="날짜입력받기 연습"
+        app:layout_constraintTop_toBottomOf="@id/calender1"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/testbutton2"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        app:layout_constraintTop_toBottomOf="@id/calender1" />
+        <Button
+            android:id="@+id/testbutton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+
+            android:text="다이어리"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/testbutton1"
+            />
+
+        <Button
+            android:id="@+id/testbutton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+
+            android:text="가계부"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/testbutton1"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+    </LinearLayout>
 
 
-    <Button
-        android:id="@+id/testbutton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
 
-        android:text="리사이클러뷰버튼"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/testbutton"
-        app:layout_constraintTop_toBottomOf="@id/calender1" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -1,5 +1,7 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 
 public class DataDairy implements Serializable {

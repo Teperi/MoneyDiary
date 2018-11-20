@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <Toolbar
         android:id="@+id/my_toolbarTop_basic"
@@ -19,142 +19,173 @@
 
         android:layout_margin="8dp"
 
-        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop_basic"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.1"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop_basic"
+        app:layout_constraintVertical_bias="0.1">
 
-        <GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:rowCount="7"
-            android:columnCount="2"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_gravity="center"
-                android:text="다이어리 입력"
-                android:textSize="25sp"
-                android:layout_row="0"
-                android:layout_column="0"
-                android:layout_columnSpan="2"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                style="@style/InputSubclassTextStyle"
-                android:text="제목"
-                android:layout_row="1"
-                android:layout_column="0"/>
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:columnCount="2"
+                android:rowCount="8">
 
-            <EditText
-                android:id="@+id/inputCreateDairyTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:ems="12"
-                android:layout_row="1"
-                android:layout_column="1"
-                android:layout_gravity="center"
-                />
-            <TextView
-                style="@style/InputSubclassTextStyle"
-                android:text="내용"
-                android:layout_row="2"
-                android:layout_column="0"/>
-            <EditText
-                android:id="@+id/inputCreateDairyContent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:ems="15"
-                android:layout_row="3"
-                android:layout_column="0"
-                android:layout_columnSpan="2"
-                android:lines="3"
-                android:maxLines="5"
-                android:layout_gravity="center"
-                />
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_row="4"
-                android:layout_column="0"
-                android:layout_columnSpan="2"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/inputCreateDairyCamera"
-                    android:text="카메라"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    />
-                <Button
-                    android:id="@+id/inputCreateDairyG"
-                    android:text="갤러리"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:text="다이어리 입력"
+                    android:textSize="25sp" />
 
+                <TextView
+                    style="@style/InputSubclassTextStyle"
+                    android:layout_row="2"
+                    android:layout_column="0"
+                    android:text="제목" />
+
+                <EditText
+                    android:id="@+id/inputCreateDairyTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    />
+                    android:layout_row="2"
+                    android:layout_column="1"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:ems="13" />
 
-            </LinearLayout>
+                <LinearLayout
+                    style="@style/InputLinearLayoutStyle"
+                    android:layout_row="1"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:id="@+id/inputCreateSpendSubclassDateTitle"
+                        style="@style/InputSubclassTextStyle"
+                        android:layout_gravity="start|center_vertical"
+                        android:text="@string/dateTitle" />
 
-            <ImageView
-                android:id="@+id/inputCreateDairyImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxHeight="100dp"
-                android:adjustViewBounds="true"
-                android:layout_margin="16dp"
-                android:layout_row="5"
-                android:layout_column="0"
-                android:layout_columnSpan="2"
-                android:scaleType="centerCrop"
-                />
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/inputCreateSpendSubclassDateYearSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_row="6"
-                android:layout_column="0"
-                android:layout_columnSpan="2"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="horizontal">
-                <Button
-                    android:id="@+id/inputCreateDairyComplete"
-                    android:text="입력 완료"
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/inputCreateSpendSubclassDateMonthSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/inputCreateSpendSubclassDateDaySpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/InputSubclassTextStyle"
+                    android:layout_row="3"
+                    android:layout_column="0"
+                    android:text="내용" />
+
+                <EditText
+                    android:id="@+id/inputCreateDairyContent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    />
-                <Button
-                    android:id="@+id/inputCreateDairyCancel"
-                    android:text="취소"
+                    android:layout_row="4"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:ems="15"
+                    android:lines="3"
+                    android:maxLines="5" />
 
+                <!--<LinearLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_row="5"-->
+                    <!--android:layout_column="0"-->
+                    <!--android:layout_columnSpan="2"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="horizontal">-->
+
+                    <!--<Button-->
+                        <!--android:id="@+id/inputCreateDairyCamera"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginEnd="16dp"-->
+                        <!--android:text="카메라" />-->
+
+                    <!--<Button-->
+                        <!--android:id="@+id/inputCreateDairyG"-->
+                        <!--android:layout_width="wrap_content"-->
+
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginStart="16dp"-->
+                        <!--android:text="갤러리" />-->
+
+                <!--</LinearLayout>-->
+
+
+                <ImageView
+                    android:id="@+id/inputCreateDairyImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_row="6"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="100dp"
+                    android:scaleType="centerCrop"
+                    />
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    />
+                    android:layout_row="7"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-            </LinearLayout>
+                    <Button
+                        android:id="@+id/inputCreateDairyComplete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="입력 완료" />
+
+                    <Button
+                        android:id="@+id/inputCreateDairyCancel"
+                        android:layout_width="wrap_content"
+
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="취소" />
+
+                </LinearLayout>
 
 
-
-
-
-
-        </GridLayout>
-
-
+            </GridLayout>
+        </ScrollView>
 
     </android.support.v7.widget.CardView>
 

@@ -18,7 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class RecyclerviewDairy extends AppCompatActivity {
 	
@@ -51,7 +54,23 @@ public class RecyclerviewDairy extends AppCompatActivity {
 		dList = new ArrayList<>();
 		
 		dList.add(new DataDairy(2018, 10, 25, "월급날이다!", "신나는 월급", 0));
-		dList.add(new DataDairy(2018, 10, 26, "월급날이다!", "신나는 월급", R.drawable.cat3));
+		dList.add(new DataDairy(2018, 10, 26, "이쁜 고양이", "이 고양이 사진이 최고인거 같다.", R.drawable.cat3));
+		
+		// 데이터가 입력되었을 때 저장
+		Intent InputCreateDairyIntent = getIntent();
+		
+		// 새로운 데이터가 들어오면 저장시킴
+		if (InputCreateDairyIntent.getSerializableExtra("InputCreateDairy") != null) {
+			DataDairy InputCreateDairy = (DataDairy) InputCreateDairyIntent.getSerializableExtra("InputCreateDairy");
+			dList.add(InputCreateDairy);
+			
+			Collections.sort(dList, new Comparator<DataDairy>() {
+				@Override
+				public int compare(DataDairy o1, DataDairy o2) {
+					return Collator.getInstance().compare(o1.DListDate, o2.DListDate);
+				}
+			});
+		}
 		
 		AdapterDRecycler myAdapter = new AdapterDRecycler(dList);
 		

@@ -182,10 +182,10 @@ public class SpendCreateInput extends AppCompatActivity {
 					}
 				});
 				
-				AlertDialog canclepopup = cancelaction.create();
-				canclepopup.setTitle("경고");
-				canclepopup.setMessage("지출 기록을 그만 하시겠습니까?");
-				canclepopup.show();
+				AlertDialog cancelpopup = cancelaction.create();
+				cancelpopup.setTitle("경고");
+				cancelpopup.setMessage("지출 기록을 그만 하시겠습니까?");
+				cancelpopup.show();
 				
 			}
 		});
@@ -212,10 +212,10 @@ public class SpendCreateInput extends AppCompatActivity {
 			}
 		});
 		
-		AlertDialog canclepopup = cancelaction.create();
-		canclepopup.setTitle("TEST");
-		canclepopup.setMessage("지출 기록을 그만 하시겠습니까?");
-		canclepopup.show();
+		AlertDialog cancelpopup = cancelaction.create();
+		cancelpopup.setTitle("TEST");
+		cancelpopup.setMessage("지출 기록을 그만 하시겠습니까?");
+		cancelpopup.show();
 	}
 	
 	@Override

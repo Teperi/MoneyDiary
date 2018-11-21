@@ -7,15 +7,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class DataDairy implements Serializable {
+public class DataDiary implements Serializable {
 	
 	Calendar DListDate;
 	String DListDateString;
 	String DListTitle;
 	String DListContent;
-	int DListImage;
+	Uri DListImage;
 	
-	public DataDairy(Calendar date, String title, String content, int image){
+	public DataDiary(Calendar date, String title, String content, Uri image){
 		String myFormat = "yyyy-MM-dd";
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
 		

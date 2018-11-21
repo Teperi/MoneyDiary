@@ -18,12 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class RecyclerviewDairy extends AppCompatActivity {
+public class RecyclerviewDiary extends AppCompatActivity {
 	
 	// 전화 걸기 권한 허용 요청
 	final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 0;
@@ -36,22 +34,22 @@ public class RecyclerviewDairy extends AppCompatActivity {
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.recyclerview_dairy);
+		setContentView(R.layout.recyclerview_diary);
 		
 		// 액션 바 삽입
 		// 추후 Dairy 전용 toolbar 생성
-		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_list_dairy);
+		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_list_diary);
 		setSupportActionBar(myToolbar);
 		
-		mRecyclerView = findViewById(R.id.dairy_recycler_view);
+		mRecyclerView = findViewById(R.id.diary_recycler_view);
 		
 		// 리니어 레이아웃 매니저. 한줄씩 쌓임
 		mLayoutManager = new LinearLayoutManager(this);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		
-		Collections.sort(ApplicationClass.dList, new Comparator<DataDairy>() {
+		Collections.sort(ApplicationClass.dList, new Comparator<DataDiary>() {
 			@Override
-			public int compare(DataDairy o1, DataDairy o2) {
+			public int compare(DataDiary o1, DataDiary o2) {
 				return o2.DListDate.compareTo(o1.DListDate);
 			}
 		});
@@ -76,7 +74,7 @@ public class RecyclerviewDairy extends AppCompatActivity {
 	//	toolbar 에 메뉴 띄워주는 함수
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.topbar_actions_dairy, menu);
+		getMenuInflater().inflate(R.menu.topbar_actions_diary, menu);
 		return true;
 	}
 	
@@ -85,7 +83,7 @@ public class RecyclerviewDairy extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.actionAdd:
-				Intent i = new Intent(RecyclerviewDairy.this, InputDairyCreate.class);
+				Intent i = new Intent(RecyclerviewDiary.this, InputDiaryCreate.class);
 				startActivity(i);
 				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
 				return true;
@@ -104,14 +102,14 @@ public class RecyclerviewDairy extends AppCompatActivity {
 			
 			case R.id.actionmyphone:
 				Intent actionTelIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:010-2061-3823"));
-				int permissionCheck = ContextCompat.checkSelfPermission(RecyclerviewDairy.this, Manifest.permission.CALL_PHONE);
+				int permissionCheck = ContextCompat.checkSelfPermission(RecyclerviewDiary.this, Manifest.permission.CALL_PHONE);
 				
 				if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
 					Toast.makeText(this, "개발자에게 전화를 합니다.", Toast.LENGTH_SHORT).show();
 					startActivity(actionTelIntent);
 				} else {
 					
-					ActivityCompat.requestPermissions(RecyclerviewDairy.this, new String[]{Manifest.permission.CALL_PHONE}, MY_PERMISSIONS_REQUEST_CALL_PHONE);
+					ActivityCompat.requestPermissions(RecyclerviewDiary.this, new String[]{Manifest.permission.CALL_PHONE}, MY_PERMISSIONS_REQUEST_CALL_PHONE);
 					
 				}
 				return true;

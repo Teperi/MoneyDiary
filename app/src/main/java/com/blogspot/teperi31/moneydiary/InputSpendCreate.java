@@ -115,7 +115,7 @@ public class InputSpendCreate extends AppCompatActivity {
 							inputUsageText.getText().toString());
 					Intent i = new Intent(InputSpendCreate.this ,RecyclerviewMoneyFlow.class);
 					ApplicationClass.mfList.add(obj);
-					// 스택 관리
+//					// 스택 관리
 					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					startActivity(i);

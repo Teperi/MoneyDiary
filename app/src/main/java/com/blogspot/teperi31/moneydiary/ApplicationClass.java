@@ -2,15 +2,15 @@ package com.blogspot.teperi31.moneydiary;
 
 import android.app.Application;
 import android.content.res.Configuration;
+import android.net.Uri;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class ApplicationClass extends Application {
 	
 	static ArrayList<DataMoneyFlow> mfList;
-	static ArrayList<DataDairy> dList;
+	static ArrayList<DataDiary> dList;
 	
 	@Override
 	public void onCreate() {
@@ -34,10 +34,10 @@ public class ApplicationClass extends Application {
 		
 		dList = new ArrayList<>();
 		
-		dList.add(new DataDairy(new GregorianCalendar(2018,9,25), "월급날이다!", "신나는 월급", 0));
-		dList.add(new DataDairy(new GregorianCalendar(2018,9,26), "이쁜 고양이", "이 고양이 사진이 최고인거 같다.", R.drawable.cat3));
+		dList.add(new DataDiary(new GregorianCalendar(2018,9,25), "월급날이다!", "신나는 월급", null));
+		dList.add(new DataDiary(new GregorianCalendar(2018,9,26), "이쁜 고양이", "이 고양이 사진이 최고인거 같다.",Uri.parse("android.resource://com.blogspot.teperi31.moneydiary/drawable/" + R.drawable.cat3)));
 		
-		
+//
 	}
 	
 	@Override

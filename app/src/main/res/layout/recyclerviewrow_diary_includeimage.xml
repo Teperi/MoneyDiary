@@ -22,7 +22,7 @@
             android:layout_column="0"/>
 
         <TextView
-            android:id="@+id/dairy_re_date_inImage"
+            android:id="@+id/diary_re_date_inImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -33,7 +33,7 @@
             />
 
         <TextView
-            android:id="@+id/dairy_re_title_inImage"
+            android:id="@+id/diary_re_title_inImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -47,7 +47,7 @@
             />
 
         <ImageView
-            android:id="@+id/dairy_re_image_inImage"
+            android:id="@+id/diary_re_image_inImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxHeight="100dp"
@@ -60,7 +60,7 @@
             />
 
         <TextView
-            android:id="@+id/dairy_re_content_inImage"
+            android:id="@+id/diary_re_content_inImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"

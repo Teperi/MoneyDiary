@@ -2,7 +2,6 @@ package com.blogspot.teperi31.moneydiary;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class DataMoneyFlow {

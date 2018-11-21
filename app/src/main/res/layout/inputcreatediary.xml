@@ -54,7 +54,7 @@
                     android:text="제목" />
 
                 <EditText
-                    android:id="@+id/inputCreateDairyTitle"
+                    android:id="@+id/inputCreateDiaryTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_row="2"
@@ -65,7 +65,7 @@
 
 
                 <TextView
-                    android:id="@+id/inputCreateDairyDateTitle"
+                    android:id="@+id/inputCreateDiaryDateTitle"
                     style="@style/InputSubclassTextStyle"
                     android:layout_row="1"
                     android:layout_column="0"
@@ -73,7 +73,7 @@
                     android:text="@string/dateTitle" />
 
                 <TextView
-                    android:id="@+id/inputCreateDairyDateEdit"
+                    android:id="@+id/inputCreateDiaryDateEdit"
                     style="@style/InputSubclassEditTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                     android:text="내용" />
 
                 <EditText
-                    android:id="@+id/inputCreateDairyContent"
+                    android:id="@+id/inputCreateDiaryContent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_row="4"
@@ -102,36 +102,36 @@
                     android:lines="3"
                     android:maxLines="5" />
 
-                <!--<LinearLayout-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_row="5"-->
-                <!--android:layout_column="0"-->
-                <!--android:layout_columnSpan="2"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:gravity="center"-->
-                <!--android:orientation="horizontal">-->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="5"
+                    android:layout_column="0"
+                    android:layout_columnSpan="2"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                <!--<Button-->
-                <!--android:id="@+id/inputCreateDairyCamera"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginEnd="16dp"-->
-                <!--android:text="카메라" />-->
+                    <Button
+                        android:id="@+id/inputCreateDiaryCamera"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:text="카메라" />
 
-                <!--<Button-->
-                <!--android:id="@+id/inputCreateDairyG"-->
-                <!--android:layout_width="wrap_content"-->
+                    <Button
+                        android:id="@+id/inputCreateDiaryGalley"
+                        android:layout_width="wrap_content"
 
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginStart="16dp"-->
-                <!--android:text="갤러리" />-->
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:text="갤러리" />
 
-                <!--</LinearLayout>-->
+                </LinearLayout>
 
 
                 <ImageView
-                    android:id="@+id/inputCreateDairyImage"
+                    android:id="@+id/inputCreateDiaryImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_row="6"
@@ -154,14 +154,14 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/inputCreateDairyComplete"
+                        android:id="@+id/inputCreateDiaryComplete"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
                         android:text="입력 완료" />
 
                     <Button
-                        android:id="@+id/inputCreateDairyCancel"
+                        android:id="@+id/inputCreateDiaryCancel"
                         android:layout_width="wrap_content"
 
                         android:layout_height="wrap_content"

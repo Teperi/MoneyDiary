@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyViewHolder> {
 	
-	ArrayList<DataDairy> DList;
+	ArrayList<DataDiary> DList;
 	
 	
 	public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -22,21 +22,21 @@ public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyVi
 		
 		MyViewHolder(View view) {
 			super(view);
-			reDate = view.findViewById(R.id.dairy_re_date_inImage);
-			reTitle = view.findViewById(R.id.dairy_re_title_inImage);
-			reImage = view.findViewById(R.id.dairy_re_image_inImage);
-			reContent = view.findViewById(R.id.dairy_re_content_inImage);
+			reDate = view.findViewById(R.id.diary_re_date_inImage);
+			reTitle = view.findViewById(R.id.diary_re_title_inImage);
+			reImage = view.findViewById(R.id.diary_re_image_inImage);
+			reContent = view.findViewById(R.id.diary_re_content_inImage);
 			
 		}
 	}
 	
-	AdapterDRecycler(ArrayList<DataDairy> DList){
+	AdapterDRecycler(ArrayList<DataDiary> DList){
 		this.DList = DList;
 	}
 	
 	@Override
 	public AdapterDRecycler.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerviewrow_dairy_includeimage, parent, false);
+		View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerviewrow_diary_includeimage, parent, false);
 		return new MyViewHolder(itemView);
 	}
 	
@@ -45,11 +45,7 @@ public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyVi
 		holder.reDate.setText(DList.get(position).DListDateString);
 		holder.reTitle.setText(DList.get(position).DListTitle);
 		holder.reContent.setText(DList.get(position).DListContent);
-		holder.reImage.setImageResource(DList.get(position).DListImage);
-		
-		if(DList.get(position).DListImage == 0){
-			holder.reImage.invalidate();
-		}
+		holder.reImage.setImageURI(DList.get(position).DListImage);
 	}
 	
 	@Override

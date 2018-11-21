@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				
 				
-				Intent i = new Intent(MainActivity.this, RecyclerviewDairy.class);
+				Intent i = new Intent(MainActivity.this, RecyclerviewDiary.class);
 				startActivity(i);
 				
 				

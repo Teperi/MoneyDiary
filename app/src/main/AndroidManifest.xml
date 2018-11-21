@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true"/>
+
 
 
     <application
@@ -32,8 +35,8 @@
 
         <activity android:name=".test"/>
         <activity android:name=".RecyclerviewMoneyFlow"/>
-        <activity android:name=".RecyclerviewDairy"/>
-        <activity android:name=".InputDairyCreate">
+        <activity android:name=".RecyclerviewDiary"/>
+        <activity android:name=".InputDiaryCreate">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
@@ -45,6 +48,7 @@
                 <data android:mimeType="image/*"/>
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbarTop_list_dairy"
+        android:id="@+id/my_toolbarTop_list_diary"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -14,13 +14,13 @@
         app:popupTheme="@style/Base.ThemeOverlay.AppCompat.Light" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/dairy_recycler_view"
+        android:id="@+id/diary_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
         android:scrollbars="vertical"
 
-        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop_list_dairy"
+        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop_list_diary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

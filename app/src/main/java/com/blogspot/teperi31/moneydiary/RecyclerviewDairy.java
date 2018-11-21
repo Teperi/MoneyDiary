@@ -32,7 +32,6 @@ public class RecyclerviewDairy extends AppCompatActivity {
 	
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
-	ArrayList<DataDairy> dList;
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,29 +49,24 @@ public class RecyclerviewDairy extends AppCompatActivity {
 		mLayoutManager = new LinearLayoutManager(this);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		
-		// 데이터 입력
-		dList = new ArrayList<>();
+		Collections.sort(ApplicationClass.dList, new Comparator<DataDairy>() {
+			@Override
+			public int compare(DataDairy o1, DataDairy o2) {
+				return o2.DListDate.compareTo(o1.DListDate);
+			}
+		});
 		
-		dList.add(new DataDairy(2018, 10, 25, "월급날이다!", "신나는 월급", 0));
-		dList.add(new DataDairy(2018, 10, 26, "이쁜 고양이", "이 고양이 사진이 최고인거 같다.", R.drawable.cat3));
+		
 		
 		// 데이터가 입력되었을 때 저장
 		Intent InputCreateDairyIntent = getIntent();
 		
-		// 새로운 데이터가 들어오면 저장시킴
-		if (InputCreateDairyIntent.getSerializableExtra("InputCreateDairy") != null) {
-			DataDairy InputCreateDairy = (DataDairy) InputCreateDairyIntent.getSerializableExtra("InputCreateDairy");
-			dList.add(InputCreateDairy);
-			
-			Collections.sort(dList, new Comparator<DataDairy>() {
-				@Override
-				public int compare(DataDairy o1, DataDairy o2) {
-					return Collator.getInstance().compare(o1.DListDate, o2.DListDate);
-				}
-			});
-		}
 		
-		AdapterDRecycler myAdapter = new AdapterDRecycler(dList);
+		
+		
+		
+		
+		AdapterDRecycler myAdapter = new AdapterDRecycler(ApplicationClass.dList);
 		
 		mRecyclerView.setAdapter(myAdapter);
 		
@@ -91,7 +85,7 @@ public class RecyclerviewDairy extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.actionAdd:
-				Intent i = new Intent(RecyclerviewDairy.this, DairyCreateInput.class);
+				Intent i = new Intent(RecyclerviewDairy.this, InputDairyCreate.class);
 				startActivity(i);
 				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
 				return true;

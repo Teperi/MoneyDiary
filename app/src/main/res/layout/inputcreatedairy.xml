@@ -63,37 +63,25 @@
                     android:layout_margin="8dp"
                     android:ems="13" />
 
-                <LinearLayout
-                    style="@style/InputLinearLayoutStyle"
+
+                <TextView
+                    android:id="@+id/inputCreateDairyDateTitle"
+                    style="@style/InputSubclassTextStyle"
                     android:layout_row="1"
                     android:layout_column="0"
-                    android:layout_columnSpan="2"
+                    android:layout_gravity="start|center_vertical"
+                    android:text="@string/dateTitle" />
+
+                <TextView
+                    android:id="@+id/inputCreateDairyDateEdit"
+                    style="@style/InputSubclassEditTextStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="1"
+                    android:layout_column="1"
                     android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:clickable="true" />
 
-                    <TextView
-                        android:id="@+id/inputCreateSpendSubclassDateTitle"
-                        style="@style/InputSubclassTextStyle"
-                        android:layout_gravity="start|center_vertical"
-                        android:text="@string/dateTitle" />
-
-                    <android.support.v7.widget.AppCompatSpinner
-                        android:id="@+id/inputCreateSpendSubclassDateYearSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <android.support.v7.widget.AppCompatSpinner
-                        android:id="@+id/inputCreateSpendSubclassDateMonthSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <android.support.v7.widget.AppCompatSpinner
-                        android:id="@+id/inputCreateSpendSubclassDateDaySpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
 
                 <TextView
                     style="@style/InputSubclassTextStyle"
@@ -115,29 +103,29 @@
                     android:maxLines="5" />
 
                 <!--<LinearLayout-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_row="5"-->
-                    <!--android:layout_column="0"-->
-                    <!--android:layout_columnSpan="2"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:gravity="center"-->
-                    <!--android:orientation="horizontal">-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_row="5"-->
+                <!--android:layout_column="0"-->
+                <!--android:layout_columnSpan="2"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:gravity="center"-->
+                <!--android:orientation="horizontal">-->
 
-                    <!--<Button-->
-                        <!--android:id="@+id/inputCreateDairyCamera"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginEnd="16dp"-->
-                        <!--android:text="카메라" />-->
+                <!--<Button-->
+                <!--android:id="@+id/inputCreateDairyCamera"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginEnd="16dp"-->
+                <!--android:text="카메라" />-->
 
-                    <!--<Button-->
-                        <!--android:id="@+id/inputCreateDairyG"-->
-                        <!--android:layout_width="wrap_content"-->
+                <!--<Button-->
+                <!--android:id="@+id/inputCreateDairyG"-->
+                <!--android:layout_width="wrap_content"-->
 
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_marginStart="16dp"-->
-                        <!--android:text="갤러리" />-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="16dp"-->
+                <!--android:text="갤러리" />-->
 
                 <!--</LinearLayout>-->
 
@@ -153,8 +141,7 @@
                     android:layout_margin="16dp"
                     android:adjustViewBounds="true"
                     android:maxHeight="100dp"
-                    android:scaleType="centerCrop"
-                    />
+                    android:scaleType="centerCrop" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"

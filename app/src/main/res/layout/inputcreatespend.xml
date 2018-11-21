@@ -72,23 +72,14 @@
                         android:text="@string/dateTitle"
                         android:layout_gravity="start|center_vertical"/>
 
-                    <android.support.v7.widget.AppCompatSpinner
-                        android:id="@+id/inputCreateSpendSubclassDateYearSpinner"
+                    <TextView
+                        android:id="@+id/inputCreateSpendSubclassDateEdit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        />
+                        style="@style/InputSubclassEditTextStyle"
+                        android:clickable="true"/>
 
-                    <android.support.v7.widget.AppCompatSpinner
-                        android:id="@+id/inputCreateSpendSubclassDateMonthSpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        />
 
-                    <android.support.v7.widget.AppCompatSpinner
-                        android:id="@+id/inputCreateSpendSubclassDateDaySpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        />
 
                 </LinearLayout>
 

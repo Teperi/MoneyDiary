@@ -19,13 +19,9 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.Collator;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-//import java.util.ArrayList;
-//import java.util.List;
 
 public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	
@@ -35,7 +31,6 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
-	ArrayList<DataMoneyFlow> mfList;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +48,13 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		Toolbar myToolbar = findViewById(R.id.toolbarTop_List_moneyflow);
 		setSupportActionBar(myToolbar);
 		
+		Collections.sort(ApplicationClass.mfList, new Comparator<DataMoneyFlow>() {
+			@Override
+			public int compare(DataMoneyFlow o1, DataMoneyFlow o2) {
+				return o2.MFListDate.compareTo(o1.MFListDate);
+			}
+		});
+		
 		
 		mRecyclerView = findViewById(R.id.moneyflow_recycler_view);
 		
@@ -65,38 +67,18 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		
 		// 데이터 입력
-		mfList = new ArrayList<>();
-		mfList.add(new DataMoneyFlow("입금", 2018, 10, 25, "현금", "월급", 200000, "월급"));
-		mfList.add(new DataMoneyFlow("이체", 2018, 10, 25, "체크카드", "이체", 150000, "월급이체"));
-		mfList.add(new DataMoneyFlow("출금", 2018, 10, 26, "체크카드", "점심", 6000, "백채김치찌개"));
-		mfList.add(new DataMoneyFlow("출금", 2018, 10, 26, "체크카드", "회식", 10000, "한신포차"));
-		mfList.add(new DataMoneyFlow("출금", 2018, 10, 27, "현금", "점심", 5000, "할매순대국"));
-		mfList.add(new DataMoneyFlow("출금", 2018, 11, 1, "체크카드", "저녁", 10000, "국물떡볶이"));
-		mfList.add(new DataMoneyFlow("출금", 2018, 11, 1, "현금", "저녁", 7000, "피자스쿨"));
-		mfList.add(new DataMoneyFlow("출금", 2018, 11, 2, "현금", "간식", 7000, "GS25"));
-		mfList.add(new DataMoneyFlow("출금", 2018, 11, 2, "체크카드", "영화", 10000, "CGV"));
+		
 		
 		// 데이터가 입력되었을 때 저장
 		Intent InputCreateSpendIntent = getIntent();
 		
 		// 새로운 지출 데이터가 들어오면 저장시킴
-		if (InputCreateSpendIntent.getSerializableExtra("InputCreateSpend") != null) {
-			DataMoneyFlow InputCreateSpend = (DataMoneyFlow) InputCreateSpendIntent.getSerializableExtra("InputCreateSpend");
-			mfList.add(InputCreateSpend);
-			
-			Collections.sort(mfList, new Comparator<DataMoneyFlow>() {
-				@Override
-				public int compare(DataMoneyFlow o1, DataMoneyFlow o2) {
-					return Collator.getInstance().compare(o1.MFListDate, o2.MFListDate);
-				}
-			});
-			
-		}
+		
 		
 		
 		
 		//내 어댑터와 데이터 연결
-		AdapterMFRecycler myAdapter = new AdapterMFRecycler(mfList);
+		AdapterMFRecycler myAdapter = new AdapterMFRecycler(ApplicationClass.mfList);
 		
 		mRecyclerView.setAdapter(myAdapter);
 		
@@ -110,11 +92,11 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		TextView moneyflowTotaltext = findViewById(R.id.moneyflowcalctotal);
 		
 		// 수입 및 지출 계산
-		for (int i = 0; i < mfList.size(); i++) {
-			if (mfList.get(i).MFListType.equals("입금")) {
-				moneyflowDepositint += mfList.get(i).MFListPrice;
-			} else if (mfList.get(i).MFListType.equals("출금")) {
-				moneyflowWithdrawint += mfList.get(i).MFListPrice;
+		for (int i = 0; i < ApplicationClass.mfList.size(); i++) {
+			if (ApplicationClass.mfList.get(i).MFListType.equals("입금")) {
+				moneyflowDepositint += ApplicationClass.mfList.get(i).MFListPrice;
+			} else if (ApplicationClass.mfList.get(i).MFListType.equals("출금")) {
+				moneyflowWithdrawint += ApplicationClass.mfList.get(i).MFListPrice;
 			}
 		}
 		
@@ -145,7 +127,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.actionAdd:
-				Intent i = new Intent(RecyclerviewMoneyFlow.this, SpendCreateInput.class);
+				Intent i = new Intent(RecyclerviewMoneyFlow.this, InputSpendCreate.class);
 				startActivity(i);
 				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
 				return true;

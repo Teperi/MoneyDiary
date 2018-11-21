@@ -42,7 +42,7 @@ public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyVi
 	
 	@Override
 	public void onBindViewHolder(MyViewHolder holder, int position) {
-		holder.reDate.setText(DList.get(position).DListDate);
+		holder.reDate.setText(DList.get(position).DListDateString);
 		holder.reTitle.setText(DList.get(position).DListTitle);
 		holder.reContent.setText(DList.get(position).DListContent);
 		holder.reImage.setImageResource(DList.get(position).DListImage);

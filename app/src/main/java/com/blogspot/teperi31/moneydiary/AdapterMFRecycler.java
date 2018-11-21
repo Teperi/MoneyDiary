@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.MyViewHolder>  {
@@ -49,8 +51,11 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 	
 	@Override
 	public void onBindViewHolder(MyViewHolder holder, int position) {
+//
+//		String myFormat = "yyyy-MM-dd";
+//		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
 		
-		holder.reDate.setText(MFList.get(position).MFListDate);
+		holder.reDate.setText(MFList.get(position).MFListDateString);
 		holder.reType.setText(MFList.get(position).MFListType);
 		holder.reAccount.setText(MFList.get(position).MFListAccount);
 		holder.reCategory.setText(MFList.get(position).MFListCategory);

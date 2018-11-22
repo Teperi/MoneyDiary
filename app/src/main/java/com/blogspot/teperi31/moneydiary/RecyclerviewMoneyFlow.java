@@ -1,6 +1,8 @@
 package com.blogspot.teperi31.moneydiary;
 
 import android.Manifest;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -10,12 +12,15 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +41,8 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		
-		
-		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.recyclerview_moneyflow);
-		
-		
 		
 		
 		// 액션 바 삽입
@@ -55,7 +56,6 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 			}
 		});
 		
-		
 		mRecyclerView = findViewById(R.id.moneyflow_recycler_view);
 		
 		// 사이즈 고정, 리사이클러 뷰에서 content 사이즈를 바꾸지 말라?
@@ -66,21 +66,12 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		
 		
-		// 데이터 입력
-		
-		
-		// 데이터가 입력되었을 때 저장
-		Intent InputCreateSpendIntent = getIntent();
-		
-		// 새로운 지출 데이터가 들어오면 저장시킴
-		
-		
-		
-		
 		//내 어댑터와 데이터 연결
 		AdapterMFRecycler myAdapter = new AdapterMFRecycler(ApplicationClass.mfList);
 		
 		mRecyclerView.setAdapter(myAdapter);
+		
+		
 		
 		
 		// 가격 전체 데이터 저장
@@ -185,6 +176,55 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 			}
 			default:
 				super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		}
+	}
+	
+	View positionview;
+	MenuItem test;
+	int index;
+	AdapterView.AdapterContextMenuInfo info;
+	
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		super.onContextItemSelected(item);
+		System.out.println(item);
+		System.out.println(item.getGroupId());
+		System.out.println(item.getOrder());
+		System.out.println(item.getActionView());
+		
+		
+		switch (item.getItemId()) {
+			case R.id.itemEdit:
+				Toast.makeText(this, "수정", Toast.LENGTH_SHORT).show();
+				return true;
+			case R.id.itemDelete:
+				
+				Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();
+				AlertDialog.Builder cancelaction = new AlertDialog.Builder(this);
+				cancelaction.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();
+						
+//						ApplicationClass.mfList.remove(mRecyclerView.getChildAdapterPosition(positionview));
+					
+					}
+				});
+				
+				cancelaction.setNegativeButton("돌아가기", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					
+					}
+				});
+				
+				AlertDialog cancelpopup = cancelaction.create();
+				cancelpopup.setTitle("경고");
+				cancelpopup.setMessage("정말로 삭제하시겠습니까?");
+				cancelpopup.show();
+			default:
+				return super.onContextItemSelected(item);
 		}
 	}
 }

@@ -30,6 +30,7 @@ public class RecyclerviewDiary extends AppCompatActivity {
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
 	
+	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -105,7 +106,6 @@ public class RecyclerviewDiary extends AppCompatActivity {
 					
 				}
 				return true;
-			
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -134,5 +134,18 @@ public class RecyclerviewDiary extends AppCompatActivity {
 		}
 	}
 	
-	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.itemEdit:
+				Toast.makeText(this, "수정하기", Toast.LENGTH_SHORT).show();
+				return true;
+			case R.id.itemDelete:
+				Toast.makeText(this, "삭제하기", Toast.LENGTH_SHORT).show();
+				return true;
+			default:
+				return super.onContextItemSelected(item);
+		}
+		
+	}
 }

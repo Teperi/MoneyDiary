@@ -3,7 +3,9 @@ package com.blogspot.teperi31.moneydiary;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,7 +19,7 @@ public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyVi
 	ArrayList<DataDiary> DList;
 	
 	// 뷰 홀더와 layout 연결
-	public static class MyViewHolder extends RecyclerView.ViewHolder {
+	public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener  {
 		TextView reDate;
 		TextView reTitle;
 		ImageView reImage;
@@ -29,6 +31,14 @@ public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyVi
 			reTitle = view.findViewById(R.id.diary_re_title_inImage);
 			reImage = view.findViewById(R.id.diary_re_image_inImage);
 			reContent = view.findViewById(R.id.diary_re_content_inImage);
+			view.setOnCreateContextMenuListener(this);
+		}
+		
+		@Override
+		public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+			
+			MenuInflater popup = new MenuInflater(v.getContext());
+			popup.inflate(R.menu.recyclerview_context_menu, menu);
 			
 		}
 	}
@@ -74,4 +84,6 @@ public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyVi
 	public int getItemCount() {
 		return DList.size();
 	}
+	
+	
 }

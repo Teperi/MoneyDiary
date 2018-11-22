@@ -43,7 +43,8 @@
             android:textSize="30sp"
             android:layout_row="1"
             android:layout_column="0"
-            android:layout_columnSpan="2"
+            android:layout_columnSpan="3"
+
             />
 
         <ImageView
@@ -55,7 +56,7 @@
             android:layout_margin="16dp"
             android:layout_row="2"
             android:layout_column="0"
-            android:layout_columnSpan="2"
+            android:layout_columnSpan="3"
             android:scaleType="centerCrop"
             />
 
@@ -64,10 +65,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:maxLines="5"
+            android:maxLines="3"
             android:layout_row="3"
             android:layout_column="0"
-            android:layout_columnSpan="2"
+            android:layout_columnSpan="3"
 
             android:text="오늘은 이쁜 고양이가 내 곁에 찾아왔다."/>
 

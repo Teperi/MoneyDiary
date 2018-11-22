@@ -112,20 +112,20 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <Button
-                        android:id="@+id/inputCreateDiaryCamera"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:text="카메라" />
+                    <!--<Button-->
+                        <!--android:id="@+id/inputCreateDiaryCamera"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginEnd="16dp"-->
+                        <!--android:text="카메라" />-->
 
-                    <Button
-                        android:id="@+id/inputCreateDiaryGalley"
-                        android:layout_width="wrap_content"
+                    <!--<Button-->
+                        <!--android:id="@+id/inputCreateDiaryGalley"-->
+                        <!--android:layout_width="wrap_content"-->
 
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:text="갤러리" />
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginStart="16dp"-->
+                        <!--android:text="갤러리" />-->
 
                 </LinearLayout>
 

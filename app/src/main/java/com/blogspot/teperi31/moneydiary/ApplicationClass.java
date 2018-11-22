@@ -21,7 +21,6 @@ public class ApplicationClass extends Application {
 		// Gregorian Calendar 로 해결함
 		
 		// Gregorian Calendar 의 경우 월이 0부터 시작함 ( 0 -> 1월 / 10 -> 11월 ...)
-		
 		mfList.add(new DataMoneyFlow("입금", new GregorianCalendar(2018,9,25) , "현금", "월급", 200000, "월급"));
 		mfList.add(new DataMoneyFlow("이체", new GregorianCalendar(2018,9,25) , "체크카드", "이체", 150000, "월급이체"));
 		mfList.add(new DataMoneyFlow("출금", new GregorianCalendar(2018,9,26), "체크카드", "점심", 6000, "백채김치찌개"));

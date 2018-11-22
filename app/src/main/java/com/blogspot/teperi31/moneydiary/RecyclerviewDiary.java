@@ -26,8 +26,7 @@ public class RecyclerviewDiary extends AppCompatActivity {
 	// 전화 걸기 권한 허용 요청
 	final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 0;
 	
-	
-	
+	//리사이클러뷰 설정용 인스턴스
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
 	
@@ -47,6 +46,7 @@ public class RecyclerviewDiary extends AppCompatActivity {
 		mLayoutManager = new LinearLayoutManager(this);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		
+		// 정렬 기능:날짜 내림차순
 		Collections.sort(ApplicationClass.dList, new Comparator<DataDiary>() {
 			@Override
 			public int compare(DataDiary o1, DataDiary o2) {
@@ -54,18 +54,10 @@ public class RecyclerviewDiary extends AppCompatActivity {
 			}
 		});
 		
-		
-		
-		// 데이터가 입력되었을 때 저장
-		Intent InputCreateDairyIntent = getIntent();
-		
-		
-		
-		
-		
-		
+		// 어뎁터로 실제 데이터 연결
 		AdapterDRecycler myAdapter = new AdapterDRecycler(ApplicationClass.dList);
 		
+		// 리사이클러뷰 어뎁터 연결 및 출력
 		mRecyclerView.setAdapter(myAdapter);
 		
 		

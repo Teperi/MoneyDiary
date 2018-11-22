@@ -48,6 +48,7 @@
                 <data android:mimeType="image/*"/>
             </intent-filter>
         </activity>
+        <activity android:name=".EditDiarydata"/>
 
     </application>
 

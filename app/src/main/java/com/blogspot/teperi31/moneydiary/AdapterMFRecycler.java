@@ -17,7 +17,7 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 	//클래스 불러오기
 	private ArrayList<DataMoneyFlow> MFList;
 	
-	
+	// 뷰 홀더 만들기
 	public static class MyViewHolder extends RecyclerView.ViewHolder {
 		TextView reDate;
 		TextView reType;
@@ -37,10 +37,14 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 		}
 	}
 	
+	
+	// 연결할 데이터목록
 	AdapterMFRecycler(ArrayList<DataMoneyFlow> MFList){
 		this.MFList = MFList;
 	}
 	
+	
+	// 뷰 홀더에 들어온 아이템 늘려주는 도구
 	@Override
 	public AdapterMFRecycler.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		
@@ -49,11 +53,9 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 		return new MyViewHolder(v);
 	}
 	
+	// 뷰 홀더와 데이터 연결
 	@Override
 	public void onBindViewHolder(MyViewHolder holder, int position) {
-//
-//		String myFormat = "yyyy-MM-dd";
-//		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
 		
 		holder.reDate.setText(MFList.get(position).MFListDateString);
 		holder.reType.setText(MFList.get(position).MFListType);

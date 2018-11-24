@@ -119,7 +119,8 @@ public class InputDiaryCreate extends AppCompatActivity {
 				else if (Intent.ACTION_SEND.equals(action) && type.startsWith("image/")) {
 					Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 					
-					obj = new DataDiary(myCalendar,
+					obj = new DataDiary(ApplicationClass.dList.size()+1,
+							myCalendar.getTime(),
 							inputTitleText.getText().toString(),
 							inputContentText.getText().toString(),
 							imageUri
@@ -140,7 +141,8 @@ public class InputDiaryCreate extends AppCompatActivity {
 				else {
 					
 					
-					obj = new DataDiary(myCalendar,
+					obj = new DataDiary(ApplicationClass.dList.size()+1,
+							myCalendar.getTime(),
 							inputTitleText.getText().toString(),
 							inputContentText.getText().toString(),
 							null

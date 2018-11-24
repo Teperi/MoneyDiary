@@ -36,6 +36,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
+	AdapterMFRecycler myAdapter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		
 		//내 어댑터와 데이터 연결
-		AdapterMFRecycler myAdapter = new AdapterMFRecycler(ApplicationClass.mfList);
+		myAdapter = new AdapterMFRecycler(ApplicationClass.mfList);
 		
 		mRecyclerView.setAdapter(myAdapter);
 		
@@ -188,10 +189,10 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		super.onContextItemSelected(item);
-		System.out.println(item);
-		System.out.println(item.getGroupId());
-		System.out.println(item.getOrder());
-		System.out.println(item.getActionView());
+		
+		
+		
+		
 		
 		
 		switch (item.getItemId()) {
@@ -199,12 +200,14 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 				Toast.makeText(this, "수정", Toast.LENGTH_SHORT).show();
 				return true;
 			case R.id.itemDelete:
-				
-				Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();
+				index = item.getOrder();
+				/*Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();*/
 				AlertDialog.Builder cancelaction = new AlertDialog.Builder(this);
 				cancelaction.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
+						
 						Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();
 						
 //						ApplicationClass.mfList.remove(mRecyclerView.getChildAdapterPosition(positionview));

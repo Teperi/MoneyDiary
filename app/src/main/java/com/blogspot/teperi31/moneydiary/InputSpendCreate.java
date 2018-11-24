@@ -108,7 +108,7 @@ public class InputSpendCreate extends AppCompatActivity {
 					Toast.makeText(InputSpendCreate.this, "금액을 입력하십시오", Toast.LENGTH_SHORT).show();
 				} else {
 					obj = new DataMoneyFlow("출금",
-							myCalendar,
+							myCalendar.getTime(),
 							sp_account.getSelectedItem().toString(),
 							sp_category.getSelectedItem().toString(),
 							Integer.parseInt(inputPriceText.getText().toString().trim()),

@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class EditDiarydata extends AppCompatActivity {
@@ -42,7 +44,6 @@ public class EditDiarydata extends AppCompatActivity {
 		EditDate = findViewById(R.id.inputCreateDiaryDateEdit);
 		EditImage = findViewById(R.id.inputCreateDiaryImage);
 		EditCompleteButton = findViewById(R.id.inputCreateDiaryComplete);
-		
 		EditCompleteButton.setText("수정 완료");
 		
 		
@@ -67,7 +68,9 @@ public class EditDiarydata extends AppCompatActivity {
 			String myFormat = "yyyy-MM-dd";
 			SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
 			EditDate.setText(sdf.format(ApplicationClass.dList.get(dListPosition).DListDate.getTime()));
-			myCalendar = ApplicationClass.dList.get(dListPosition).DListDate;
+			System.out.println(ApplicationClass.dList.get(dListPosition).DListDate);
+			myCalendar = Calendar.getInstance();
+			myCalendar.setTime(ApplicationClass.dList.get(dListPosition).DListDate);
 			
 		}
 		
@@ -101,7 +104,8 @@ public class EditDiarydata extends AppCompatActivity {
 				} else if (EditContenttext.getText().toString().length() <= 0) {
 					Toast.makeText(EditDiarydata.this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
 				} else if (setImage == null) {
-					obj = new DataDiary(myCalendar,
+					obj = new DataDiary(ApplicationClass.dList.size()+1,
+							myCalendar.getTime(),
 							EditTitletext.getText().toString(),
 							EditContenttext.getText().toString(),
 							null
@@ -117,7 +121,9 @@ public class EditDiarydata extends AppCompatActivity {
 					
 					startActivity(i);
 				} else {
-					obj = new DataDiary(myCalendar,
+					obj = new DataDiary(
+							ApplicationClass.dList.size()+1,
+							myCalendar.getTime(),
 							EditTitletext.getText().toString(),
 							EditContenttext.getText().toString(),
 							setImage
@@ -171,7 +177,7 @@ public class EditDiarydata extends AppCompatActivity {
 		
 		AlertDialog.Builder cancelaction = new AlertDialog.Builder(EditDiarydata.this);
 		
-		cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
+		cancelaction.setPositiveButton("계속 수정", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 			}
@@ -186,7 +192,7 @@ public class EditDiarydata extends AppCompatActivity {
 		
 		AlertDialog cancelpopup = cancelaction.create();
 		cancelpopup.setTitle("TEST");
-		cancelpopup.setMessage("지출 기록을 그만 하시겠습니까?");
+		cancelpopup.setMessage("다이어리 수정을 그만 하시겠습니까?");
 		cancelpopup.show();
 	}
 	

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,14 +15,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class RecyclerviewDiary extends AppCompatActivity {
+public class RecyclerviewDiary extends AppCompatActivity implements ActionMode.Callback {
 	
 	// 전화 걸기 권한 허용 요청
 	final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 0;
@@ -29,6 +34,13 @@ public class RecyclerviewDiary extends AppCompatActivity {
 	//리사이클러뷰 설정용 인스턴스
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
+	private boolean isMultiSelect = false;
+	
+	AdapterDRecycler myAdapter;
+	private ArrayList<Integer> selectedIds = new ArrayList<>();
+	
+	
+	ActionMode actionMode;
 	
 	
 	@Override
@@ -56,12 +68,68 @@ public class RecyclerviewDiary extends AppCompatActivity {
 		});
 		
 		// 어뎁터로 실제 데이터 연결
-		AdapterDRecycler myAdapter = new AdapterDRecycler(ApplicationClass.dList);
+		myAdapter = new AdapterDRecycler(this, ApplicationClass.dList);
 		
 		// 리사이클러뷰 어뎁터 연결 및 출력
 		mRecyclerView.setAdapter(myAdapter);
 		
 		
+		// 리사이클러뷰 클릭이벤트 처리
+		// RecyclerItemClickListener 를 그
+		mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+			
+			
+			@Override
+			public void onItemClick(View view, int position) {
+				if (isMultiSelect) {
+					//if multiple selection is enabled then select item on single click else perform normal click on item.
+					multiSelect(position);
+				} else {
+					Intent i = new Intent(RecyclerviewDiary.this, EditDiarydata.class);
+					i.putExtra("position", position);
+					startActivity(i);
+				}
+			}
+			
+			@Override
+			public void onItemLongClick(View view, int position) {
+				if (!isMultiSelect) {
+					selectedIds = new ArrayList<>();
+					isMultiSelect = true;
+					
+					if (actionMode == null) {
+						actionMode = startActionMode(RecyclerviewDiary.this); //show ActionMode.
+					}
+				}
+				
+				multiSelect(position);
+			}
+		}
+		
+		));
+		
+		
+	}
+	
+	private void multiSelect(int position) {
+		DataDiary data = myAdapter.getItem(position);
+		if (data != null) {
+			if (actionMode != null) {
+				if (selectedIds.contains(data.id))
+					selectedIds.remove(Integer.valueOf(data.id));
+				else
+					selectedIds.add(data.id);
+				
+				if (selectedIds.size() > 0)
+					actionMode.setTitle(String.valueOf(selectedIds.size())); //show selected item count on action mode.
+				else {
+					actionMode.setTitle(""); //remove item count from action mode.
+					actionMode.finish(); //hide action mode.
+				}
+				myAdapter.setSelectedIDs(selectedIds);
+				
+			}
+		}
 	}
 	
 	//	toolbar 에 메뉴 띄워주는 함수
@@ -112,7 +180,8 @@ public class RecyclerviewDiary extends AppCompatActivity {
 	}
 	
 	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+	                                       @NonNull int[] grantResults) {
 		switch (requestCode) {
 			case MY_PERMISSIONS_REQUEST_CALL_PHONE: {
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -147,5 +216,53 @@ public class RecyclerviewDiary extends AppCompatActivity {
 				return super.onContextItemSelected(item);
 		}
 		
+	}
+	
+	
+	@Override
+	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		MenuInflater inflater = mode.getMenuInflater();
+		inflater.inflate(R.menu.recyclerview_context_menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		
+		return false;
+	}
+	
+	@Override
+	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		switch (item.getItemId()){
+			case R.id.itemEdit:
+				//just to show selected items.
+				StringBuilder stringBuilder = new StringBuilder();
+				for (DataDiary data : ApplicationClass.dList) {
+					if (selectedIds.contains(data.id))
+						stringBuilder.append("\n").append(data.DListTitle);
+				}
+				Toast.makeText(this, "Selected items are :" + stringBuilder.toString(), Toast.LENGTH_SHORT).show();
+				return true;
+			case R.id.itemDelete:
+				//just to show selected items.
+				StringBuilder stringBuilder2 = new StringBuilder();
+				for (DataDiary data : ApplicationClass.dList) {
+					if (selectedIds.contains(data.id))
+						stringBuilder2.append("\n").append(data.DListTitle);
+				}
+				Toast.makeText(this, "Selected items are :" + stringBuilder2.toString(), Toast.LENGTH_SHORT).show();
+				return true;
+				
+		}
+		return false;
+	}
+	
+	@Override
+	public void onDestroyActionMode(ActionMode mode) {
+		actionMode = null;
+		isMultiSelect = false;
+		selectedIds = new ArrayList<>();
+		myAdapter.setSelectedIDs(new ArrayList<Integer>());
 	}
 }

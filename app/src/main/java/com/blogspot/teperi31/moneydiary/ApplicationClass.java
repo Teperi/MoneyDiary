@@ -1,6 +1,7 @@
 package com.blogspot.teperi31.moneydiary;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
@@ -9,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
@@ -43,66 +45,17 @@ public class ApplicationClass extends Application {
 		mfList.add(new DataMoneyFlow("출금", new GregorianCalendar(2018, 10, 1).getTime(), "현금", "저녁", 7000, "피자스쿨"));
 		mfList.add(new DataMoneyFlow("출금", new GregorianCalendar(2018, 10, 2).getTime(), "현금", "간식", 7000, "GS25"));
 		mfList.add(new DataMoneyFlow("출금", new GregorianCalendar(2018, 10, 2).getTime(), "체크카드", "영화", 10000, "CGV"));
-		
-		/*SharedPreference*/
-		
-		dList = new ArrayList<>();
-			dList.add(new DataDiary(new GregorianCalendar(2018, 9, 26).getTime(), "sss", "신나는 월급", null, 0));
-			dList.add(new DataDiary(new GregorianCalendar(2018, 9, 27).getTime(), "tt", "이 고양이 사진이 최고인거 같다.", (String) ("android.resource://com.blogspot.teperi31.moneydiary/drawable/" + R.drawable.cat3),1));
-		
-		gson = new Gson();
-		
-		dListMap = new HashMap<>();
-		
-		for (int i = 0; i <dList.size(); i++){
-			dListMap.put(i, dList.get(i));
-		}
-		
-		
-		
-		SharedPreferences saveDiary = getSharedPreferences("Diary",MODE_PRIVATE);
-		SharedPreferences.Editor save = saveDiary.edit();
-		
-		save.putString("Diary",gson.toJson(dListMap));
-		save.apply();
-		save.remove("Diary");
-		
-		
 		dList = new ArrayList<>();
 		
-		dListMap = new HashMap<>();
-		System.out.println(dList.size());
-		System.out.println(dListMap.size());
+		dList.add(new DataDiary(new GregorianCalendar(2018, 10, 2).getTime(), "제목", "이름", null, 0));
+		dList.add(new DataDiary(new GregorianCalendar(2018, 10, 3).getTime(), "제목", "이름", null, 1));
+		dList.add(new DataDiary(new GregorianCalendar(2018, 10, 4).getTime(), "제목", "이름", null, 2));
+		dList.add(new DataDiary(new GregorianCalendar(2018, 10, 5).getTime(), "제목", "이름", null, 3));
 		
-		String json = saveDiary.getString("Diary",null);
-		System.out.println(json);
-		Type collectionType = new TypeToken<HashMap<Integer,DataDiary>>(){}.getType();
+		Context context = this;
 		
-		dListMap = gson.fromJson(json , collectionType);
-
-
-		System.out.println(dListMap.get(0).DListContent);
-		
-		dList.add(dListMap.get(0));
-//		System.out.println(dListMap.get(1).DListContent);
-		
-		
-		
-		
-		/*HashMap<Integer, DataDiary> hashdList = new HashMap<>();
-		
-		if (hashdList.size() == 0) {
-			dList = new ArrayList<>();
-			*//*dList.add(new DataDiary(new GregorianCalendar(2018, 9, 25).getTime(), 0,"월급날이다!", "신나는 월급", null, 0));
-			dList.add(new DataDiary(new GregorianCalendar(2018, 9, 26).getTime(), 0,"이쁜 고양이", "이 고양이 사진이 최고인거 같다.", Uri.parse("android.resource://com.blogspot.teperi31.moneydiary/drawable/" + R.drawable.cat3),1));
-			*//*
-		} else {
-			dList = new ArrayList<>();
-			for (int i = 0; i < hashdList.size(); i++) {
-				dList.add(i, hashdList.get(i));
-			}
-		}*/
-		
+		PreferenceUtil.setDiary(this);
+		PreferenceUtil.getDiary();
 		
 	}
 	

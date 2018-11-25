@@ -129,11 +129,13 @@ public class InputDiaryCreate extends AppCompatActivity {
 					
 					ApplicationClass.dList.add(obj);
 					
+					PreferenceUtil.setDiary(InputDiaryCreate.this);
+					
 					Intent i = new Intent(InputDiaryCreate.this, RecyclerviewDiary.class);
 					// 스택 관리를 위한 Flags 설정
 					// FLAG_ACTIVITY_SINGLE_TOP : 연속적으로 쌓일 경우 onPause(), onNewIntent(), onResume()
 					// 순서로 동작함
-					i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					
 					startActivity(i);
 				}
@@ -151,7 +153,7 @@ public class InputDiaryCreate extends AppCompatActivity {
 					Intent i = new Intent(InputDiaryCreate.this, RecyclerviewDiary.class);
 					ApplicationClass.dList.add(obj);
 					// 스택 관리
-					i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					
 					startActivity(i);
 				}

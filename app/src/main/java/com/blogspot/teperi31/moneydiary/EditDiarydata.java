@@ -28,7 +28,7 @@ public class EditDiarydata extends AppCompatActivity {
 	TextView EditContenttext;
 	TextView EditDate;
 	ImageView EditImage;
-	Uri setImage;
+	Uri setImage = null;
 	Calendar myCalendar;
 	Button EditCompleteButton;
 	DatePickerDialog.OnDateSetListener date;
@@ -63,8 +63,18 @@ public class EditDiarydata extends AppCompatActivity {
 		} else {
 			EditTitletext.setText(ApplicationClass.dList.get(dListPosition).DListTitle);
 			EditContenttext.setText(ApplicationClass.dList.get(dListPosition).DListContent);
-			EditImage.setImageURI(Uri.parse(ApplicationClass.dList.get(dListPosition).DListImageUri));
-			setImage = Uri.parse(ApplicationClass.dList.get(dListPosition).DListImageUri);
+			if(ApplicationClass.dList.get(dListPosition).DListImageUri == null){
+			
+			} else {
+				EditImage.setImageURI(Uri.parse(ApplicationClass.dList.get(dListPosition).DListImageUri));
+			}
+			
+			if(ApplicationClass.dList.get(dListPosition).DListImageUri == null){
+			
+			} else {
+				setImage = Uri.parse(ApplicationClass.dList.get(dListPosition).DListImageUri);
+			}
+			
 			String myFormat = "yyyy-MM-dd";
 			SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
 			EditDate.setText(sdf.format(ApplicationClass.dList.get(dListPosition).DListDate.getTime()));
@@ -117,8 +127,7 @@ public class EditDiarydata extends AppCompatActivity {
 					Intent i = new Intent(EditDiarydata.this, RecyclerviewDiary.class);
 					ApplicationClass.dList.add(obj);
 					// 스택 관리
-					i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-					
+					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					startActivity(i);
 				} else {
 					obj = new DataDiary(
@@ -135,8 +144,7 @@ public class EditDiarydata extends AppCompatActivity {
 					Intent i = new Intent(EditDiarydata.this, RecyclerviewDiary.class);
 					ApplicationClass.dList.add(obj);
 					// 스택 관리
-					i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-					
+					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					startActivity(i);
 				}
 			}

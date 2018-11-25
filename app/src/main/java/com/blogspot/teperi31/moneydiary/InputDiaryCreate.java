@@ -129,7 +129,7 @@ public class InputDiaryCreate extends AppCompatActivity {
 					
 					ApplicationClass.dList.add(obj);
 					
-					PreferenceUtil.setDiary(InputDiaryCreate.this);
+					UtilPreference.setDiary(InputDiaryCreate.this);
 					
 					Intent i = new Intent(InputDiaryCreate.this, RecyclerviewDiary.class);
 					// 스택 관리를 위한 Flags 설정

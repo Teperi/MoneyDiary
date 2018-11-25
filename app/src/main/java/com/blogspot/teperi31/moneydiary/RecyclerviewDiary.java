@@ -50,7 +50,7 @@ public class RecyclerviewDiary extends AppCompatActivity implements android.supp
 		
 		// 액션 바 삽입
 		// 추후 Dairy 전용 toolbar 생성
-		myToolbar = findViewById(R.id.my_toolbarTop_list_diary);
+		myToolbar = findViewById(R.id.toolbarTop_list_diary);
 		setSupportActionBar(myToolbar);
 		
 		mRecyclerView = findViewById(R.id.diary_recycler_view);

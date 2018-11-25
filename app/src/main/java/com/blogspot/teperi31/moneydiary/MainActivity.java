@@ -19,6 +19,7 @@ import android.widget.CalendarView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 		
 		final CalendarView calendarView = findViewById(R.id.calender1);
 		calendarView.setDate(System.currentTimeMillis());
+		
+		
 		
 		saveDate = transFormat.format(calendarView.getDate());
 		

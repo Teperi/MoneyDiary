@@ -112,12 +112,12 @@ public class InputSpendCreate extends AppCompatActivity {
 							sp_account.getSelectedItem().toString(),
 							sp_category.getSelectedItem().toString(),
 							Integer.parseInt(inputPriceText.getText().toString().trim()),
-							inputUsageText.getText().toString());
+							inputUsageText.getText().toString(),
+							ApplicationClass.mfList.size()+1);
 					Intent i = new Intent(InputSpendCreate.this ,RecyclerviewMoneyFlow.class);
 					ApplicationClass.mfList.add(obj);
 //					// 스택 관리
 					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					startActivity(i);
 				}
 				

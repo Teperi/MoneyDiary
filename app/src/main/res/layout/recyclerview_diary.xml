@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbarTop_list_diary"
+        android:id="@+id/toolbarTop_list_diary"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
@@ -19,7 +19,7 @@
         android:layout_margin="8dp"
         android:scrollbars="vertical"
 
-        app:layout_constraintTop_toBottomOf="@id/my_toolbarTop_list_diary"
+        app:layout_constraintTop_toBottomOf="@id/toolbarTop_list_diary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

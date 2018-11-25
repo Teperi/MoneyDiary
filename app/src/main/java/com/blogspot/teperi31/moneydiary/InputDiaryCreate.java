@@ -119,11 +119,12 @@ public class InputDiaryCreate extends AppCompatActivity {
 				else if (Intent.ACTION_SEND.equals(action) && type.startsWith("image/")) {
 					Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 					
-					obj = new DataDiary(ApplicationClass.dList.size()+1,
+					obj = new DataDiary(
 							myCalendar.getTime(),
 							inputTitleText.getText().toString(),
 							inputContentText.getText().toString(),
-							imageUri
+							imageUri.toString(),
+							ApplicationClass.dList.size()+1
 					);
 					
 					ApplicationClass.dList.add(obj);
@@ -140,12 +141,12 @@ public class InputDiaryCreate extends AppCompatActivity {
 				// 공유된 이미지가 없는 경우 데이터 저장
 				else {
 					
-					
-					obj = new DataDiary(ApplicationClass.dList.size()+1,
+					obj = new DataDiary(
 							myCalendar.getTime(),
 							inputTitleText.getText().toString(),
 							inputContentText.getText().toString(),
-							null
+							null,
+							ApplicationClass.dList.size()+1
 					);
 					Intent i = new Intent(InputDiaryCreate.this, RecyclerviewDiary.class);
 					ApplicationClass.dList.add(obj);

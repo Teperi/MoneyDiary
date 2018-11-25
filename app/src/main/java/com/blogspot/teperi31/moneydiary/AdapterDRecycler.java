@@ -3,6 +3,7 @@ package com.blogspot.teperi31.moneydiary;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -65,9 +66,9 @@ public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyVi
 		holder.reDate.setText(DList.get(position).DListDateString);
 		holder.reTitle.setText(DList.get(position).DListTitle);
 		holder.reContent.setText(DList.get(position).DListContent);
-		holder.reImage.setImageURI(DList.get(position).DListImage);
+		holder.reImage.setImageURI(Uri.parse(DList.get(position).DListImageUri));
 		
-		int id = DList.get(position).id;
+		int id = DList.get(position).DListId;
 		
 		// 롱클릭시 색상 조정
 		if(selectedIDs.contains(id)){

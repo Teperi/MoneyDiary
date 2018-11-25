@@ -63,8 +63,8 @@ public class EditDiarydata extends AppCompatActivity {
 		} else {
 			EditTitletext.setText(ApplicationClass.dList.get(dListPosition).DListTitle);
 			EditContenttext.setText(ApplicationClass.dList.get(dListPosition).DListContent);
-			EditImage.setImageURI(ApplicationClass.dList.get(dListPosition).DListImage);
-			setImage = ApplicationClass.dList.get(dListPosition).DListImage;
+			EditImage.setImageURI(Uri.parse(ApplicationClass.dList.get(dListPosition).DListImageUri));
+			setImage = Uri.parse(ApplicationClass.dList.get(dListPosition).DListImageUri);
 			String myFormat = "yyyy-MM-dd";
 			SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
 			EditDate.setText(sdf.format(ApplicationClass.dList.get(dListPosition).DListDate.getTime()));
@@ -104,11 +104,11 @@ public class EditDiarydata extends AppCompatActivity {
 				} else if (EditContenttext.getText().toString().length() <= 0) {
 					Toast.makeText(EditDiarydata.this, "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
 				} else if (setImage == null) {
-					obj = new DataDiary(ApplicationClass.dList.size()+1,
-							myCalendar.getTime(),
+					obj = new DataDiary(myCalendar.getTime(),
 							EditTitletext.getText().toString(),
 							EditContenttext.getText().toString(),
-							null
+							null,
+							ApplicationClass.dList.size()+1
 					);
 					// 이전 기록 삭제
 					ApplicationClass.dList.remove(dListPosition);
@@ -122,11 +122,11 @@ public class EditDiarydata extends AppCompatActivity {
 					startActivity(i);
 				} else {
 					obj = new DataDiary(
-							ApplicationClass.dList.size()+1,
 							myCalendar.getTime(),
 							EditTitletext.getText().toString(),
 							EditContenttext.getText().toString(),
-							setImage
+							setImage.toString(),
+							ApplicationClass.dList.size()+1
 					);
 					// 이전 기록 삭제
 					ApplicationClass.dList.remove(dListPosition);

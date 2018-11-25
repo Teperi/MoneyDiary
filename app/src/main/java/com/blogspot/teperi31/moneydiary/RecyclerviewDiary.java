@@ -5,17 +5,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class RecyclerviewDiary extends AppCompatActivity implements ActionMode.Callback {
+public class RecyclerviewDiary extends AppCompatActivity implements android.support.v7.view.ActionMode.Callback {
 	
 	// 전화 걸기 권한 허용 요청
 	final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 0;
@@ -38,6 +37,7 @@ public class RecyclerviewDiary extends AppCompatActivity implements ActionMode.C
 	
 	AdapterDRecycler myAdapter;
 	private ArrayList<Integer> selectedIds = new ArrayList<>();
+	Toolbar myToolbar;
 	
 	
 	ActionMode actionMode;
@@ -50,7 +50,7 @@ public class RecyclerviewDiary extends AppCompatActivity implements ActionMode.C
 		
 		// 액션 바 삽입
 		// 추후 Dairy 전용 toolbar 생성
-		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_list_diary);
+		myToolbar = findViewById(R.id.my_toolbarTop_list_diary);
 		setSupportActionBar(myToolbar);
 		
 		mRecyclerView = findViewById(R.id.diary_recycler_view);
@@ -98,7 +98,7 @@ public class RecyclerviewDiary extends AppCompatActivity implements ActionMode.C
 					isMultiSelect = true;
 					
 					if (actionMode == null) {
-						actionMode = startActionMode(RecyclerviewDiary.this); //show ActionMode.
+						actionMode = startSupportActionMode(RecyclerviewDiary.this); //show ActionMode.
 					}
 				}
 				
@@ -115,10 +115,10 @@ public class RecyclerviewDiary extends AppCompatActivity implements ActionMode.C
 		DataDiary data = myAdapter.getItem(position);
 		if (data != null) {
 			if (actionMode != null) {
-				if (selectedIds.contains(data.id))
-					selectedIds.remove(Integer.valueOf(data.id));
+				if (selectedIds.contains(data.DListId))
+					selectedIds.remove(Integer.valueOf(data.DListId));
 				else
-					selectedIds.add(data.id);
+					selectedIds.add(data.DListId);
 				
 				if (selectedIds.size() > 0)
 					actionMode.setTitle(String.valueOf(selectedIds.size())); //show selected item count on action mode.
@@ -136,6 +136,7 @@ public class RecyclerviewDiary extends AppCompatActivity implements ActionMode.C
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.topbar_actions_diary, menu);
+		
 		return true;
 	}
 	
@@ -204,62 +205,36 @@ public class RecyclerviewDiary extends AppCompatActivity implements ActionMode.C
 	}
 	
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.itemEdit:
-				Toast.makeText(this, "수정하기", Toast.LENGTH_SHORT).show();
-				return true;
-			case R.id.itemDelete:
-				Toast.makeText(this, "삭제하기", Toast.LENGTH_SHORT).show();
-				return true;
-			default:
-				return super.onContextItemSelected(item);
-		}
-		
-	}
-	
-	
-	@Override
-	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		MenuInflater inflater = mode.getMenuInflater();
-		inflater.inflate(R.menu.recyclerview_context_menu, menu);
+	public boolean onCreateActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
+		MenuInflater inflater = actionMode.getMenuInflater();
+		inflater.inflate(R.menu.actionmode_setting, menu);
 		return true;
 	}
 	
 	@Override
-	public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-		
+	public boolean onPrepareActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
 		return false;
 	}
 	
 	@Override
-	public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		switch (item.getItemId()){
-			case R.id.itemEdit:
-				//just to show selected items.
-				StringBuilder stringBuilder = new StringBuilder();
-				for (DataDiary data : ApplicationClass.dList) {
-					if (selectedIds.contains(data.id))
-						stringBuilder.append("\n").append(data.DListTitle);
-				}
-				Toast.makeText(this, "Selected items are :" + stringBuilder.toString(), Toast.LENGTH_SHORT).show();
-				return true;
-			case R.id.itemDelete:
+	public boolean onActionItemClicked(android.support.v7.view.ActionMode actionMode, MenuItem menuItem) {
+		switch (menuItem.getItemId()){
+			case R.id.actionmodeDelete:
 				//just to show selected items.
 				StringBuilder stringBuilder2 = new StringBuilder();
 				for (DataDiary data : ApplicationClass.dList) {
-					if (selectedIds.contains(data.id))
+					if (selectedIds.contains(data.DListId))
 						stringBuilder2.append("\n").append(data.DListTitle);
 				}
 				Toast.makeText(this, "Selected items are :" + stringBuilder2.toString(), Toast.LENGTH_SHORT).show();
 				return true;
-				
+			
 		}
 		return false;
 	}
 	
 	@Override
-	public void onDestroyActionMode(ActionMode mode) {
+	public void onDestroyActionMode(android.support.v7.view.ActionMode actionMode) {
 		actionMode = null;
 		isMultiSelect = false;
 		selectedIds = new ArrayList<>();

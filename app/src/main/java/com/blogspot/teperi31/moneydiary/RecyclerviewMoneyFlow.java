@@ -1,7 +1,6 @@
 package com.blogspot.teperi31.moneydiary;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -71,8 +70,6 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		myAdapter = new AdapterMFRecycler(ApplicationClass.mfList);
 		
 		mRecyclerView.setAdapter(myAdapter);
-		
-		
 		
 		
 		// 가격 전체 데이터 저장
@@ -180,7 +177,6 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		}
 	}
 	
-	View positionview;
 	MenuItem test;
 	int index;
 	AdapterView.AdapterContextMenuInfo info;
@@ -191,17 +187,13 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		super.onContextItemSelected(item);
 		
 		
-		
-		
-		
-		
 		switch (item.getItemId()) {
 			case R.id.itemEdit:
 				Toast.makeText(this, "수정", Toast.LENGTH_SHORT).show();
 				return true;
 			case R.id.itemDelete:
 				index = item.getOrder();
-				/*Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();*/
+				Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();
 				AlertDialog.Builder cancelaction = new AlertDialog.Builder(this);
 				cancelaction.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
 					
@@ -209,7 +201,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						
 						Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();
-						
+
 //						ApplicationClass.mfList.remove(mRecyclerView.getChildAdapterPosition(positionview));
 					
 					}

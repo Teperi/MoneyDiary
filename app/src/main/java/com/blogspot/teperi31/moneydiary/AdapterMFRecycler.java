@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +92,7 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 								case R.id.itemEdit:
 									Toast.makeText(context, "수정", Toast.LENGTH_SHORT).show();
 									return true;
-								case R.id.itemDelete:
+								case R.id.actionmodeDelete:
 									MFList.remove(position);
 									Intent i = new Intent(context, context.getClass());
 									i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

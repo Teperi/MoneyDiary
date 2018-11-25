@@ -1,12 +1,32 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- 기본 색상 지정 -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+
+        <!--Action mode style-->
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionMenuTextColor">@color/colorBackground</item>
+        <item name="actionModeBackground">@color/colorAccent</item>
+
+        <!-- popup menu style-->
+        <item name="android:itemBackground">@color/colorBackground</item>
+    </style>
+
+
+    <!--상단 툴바 스타일 지정-->
+    <style name="styleAppBar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorBackground</item>
+        <item name="android:textColorPrimary">@color/colorBackground</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
+
+
 
     <!--가계부 입력창 스타일-->
     <!--수입, 지출, 입력, 수정 모두 사용가능하게 만들 예정-->

@@ -68,7 +68,7 @@
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassDateTitle"
-                        style="@style/InputSubclassTextStyle"
+                        style="@style/style_InputSubclassText"
                         android:text="@string/dateTitle"
                         android:layout_gravity="start|center_vertical"/>
 
@@ -87,7 +87,7 @@
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassAccountTitle"
-                        style="@style/InputSubclassTextStyle"
+                        style="@style/style_InputSubclassText"
                         android:text="@string/accountTitle" />
 
 
@@ -104,7 +104,7 @@
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassCategoryTitle"
-                        style="@style/InputSubclassTextStyle"
+                        style="@style/style_InputSubclassText"
                         android:text="@string/categoryTitle" />
 
 
@@ -121,7 +121,7 @@
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassPriceTitle"
-                        style="@style/InputSubclassTextStyle"
+                        style="@style/style_InputSubclassText"
                         android:text="@string/priceTitle" />
 
 
@@ -137,7 +137,7 @@
 
                     <TextView
                         android:id="@+id/inputCreateSpendSubclassUsageTitle"
-                        style="@style/InputSubclassTextStyle"
+                        style="@style/style_InputSubclassText"
                         android:text="@string/usageTitle" />
 
 

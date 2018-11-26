@@ -72,10 +72,10 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 			holder.reUsage.setText(MFList.get(position).MFListUsage);
 			holder.rePrice.setText(String.valueOf(MFList.get(position).MFListPrice));
 			
-			if (MFList.get(position).MFListType.equals("출금")) {
-				holder.rePrice.setTextColor(Color.parseColor("#c62828"));
-			} else if (MFList.get(position).MFListType.equals("입금")) {
-				holder.rePrice.setTextColor(Color.parseColor("#1a237e"));
+			if (MFList.get(position).MFListType.equals("지출")) {
+				holder.rePrice.setTextColor(Color.parseColor("#B00020"));
+			} else if (MFList.get(position).MFListType.equals("수입")) {
+				holder.rePrice.setTextColor(Color.parseColor("#0086c9"));
 			}
 			
 			holder.buttonViewOption.setOnClickListener(new View.OnClickListener() {

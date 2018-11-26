@@ -14,16 +14,16 @@ import java.util.HashMap;
 
 
 /*
-*
-* SharedPreferences 저장
-* SharedPreferences 가져오기
-* ArraryList 내 정렬 기능
-* 처리하기 위한 클래스
-*
-* set 에서 정렬 및 저장하고
-* get 에서 저장된 것을 가져온다.
-*
-* */
+ *
+ * SharedPreferences 저장
+ * SharedPreferences 가져오기
+ * ArraryList 내 정렬 기능
+ * 처리하기 위한 클래스
+ *
+ * set 에서 정렬 및 저장하고
+ * get 에서 저장된 것을 가져온다.
+ *
+ * */
 
 
 public class UtilPreference {
@@ -32,8 +32,10 @@ public class UtilPreference {
 	static SharedPreferences pref;
 	
 	static SharedPreferences.Editor savePref;
-	static Type collectionTypeDiary = new TypeToken<HashMap<Integer,DataDiary>>(){}.getType();
-	static Type collectionTypeMoneyFlow = new TypeToken<HashMap<Integer,DataMoneyFlow>>(){}.getType();
+	static Type collectionTypeDiary = new TypeToken<HashMap<Integer, DataDiary>>() {
+	}.getType();
+	static Type collectionTypeMoneyFlow = new TypeToken<HashMap<Integer, DataMoneyFlow>>() {
+	}.getType();
 	
 	
 	public static void setDiary(Context context) {
@@ -58,7 +60,6 @@ public class UtilPreference {
 		setPreferences(context, "Diary", gson.toJson(ApplicationClass.dListMap));
 	}
 	
-	
 	public static void getDiary(Context context) {
 		String json = getPreferences(context, "Diary");
 		
@@ -66,19 +67,17 @@ public class UtilPreference {
 		ApplicationClass.dList = new ArrayList<>();
 		ApplicationClass.dListMap = new HashMap<>();
 		
-		if(json.equals("notinValue")){
+		if (json.equals("notinValue")) {
 		
 		} else {
 			ApplicationClass.dListMap = gson.fromJson(json, collectionTypeDiary);
 			
-			for(int i = 0; i < ApplicationClass.dListMap.size(); i++){
+			for (int i = 0; i < ApplicationClass.dListMap.size(); i++) {
 				ApplicationClass.dList.add(ApplicationClass.dListMap.get(i));
 			}
 		}
 		
-		
 	}
-	
 	
 	
 	public static void setMoneyflow(Context context) {
@@ -104,29 +103,25 @@ public class UtilPreference {
 	}
 	
 	public static void getMoneyflow(Context context) {
-		String json = getPreferences(context,"MoneyFlow");
+		String json = getPreferences(context, "MoneyFlow");
 		
 		gson = new Gson();
 		ApplicationClass.mfList = new ArrayList<>();
 		ApplicationClass.mfListMap = new HashMap<>();
 		
 		
-		
-		if(json.equals("notinValue")){
+		if (json.equals("notinValue")) {
 		
 		} else {
 			ApplicationClass.mfListMap = gson.fromJson(json, collectionTypeMoneyFlow);
 			
-			for(int i = 0; i < ApplicationClass.mfListMap.size(); i++){
+			for (int i = 0; i < ApplicationClass.mfListMap.size(); i++) {
 				ApplicationClass.mfList.add(ApplicationClass.mfListMap.get(i));
 			}
 		}
 		
 		
 	}
-	
-	
-	
 	
 	
 	public static void setPreferences(Context context, String key, String value) {

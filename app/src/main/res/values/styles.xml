@@ -11,6 +11,9 @@
         <item name="actionMenuTextColor">@color/colorBackground</item>
         <item name="actionModeBackground">@color/colorAccent</item>
 
+        <!--button style-->
+        <item name="colorButtonNormal">@color/colorGreen</item>
+
         <!-- popup menu style-->
         <item name="android:itemBackground">@color/colorBackground</item>
     </style>
@@ -42,12 +45,13 @@
 
     <!--입력창 내 소제목 스타일-->
     <!--글씨크기 20sp, 마진 10dp-->
-    <style name="InputSubclassTextStyle">
+    <style name="style_InputSubclassText">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">20sp</item>
-        <item name="android:layout_margin">10dp</item>
+        <item name="android:padding">10dp</item>
         <item name="android:layout_gravity">start|center_vertical</item>
+        <item name="android:textColor">@color/colorBlack</item>
     </style>
 
     <!--입력창 내 입력값 받는 부분 스타일-->

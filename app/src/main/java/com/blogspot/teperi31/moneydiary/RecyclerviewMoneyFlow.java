@@ -18,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,9 +81,9 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		// 수입 및 지출 계산
 		for (int i = 0; i < ApplicationClass.mfList.size(); i++) {
-			if (ApplicationClass.mfList.get(i).MFListType.equals("입금")) {
+			if (ApplicationClass.mfList.get(i).MFListType.equals("수입")) {
 				moneyflowDepositint += ApplicationClass.mfList.get(i).MFListPrice;
-			} else if (ApplicationClass.mfList.get(i).MFListType.equals("출금")) {
+			} else if (ApplicationClass.mfList.get(i).MFListType.equals("지출")) {
 				moneyflowWithdrawint += ApplicationClass.mfList.get(i).MFListPrice;
 			}
 		}
@@ -97,8 +96,8 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		moneyflowWithdrawtext.setText(String.valueOf(moneyflowWithdrawint));
 		moneyflowTotaltext.setText(String.valueOf(moneyflowTotalint));
 		
-		moneyflowDeposittext.setTextColor(Color.parseColor("#c62828"));
-		moneyflowWithdrawtext.setTextColor(Color.parseColor("#1a237e"));
+		moneyflowDeposittext.setTextColor(getColor(R.color.colorPrimaryDark));
+		moneyflowWithdrawtext.setTextColor(getColor(R.color.colorError));
 
 
 //
@@ -116,7 +115,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.actionAdd:
-				Intent i = new Intent(RecyclerviewMoneyFlow.this, InputSpendCreate.class);
+				Intent i = new Intent(RecyclerviewMoneyFlow.this, InputMoneyFlowCreateExpense.class);
 				startActivity(i);
 				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
 				return true;

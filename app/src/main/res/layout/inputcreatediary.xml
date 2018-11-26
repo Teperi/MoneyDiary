@@ -39,7 +39,7 @@
                     android:textSize="25sp" />
 
                 <TextView
-                    style="@style/InputSubclassTextStyle"
+                    style="@style/style_InputSubclassText"
                     android:layout_row="2"
                     android:layout_column="0"
                     android:text="제목" />
@@ -57,7 +57,7 @@
 
                 <TextView
                     android:id="@+id/inputCreateDiaryDateTitle"
-                    style="@style/InputSubclassTextStyle"
+                    style="@style/style_InputSubclassText"
                     android:layout_row="1"
                     android:layout_column="0"
                     android:layout_gravity="start|center_vertical"
@@ -75,7 +75,7 @@
 
 
                 <TextView
-                    style="@style/InputSubclassTextStyle"
+                    style="@style/style_InputSubclassText"
                     android:layout_row="3"
                     android:layout_column="0"
                     android:text="내용" />

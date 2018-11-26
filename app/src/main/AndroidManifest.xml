@@ -33,6 +33,8 @@
         </activity>
         <activity android:name=".InputMoneyFlowCreateExpense"/>
         <activity android:name=".InputMoneyFlowCreateIncome"/>
+        <activity android:name=".InputMoneyFlowCreateTransfer"/>
+        <activity android:name=".EditMoneyFlowData"/>
         <activity android:name=".test"/>
         <activity android:name=".RecyclerviewMoneyFlow"/>
         <activity android:name=".RecyclerviewDiary"/>

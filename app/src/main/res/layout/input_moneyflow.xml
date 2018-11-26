@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/input_moneyflow_toolbarTop"
@@ -17,17 +17,16 @@
         android:id="@+id/input_moneyflow_type_button_layout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:gravity="center"
-        android:background="@color/colorPrimary"
         android:layout_marginVertical="0dp"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintVertical_bias="0"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@id/input_moneyflow_content_scroll"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/input_moneyflow_toolbarTop"
-        app:layout_constraintHorizontal_weight="3"
-        >
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <Button
             android:id="@+id/input_moneyflow_type_income"
@@ -36,13 +35,12 @@
             android:layout_marginVertical="1dp"
             android:layout_weight="1"
             android:background="@color/colorBackground"
-            android:textColor="@color/colorBlack"
             android:text="수입"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/colorBlack"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/input_moneyflow_type_expense"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/input_moneyflow_type_expense"
@@ -51,13 +49,12 @@
             android:layout_marginVertical="1dp"
             android:layout_weight="1"
             android:background="@color/colorBackground"
-            android:textColor="@color/colorBlack"
             android:text="지출"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/colorBlack"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/input_moneyflow_type_income"
             app:layout_constraintEnd_toStartOf="@id/input_moneyflow_type_Transfer"
-            />
+            app:layout_constraintStart_toEndOf="@id/input_moneyflow_type_income"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/input_moneyflow_type_Transfer"
@@ -66,24 +63,24 @@
             android:layout_marginVertical="1dp"
             android:layout_weight="1"
             android:background="@color/colorBackground"
-            android:textColor="@color/colorBlack"
             android:text="이체"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/colorBlack"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/input_moneyflow_type_expense"
             app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintStart_toEndOf="@id/input_moneyflow_type_expense"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>
+
     <ScrollView
         android:id="@+id/input_moneyflow_content_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/input_moneyflow_type_button_layout"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_moneyflow_type_button_layout">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -92,142 +89,135 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp"
-                >
+                android:layout_margin="8dp">
 
                 <GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:rowCount="5"
                     android:columnCount="3"
                     android:gravity="center"
-                    >
+                    android:rowCount="5">
+
                     <TextView
-                        android:text="날짜"
+                        style="@style/style_InputSubclassText"
                         android:layout_row="0"
                         android:layout_column="0"
-                        style="@style/style_InputSubclassText"
                         android:background="@drawable/input_borderline_topleft"
-                        />
+                        android:text="날짜" />
+
                     <TextView
                         android:id="@+id/input_moneyflow_datepick"
-                        android:text="2018-01-01"
                         android:layout_row="0"
                         android:layout_column="1"
-                        android:textColor="@color/colorBlack"
                         android:layout_gravity="start|center_vertical"
-                        android:textSize="20dp"
-                        android:padding="10dp"
                         android:background="@drawable/input_borderline_top"
-                        />
+                        android:padding="10dp"
+                        android:text="2018-01-01"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20dp" />
+
                     <TextView
-                        android:text="04:28"
+                        android:layout_width="match_parent"
                         android:layout_row="0"
                         android:layout_column="2"
-                        android:layout_width="match_parent"
-                        android:textColor="@color/colorBlack"
                         android:layout_gravity="start|center_vertical"
-                        android:textSize="20dp"
-                        android:padding="10dp"
                         android:background="@drawable/input_borderline_top"
-                        />
+                        android:padding="10dp"
+                        android:text=""
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20dp" />
 
                     <TextView
-                        android:text="계좌"
+                        android:id="@+id/input_moneyflow_accounttitle"
+                        style="@style/style_InputSubclassText"
                         android:layout_row="1"
                         android:layout_column="0"
-                        style="@style/style_InputSubclassText"
                         android:background="@drawable/input_borderline_topleft"
-                        />
+                        android:text="계좌" />
 
                     <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_row="1"
                         android:layout_column="1"
                         android:layout_columnSpan="2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorBlack"
                         android:layout_gravity="start|center_vertical"
-                        android:padding="4dp"
                         android:background="@drawable/input_borderline_top"
-                        >
+                        android:padding="4dp"
+                        android:textColor="@color/colorBlack">
+
                         <android.support.v7.widget.AppCompatSpinner
                             android:id="@+id/input_moneyflow_accountspinner"
-                            android:layout_height="39dp"
                             android:layout_width="340dp"
-                            android:spinnerMode="dropdown"
+                            android:layout_height="39dp"
                             android:overlapAnchor="false"
-                            />
+                            android:spinnerMode="dropdown" />
                     </FrameLayout>
 
 
                     <TextView
-                        android:text="분류"
+                        android:id="@+id/input_moneyflow_categorytitle"
+                        style="@style/style_InputSubclassText"
                         android:layout_row="2"
                         android:layout_column="0"
-                        style="@style/style_InputSubclassText"
                         android:background="@drawable/input_borderline_topleft"
-                        />
+                        android:text="분류" />
 
                     <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_row="2"
                         android:layout_column="1"
                         android:layout_columnSpan="2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorBlack"
                         android:layout_gravity="start|center_vertical"
-                        android:padding="4dp"
                         android:background="@drawable/input_borderline_top"
-                        >
+                        android:padding="4dp"
+                        android:textColor="@color/colorBlack">
+
                         <android.support.v7.widget.AppCompatSpinner
                             android:id="@+id/input_moneyflow_categoryspinner"
-                            android:layout_height="39dp"
                             android:layout_width="340dp"
-                            android:spinnerMode="dropdown"
+                            android:layout_height="39dp"
                             android:overlapAnchor="false"
-                            />
+                            android:spinnerMode="dropdown" />
                     </FrameLayout>
 
                     <TextView
-                        android:text="금액"
+                        style="@style/style_InputSubclassText"
                         android:layout_row="3"
                         android:layout_column="0"
-                        style="@style/style_InputSubclassText"
                         android:background="@drawable/input_borderline_topleft"
-                        />
+                        android:text="금액" />
 
                     <EditText
                         android:id="@+id/input_moneyflow_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="47dp"
                         android:layout_row="3"
                         android:layout_column="1"
                         android:layout_columnSpan="2"
-                        android:layout_width="match_parent"
-                        android:layout_height="47dp"
-                        android:textColor="@color/colorBlack"
                         android:layout_gravity="start|center_vertical"
                         android:background="@drawable/input_borderline_topleft"
                         android:inputType="numberSigned"
-                        />
+                        android:textColor="@color/colorBlack" />
 
                     <TextView
-                        android:text="내용"
+                        style="@style/style_InputSubclassText"
                         android:layout_row="4"
                         android:layout_column="0"
-                        style="@style/style_InputSubclassText"
                         android:background="@drawable/input_borderline_topleft"
-                        />
+                        android:text="내용" />
 
                     <EditText
                         android:id="@+id/input_moneyflow_content_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="47dp"
                         android:layout_row="4"
                         android:layout_column="1"
                         android:layout_columnSpan="2"
-                        android:layout_width="match_parent"
-                        android:layout_height="47dp"
-                        android:textColor="@color/colorBlack"
                         android:layout_gravity="start|center_vertical"
-                        android:background="@drawable/input_borderline_topleft"/>
+                        android:background="@drawable/input_borderline_topleft"
+                        android:textColor="@color/colorBlack" />
 
                 </GridLayout>
 
@@ -237,17 +227,14 @@
                 android:id="@+id/input_moneyflow_save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="저장하기"
                 android:layout_margin="8dp"
-                />
+                android:theme="@style/style_Button"
+                android:text="저장하기" />
 
         </LinearLayout>
 
 
-
-
     </ScrollView>
-
 
 
 </android.support.constraint.ConstraintLayout>

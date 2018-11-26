@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class UtilDateTimePicker {
@@ -29,10 +30,10 @@ public class UtilDateTimePicker {
 	}
 	
 	
-	public static Date setDatepopup(final Context context, View datetextid){
+	public static Date setDatepopup(final Context context,Date datetime, View datetextid){
 		
 		// 날짜 설정
-		myCalendar = Calendar.getInstance(Locale.KOREA);
+		myCalendar.setTime(datetime);
 		// 텍스트뷰에 있는 날짜로 선택
 		datepicker = (TextView) datetextid;
 		

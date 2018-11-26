@@ -1,40 +1,47 @@
 package com.blogspot.teperi31.moneydiary;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.AdapterView;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.ArrayList;
 
 
-public class RecyclerviewMoneyFlow extends AppCompatActivity {
+public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.support.v7.view.ActionMode.Callback {
 	
 	// 전화 걸기 권한 허용 요청
 	final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 0;
 	
+	Toolbar myToolbar;
 	
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
 	AdapterMFRecycler myAdapter;
+	
+	// 선택 모드 확인
+	private boolean isMultiSelect = false;
+	
+	// 액션모드 선택을 위한 저장 데이터
+	private ArrayList<Integer> selectedIds = new ArrayList<>();
+	
+	ActionMode actionMode;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +52,8 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		
 		// 액션 바 삽입
-		Toolbar myToolbar = findViewById(R.id.toolbarTop_List_moneyflow);
+		myToolbar = findViewById(R.id.toolbarTop_List_moneyflow);
 		setSupportActionBar(myToolbar);
-		
-		Collections.sort(ApplicationClass.mfList, new Comparator<DataMoneyFlow>() {
-			@Override
-			public int compare(DataMoneyFlow o1, DataMoneyFlow o2) {
-				return o2.MFListDate.compareTo(o1.MFListDate);
-			}
-		});
 		
 		mRecyclerView = findViewById(R.id.moneyflow_recycler_view);
 		
@@ -66,7 +66,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		
 		//내 어댑터와 데이터 연결
-		myAdapter = new AdapterMFRecycler(ApplicationClass.mfList);
+		myAdapter = new AdapterMFRecycler(this, ApplicationClass.mfList);
 		
 		mRecyclerView.setAdapter(myAdapter);
 		
@@ -98,10 +98,65 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		
 		moneyflowDeposittext.setTextColor(getColor(R.color.colorPrimaryDark));
 		moneyflowWithdrawtext.setTextColor(getColor(R.color.colorError));
-
-
-//
+		
+		
+		// RecyclerItemClickListener 를 그
+		mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(this, mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+			
+			
+			@Override
+			public void onItemClick(View view, int position) {
+				if (isMultiSelect) {
+					//if multiple selection is enabled then select item on single click else perform normal click on item.
+					multiSelect(position);
+				} else {
+					Intent i = new Intent(RecyclerviewMoneyFlow.this, EditMoneyFlowData.class);
+					i.putExtra("mfposition", position);
+					startActivity(i);
+				}
+			}
+			
+			@Override
+			public void onItemLongClick(View view, int position) {
+				if (!isMultiSelect) {
+					selectedIds = new ArrayList<>();
+					isMultiSelect = true;
+					
+					if (actionMode == null) {
+						actionMode = startSupportActionMode(RecyclerviewMoneyFlow.this); //show ActionMode.
+					}
+				}
+				
+				multiSelect(position);
+			}
+		}
+		
+		));
+		
+		
 	}
+	
+	private void multiSelect(int position) {
+		DataMoneyFlow data = myAdapter.getItem(position);
+		if (data != null) {
+			if (actionMode != null) {
+				if (selectedIds.contains(data.MFListId))
+					selectedIds.remove(Integer.valueOf(data.MFListId));
+				else
+					selectedIds.add(data.MFListId);
+				
+				if (selectedIds.size() > 0)
+					actionMode.setTitle(String.valueOf(selectedIds.size())); //show selected item count on action mode.
+				else {
+					actionMode.setTitle(""); //remove item count from action mode.
+					actionMode.finish(); //hide action mode.
+				}
+				myAdapter.setSelectedIDs(selectedIds);
+				
+			}
+		}
+	}
+	
 	
 	//	toolbar 에 메뉴 띄워주는 함수
 	@Override
@@ -176,50 +231,41 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity {
 		}
 	}
 	
-	MenuItem test;
-	int index;
-	AdapterView.AdapterContextMenuInfo info;
-	
+	@Override
+	public boolean onCreateActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
+		MenuInflater inflater = actionMode.getMenuInflater();
+		inflater.inflate(R.menu.actionmode_setting, menu);
+		return true;
+	}
 	
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		super.onContextItemSelected(item);
-		
-		
-		switch (item.getItemId()) {
-			case R.id.itemEdit:
-				Toast.makeText(this, "수정", Toast.LENGTH_SHORT).show();
+	public boolean onPrepareActionMode(android.support.v7.view.ActionMode actionMode, Menu menu) {
+		return false;
+	}
+	
+	@Override
+	public boolean onActionItemClicked(android.support.v7.view.ActionMode actionMode, MenuItem menuItem) {
+		switch (menuItem.getItemId()){
+			case R.id.actionmodeDelete:
+				//just to show selected items.
+				StringBuilder stringBuilder2 = new StringBuilder();
+				for (DataMoneyFlow data : ApplicationClass.mfList) {
+					if (selectedIds.contains(data.MFListId))
+						stringBuilder2.append("\n").append(data.MFListPrice);
+				}
+				Toast.makeText(this, "Selected items are :" + stringBuilder2.toString(), Toast.LENGTH_SHORT).show();
 				return true;
-			case R.id.itemDelete:
-				index = item.getOrder();
-				Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();
-				AlertDialog.Builder cancelaction = new AlertDialog.Builder(this);
-				cancelaction.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						
-						Toast.makeText(RecyclerviewMoneyFlow.this, String.valueOf(index), Toast.LENGTH_SHORT).show();
-
-//						ApplicationClass.mfList.remove(mRecyclerView.getChildAdapterPosition(positionview));
-					
-					}
-				});
-				
-				cancelaction.setNegativeButton("돌아가기", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					
-					}
-				});
-				
-				AlertDialog cancelpopup = cancelaction.create();
-				cancelpopup.setTitle("경고");
-				cancelpopup.setMessage("정말로 삭제하시겠습니까?");
-				cancelpopup.show();
-			default:
-				return super.onContextItemSelected(item);
+			
 		}
+		return false;
+	}
+	
+	@Override
+	public void onDestroyActionMode(android.support.v7.view.ActionMode actionMode) {
+		actionMode = null;
+		isMultiSelect = false;
+		selectedIds = new ArrayList<>();
+		myAdapter.setSelectedIDs(new ArrayList<Integer>());
 	}
 }
 	

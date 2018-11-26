@@ -22,8 +22,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class RecyclerviewDiary extends AppCompatActivity implements android.support.v7.view.ActionMode.Callback {
 	
@@ -58,14 +56,6 @@ public class RecyclerviewDiary extends AppCompatActivity implements android.supp
 		// 리니어 레이아웃 매니저. 한줄씩 쌓임
 		mLayoutManager = new LinearLayoutManager(this);
 		mRecyclerView.setLayoutManager(mLayoutManager);
-		
-		// 정렬 기능:날짜 내림차순
-		Collections.sort(ApplicationClass.dList, new Comparator<DataDiary>() {
-			@Override
-			public int compare(DataDiary o1, DataDiary o2) {
-				return o2.DListDate.compareTo(o1.DListDate);
-			}
-		});
 		
 		// 어뎁터로 실제 데이터 연결
 		myAdapter = new AdapterDRecycler(this, ApplicationClass.dList);

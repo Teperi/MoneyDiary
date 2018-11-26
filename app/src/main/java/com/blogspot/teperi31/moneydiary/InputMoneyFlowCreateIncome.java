@@ -33,11 +33,14 @@ public class InputMoneyFlowCreateIncome extends AppCompatActivity {
 		Toolbar mToolbar = findViewById(R.id.input_moneyflow_toolbarTop);
 		setSupportActionBar(mToolbar);
 		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		
 		// 날짜 설정 view 연결 및 Datepick popup 생성
 		View mDatepick = findViewById(R.id.input_moneyflow_datepick);
 		
 		setDate = UtilDateTimePicker.setTodayDate(mDatepick);
-		setDate = UtilDateTimePicker.setDatepopup(this, mDatepick);
+		setDate = UtilDateTimePicker.setDatepopup(this,setDate, mDatepick);
 		
 		
 		
@@ -72,7 +75,9 @@ public class InputMoneyFlowCreateIncome extends AppCompatActivity {
 		findViewById(R.id.input_moneyflow_type_Transfer).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-			
+				Intent i = new Intent(InputMoneyFlowCreateIncome.this, InputMoneyFlowCreateTransfer.class);
+				i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				startActivity(i);
 			}
 		});
 		
@@ -148,26 +153,9 @@ public class InputMoneyFlowCreateIncome extends AppCompatActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.topbar_input_clear:
-				AlertDialog.Builder cancelaction = new AlertDialog.Builder(InputMoneyFlowCreateIncome.this);
-				
-				cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				});
-				
-				cancelaction.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						finish();
-					}
-				});
-				
-				AlertDialog cancelpopup = cancelaction.create();
-				cancelpopup.setTitle("경고");
-				cancelpopup.setMessage("수입 기록을 그만 하시겠습니까?");
-				cancelpopup.show();
+			case R.id.topbar_input_setting:
+				//TODO : 설정 창 만들어서 분류 변경 가능하도록 허용
+				Toast.makeText(this, "설정 창 이동", Toast.LENGTH_SHORT).show();
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -199,6 +187,32 @@ public class InputMoneyFlowCreateIncome extends AppCompatActivity {
 		cancelpopup.setTitle("경고");
 		cancelpopup.setMessage("수입 기록을 그만 하시겠습니까?");
 		cancelpopup.show();
+	}
+	
+	@Override
+	public boolean onSupportNavigateUp() {
+		AlertDialog.Builder cancelaction = new AlertDialog.Builder(InputMoneyFlowCreateIncome.this);
+		
+		cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			
+			}
+			
+		});
+		
+		cancelaction.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				InputMoneyFlowCreateIncome.super.onBackPressed();
+			}
+		});
+		
+		AlertDialog cancelpopup = cancelaction.create();
+		cancelpopup.setTitle("경고");
+		cancelpopup.setMessage("수입 기록을 그만 하시겠습니까?");
+		cancelpopup.show();
+		return true;
 	}
 	
 }

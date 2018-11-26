@@ -1,7 +1,5 @@
 package com.blogspot.teperi31.moneydiary;
 
-import android.net.Uri;
-
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;

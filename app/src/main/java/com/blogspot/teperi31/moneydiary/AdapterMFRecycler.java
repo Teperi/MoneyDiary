@@ -2,7 +2,11 @@ package com.blogspot.teperi31.moneydiary;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.MyViewHolder> {
@@ -21,6 +26,7 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 	
 	//클래스 불러오기
 	private ArrayList<DataMoneyFlow> MFList;
+	List<Integer> selectedIDs = new ArrayList<>();
 	
 	// 뷰 홀더 만들기
 	public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -30,7 +36,9 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 		TextView reCategory;
 		TextView reUsage;
 		TextView rePrice;
-		TextView buttonViewOption;
+		CardView childView;
+		
+		
 		
 		
 		MyViewHolder(View view) {
@@ -41,13 +49,15 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 			reCategory = view.findViewById(R.id.moneyflow_re_category);
 			reUsage = view.findViewById(R.id.moneyflow_re_usage);
 			rePrice = view.findViewById(R.id.moneyflow_re_price);
-			buttonViewOption = view.findViewById(R.id.textViewOptions);
+			childView = view.findViewById(R.id.moneyflow_list_clickforview);
+			
 		}
 	}
 		
 		
 		// 연결할 데이터목록
-		AdapterMFRecycler(ArrayList<DataMoneyFlow> MFList) {
+		AdapterMFRecycler(Context context, ArrayList<DataMoneyFlow> MFList) {
+			this.context = context;
 			this.MFList = MFList;
 		}
 		
@@ -56,7 +66,7 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 		@Override
 		public AdapterMFRecycler.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 			
-			View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerviewrow_moneyflow, parent, false);
+			View v = LayoutInflater.from(context).inflate(R.layout.recyclerviewrow_moneyflow, parent, false);
 			
 			return new MyViewHolder(v);
 		}
@@ -78,36 +88,15 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 				holder.rePrice.setTextColor(Color.parseColor("#0086c9"));
 			}
 			
-			holder.buttonViewOption.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					context = v.getContext();
-					PopupMenu popup = new PopupMenu(context, holder.buttonViewOption);
-					popup.inflate(R.menu.recyclerview_context_menu);
-					
-					popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-						@Override
-						public boolean onMenuItemClick(MenuItem item) {
-							switch (item.getItemId()) {
-								case R.id.itemEdit:
-									Toast.makeText(context, "수정", Toast.LENGTH_SHORT).show();
-									return true;
-								case R.id.actionmodeDelete:
-									MFList.remove(position);
-									Intent i = new Intent(context, context.getClass());
-									i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-									i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-									context.startActivity(i);
-									return true;
-								default:
-									return false;
-							}
-						}
-					});
-					popup.show();
-					
-				}
-			});
+			int id = MFList.get(position).MFListId;
+			
+			// 롱클릭시 색상 조정
+			if(selectedIDs.contains(id)){
+				holder.childView.setBackground(new ColorDrawable(ContextCompat.getColor(context, R.color.colorAccent)));
+			} else {
+				holder.childView.setBackground(new ColorDrawable(ContextCompat.getColor(context, android.R.color.background_light)));
+			}
+			
 			
 		}
 		
@@ -115,6 +104,16 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 		public int getItemCount() {
 			return MFList.size();
 		}
+	
+	public DataMoneyFlow getItem(int position) {
+		return MFList.get(position);
+	}
+	
+	// 아이디 선택 여부 저장
+	public void setSelectedIDs(List<Integer> selectedIds) {
+		this.selectedIDs = selectedIds;
+		notifyDataSetChanged();
+	}
 		
 		
 	}

@@ -11,11 +11,12 @@
         <item name="actionMenuTextColor">@color/colorBackground</item>
         <item name="actionModeBackground">@color/colorAccent</item>
 
-        <!--button style-->
-        <item name="colorButtonNormal">@color/colorGreen</item>
-
         <!-- popup menu style-->
         <item name="android:itemBackground">@color/colorBackground</item>
+    </style>
+
+    <style name="style_Button" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/colorGreen</item>
     </style>
 
 

@@ -47,14 +47,6 @@ public class EditDiarydata extends AppCompatActivity {
 		EditCompleteButton.setText("수정 완료");
 		
 		
-		
-		Collections.sort(ApplicationClass.dList, new Comparator<DataDiary>() {
-			@Override
-			public int compare(DataDiary o1, DataDiary o2) {
-				return o2.DListDate.compareTo(o1.DListDate);
-			}
-		});
-		
 		Intent intent = getIntent();
 		dListPosition = intent.getIntExtra("position", -1);
 		

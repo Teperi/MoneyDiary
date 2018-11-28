@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- 기본 색상 지정 -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -15,7 +15,12 @@
         <item name="android:itemBackground">@color/colorBackground</item>
     </style>
 
-    <style name="style_Button" parent="Widget.AppCompat.Button">
+    <style name="style_Button_accent" parent="Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorBackground</item>
+    </style>
+
+    <style name="style_Button_save" parent="Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/colorGreen</item>
     </style>
 

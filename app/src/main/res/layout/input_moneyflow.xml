@@ -231,7 +231,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:theme="@style/style_Button"
+                android:theme="@style/style_Button_save"
                 android:text="저장하기" />
 
         </LinearLayout>

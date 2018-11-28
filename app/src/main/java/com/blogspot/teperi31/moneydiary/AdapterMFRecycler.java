@@ -86,6 +86,8 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 				holder.rePrice.setTextColor(Color.parseColor("#B00020"));
 			} else if (MFList.get(position).MFListType.equals("수입")) {
 				holder.rePrice.setTextColor(Color.parseColor("#0086c9"));
+			} else {
+				holder.rePrice.setTextColor(Color.parseColor("#000000"));
 			}
 			
 			int id = MFList.get(position).MFListId;

@@ -170,7 +170,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.actionAdd:
-				Intent i = new Intent(RecyclerviewMoneyFlow.this, InputMoneyFlowCreateExpense.class);
+				Intent i = new Intent(RecyclerviewMoneyFlow.this, InputMoneyFlowCreate.class);
 				startActivity(i);
 				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
 				return true;
@@ -248,12 +248,22 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.
 		switch (menuItem.getItemId()){
 			case R.id.actionmodeDelete:
 				//just to show selected items.
-				StringBuilder stringBuilder2 = new StringBuilder();
+				ArrayList<Integer> idSelect = new ArrayList<>();
+//				StringBuilder stringBuilder2 = new StringBuilder();
 				for (DataMoneyFlow data : ApplicationClass.mfList) {
 					if (selectedIds.contains(data.MFListId))
-						stringBuilder2.append("\n").append(data.MFListPrice);
+						idSelect.add(data.MFListId);
 				}
-				Toast.makeText(this, "Selected items are :" + stringBuilder2.toString(), Toast.LENGTH_SHORT).show();
+//				Toast.makeText(this, "Selected items are :" + idSelect.toString(), Toast.LENGTH_SHORT).show();
+				for(int i : idSelect){
+					ApplicationClass.mfList.remove(i);
+				}
+				UtilPreference.setMoneyflow(this);
+				Intent intent = new Intent(RecyclerviewMoneyFlow.this, RecyclerviewMoneyFlow.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				startActivity(intent);
+				
 				return true;
 			
 		}

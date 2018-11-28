@@ -11,16 +11,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class EditDiarydata extends AppCompatActivity {
@@ -33,11 +30,21 @@ public class EditDiarydata extends AppCompatActivity {
 	Button EditCompleteButton;
 	DatePickerDialog.OnDateSetListener date;
 	int dListPosition;
+	android.support.v7.widget.Toolbar myToolbar;
+	
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.inputcreatediary);
+		
+		// 툴바 입력
+		myToolbar = findViewById(R.id.input_diary_toolbarTop);
+		setSupportActionBar(myToolbar);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		
 		
 		EditTitletext = findViewById(R.id.inputCreateDiaryTitle);
 		EditContenttext = findViewById(R.id.inputCreateDiaryContent);
@@ -115,9 +122,11 @@ public class EditDiarydata extends AppCompatActivity {
 					// 이전 기록 삭제
 					ApplicationClass.dList.remove(dListPosition);
 					
+					
 					// 수정 완료된 기록 집어넣기
 					Intent i = new Intent(EditDiarydata.this, RecyclerviewDiary.class);
 					ApplicationClass.dList.add(obj);
+					UtilPreference.setDiary(EditDiarydata.this);
 					// 스택 관리
 					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					startActivity(i);
@@ -135,6 +144,7 @@ public class EditDiarydata extends AppCompatActivity {
 					// 수정 완료된 기록 집어넣기
 					Intent i = new Intent(EditDiarydata.this, RecyclerviewDiary.class);
 					ApplicationClass.dList.add(obj);
+					UtilPreference.setDiary(EditDiarydata.this);
 					// 스택 관리
 					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					startActivity(i);
@@ -192,8 +202,34 @@ public class EditDiarydata extends AppCompatActivity {
 		
 		AlertDialog cancelpopup = cancelaction.create();
 		cancelpopup.setTitle("TEST");
-		cancelpopup.setMessage("다이어리 수정을 그만 하시겠습니까?");
+		cancelpopup.setMessage("수정을 그만 하시겠습니까?");
 		cancelpopup.show();
+	}
+	
+	@Override
+	public boolean onSupportNavigateUp() {
+		AlertDialog.Builder cancelaction = new AlertDialog.Builder(EditDiarydata.this);
+		
+		cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			
+			}
+			
+		});
+		
+		cancelaction.setNegativeButton("중단", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				EditDiarydata.super.onBackPressed();
+			}
+		});
+		
+		AlertDialog cancelpopup = cancelaction.create();
+		cancelpopup.setTitle("경고");
+		cancelpopup.setMessage("수정을 중단하겠습니까?");
+		cancelpopup.show();
+		return true;
 	}
 	
 	// 이 페이지가 스텍에 쌓이지 않도록 종료

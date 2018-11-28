@@ -211,13 +211,21 @@ public class RecyclerviewDiary extends AppCompatActivity implements android.supp
 		switch (menuItem.getItemId()){
 			case R.id.actionmodeDelete:
 				//just to show selected items.
-				StringBuilder stringBuilder2 = new StringBuilder();
+				ArrayList<Integer> idSelect = new ArrayList<>();
+//				StringBuilder stringBuilder2 = new StringBuilder();
 				for (DataDiary data : ApplicationClass.dList) {
 					if (selectedIds.contains(data.DListId))
-						stringBuilder2.append("\n").append(data.DListTitle);
+						idSelect.add(data.DListId);
 				}
-				Toast.makeText(this, "Selected items are :" + stringBuilder2.toString(), Toast.LENGTH_SHORT).show();
-				return true;
+//				Toast.makeText(this, "Selected items are :" + idSelect.toString(), Toast.LENGTH_SHORT).show();
+				for(int i : idSelect){
+					ApplicationClass.dList.remove(i);
+				}
+				UtilPreference.setDiary(this);
+				Intent intent = new Intent(RecyclerviewDiary.this, RecyclerviewDiary.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+				startActivity(intent);
 			
 		}
 		return false;

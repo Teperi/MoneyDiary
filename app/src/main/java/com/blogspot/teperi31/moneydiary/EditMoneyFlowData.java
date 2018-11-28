@@ -1,9 +1,11 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import java.util.Date;
 
 public class EditMoneyFlowData extends AppCompatActivity {
+	
 	
 	TextView EditDateString;
 	AppCompatSpinner EditAccount;
@@ -51,6 +54,9 @@ public class EditMoneyFlowData extends AppCompatActivity {
 		EditPrice = findViewById(R.id.input_moneyflow_price);
 		EditContent = findViewById(R.id.input_moneyflow_content_text);
 		
+		
+		
+		
 		// 포지션 값 받아오기
 		Intent intent = getIntent();
 		mfListPosition = intent.getIntExtra("mfposition", -1);
@@ -59,8 +65,8 @@ public class EditMoneyFlowData extends AppCompatActivity {
 			Toast.makeText(this, "에러가 발생했습니다.", Toast.LENGTH_SHORT).show();
 		} else {
 			EditDateString.setText(ApplicationClass.mfList.get(mfListPosition).MFListDateString);
-			EditDate = ApplicationClass.mfList.get(mfListPosition).MFListDate;
-			
+			EditDate =  ApplicationClass.mfList.get(mfListPosition).MFListDate;
+			UtilDateTimePicker.setDatepopup(this, EditDate, EditDateString);
 			
 			//계좌 스피너
 			ArrayAdapter accountAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, ApplicationClass.mfAccountList);
@@ -280,5 +286,59 @@ public class EditMoneyFlowData extends AppCompatActivity {
 	protected void onPause() {
 		super.onPause();
 		finish();
+	}
+	
+	
+	
+	
+	// 뒤로가기 버튼 눌렀을 시
+	@Override
+	public void onBackPressed() {
+		
+		AlertDialog.Builder cancelaction = new AlertDialog.Builder(EditMoneyFlowData.this);
+		
+		cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		
+		cancelaction.setNegativeButton("중단", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				EditMoneyFlowData.super.onBackPressed();
+			}
+		});
+		
+		AlertDialog cancelpopup = cancelaction.create();
+		cancelpopup.setTitle("경고");
+		cancelpopup.setMessage("수정을 중단하겠습니까?");
+		cancelpopup.show();
+	}
+	
+	@Override
+	public boolean onSupportNavigateUp() {
+		AlertDialog.Builder cancelaction = new AlertDialog.Builder(EditMoneyFlowData.this);
+		
+		cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			
+			}
+			
+		});
+		
+		cancelaction.setNegativeButton("중단", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				EditMoneyFlowData.super.onBackPressed();
+			}
+		});
+		
+		AlertDialog cancelpopup = cancelaction.create();
+		cancelpopup.setTitle("경고");
+		cancelpopup.setMessage("수정을 중단하겠습니까?");
+		cancelpopup.show();
+		return true;
 	}
 }

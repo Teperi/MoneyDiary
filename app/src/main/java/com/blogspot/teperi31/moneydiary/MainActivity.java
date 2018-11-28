@@ -94,10 +94,13 @@ public class MainActivity extends AppCompatActivity {
 			}
 		});
 		
-		findViewById(R.id.button1234).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.signup_intent).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},100);
+				
+				Intent intent = new Intent(MainActivity.this, SignupActivity.class);
+				startActivity(intent);
+				
 			}
 		});
 		

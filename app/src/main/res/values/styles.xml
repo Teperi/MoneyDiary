@@ -28,6 +28,16 @@
         <item name="colorControlNormal">@color/colorBackground</item>
         <item name="android:textColorPrimary">@color/colorBackground</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
+
+    <!--가입 창 스타일-->
+
+    <style name="style_signTitle">
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:layout_marginEnd">10dp</item>
     </style>
 
 

@@ -96,8 +96,6 @@ public class ApplicationClass extends Application {
 		
 		mfIncomeCategoryList.addAll(mfIncomeCategorySet);
 		
-		
-		
 	}
 	
 	@Override

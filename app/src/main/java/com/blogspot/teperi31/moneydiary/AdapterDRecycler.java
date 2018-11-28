@@ -66,8 +66,8 @@ public class AdapterDRecycler extends RecyclerView.Adapter<AdapterDRecycler.MyVi
 		holder.reDate.setText(DList.get(position).DListDateString);
 		holder.reTitle.setText(DList.get(position).DListTitle);
 		holder.reContent.setText(DList.get(position).DListContent);
-		if(DList.get(position).DListImageUri == null) {
-		
+		if(DList.get(position).DListImageUri == (null)) {
+			holder.reImage.setImageURI(null);
 		} else {
 			holder.reImage.setImageURI(Uri.parse(DList.get(position).DListImageUri));
 		}

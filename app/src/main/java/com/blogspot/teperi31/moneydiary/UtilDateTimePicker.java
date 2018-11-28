@@ -9,7 +9,6 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class UtilDateTimePicker {
@@ -18,30 +17,37 @@ public class UtilDateTimePicker {
 	static TextView datepicker;
 	static DatePickerDialog.OnDateSetListener date;
 	
-	public static Date setTodayDate(View datetextid){
+	public static void setTodayDate(TextView datetextid){
 		// 날짜 설정
 		myCalendar = Calendar.getInstance(Locale.KOREA);
 		// 텍스트뷰에 있는 날짜로 선택
-		datepicker = (TextView) datetextid;
+		datepicker = datetextid;
 		// 현재 날짜로 선택
 		updateLabel();
-		
-		return myCalendar.getTime();
 	}
 	
 	
-	public static Date setDatepopup(final Context context,Date datetime, View datetextid){
+	public static void setDatepopup(final Context context,final Date datetime, TextView datetextid){
 		
-		// 날짜 설정
-		myCalendar.setTime(datetime);
-		// 텍스트뷰에 있는 날짜로 선택
-		datepicker = (TextView) datetextid;
+		// myCalendar 초기화
+		myCalendar = Calendar.getInstance(Locale.KOREA);
+		
+		if(datetime == null){
+			myCalendar = Calendar.getInstance(Locale.KOREA);
+		} else {
+			// 날짜 설정
+			myCalendar.setTime(datetime);
+		}
+		
+		// 텍스트뷰에 있는 날짜로 변경하기 위해 id 연결
+		datepicker = datetextid;
 		
 		// 날짜를 변경해주는 값 받아주는 변수
 		date = new DatePickerDialog.OnDateSetListener() {
 			@Override
 			public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 				myCalendar.set(year, month, dayOfMonth);
+				datetime.setTime(myCalendar.getTimeInMillis());
 				updateLabel();
 			}
 		};
@@ -54,7 +60,7 @@ public class UtilDateTimePicker {
 			}
 		});
 		
-		return myCalendar.getTime();
+		
 	}
 	
 	

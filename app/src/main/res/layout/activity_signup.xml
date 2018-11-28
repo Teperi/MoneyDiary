@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/signup_toolbarTop"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/styleAppBar" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/signup_toolbarTop"
+
+        >
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_margin="8dp">
+
+            <TextView
+                style="@style/style_signTitle"
+                android:layout_row="0"
+                android:layout_column="0"
+                android:text="아이디" />
+
+            <EditText
+                android:id="@+id/signup_id"
+                android:layout_row="0"
+                android:layout_column="1"
+                android:ems="9"
+                android:hint="ex@example.com"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                style="@style/style_signTitle"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:text="닉네임" />
+
+            <EditText
+                android:id="@+id/signup_nickname"
+                android:layout_row="1"
+                android:layout_column="1"
+                android:ems="9"
+                android:inputType="text" />
+
+            <TextView
+                style="@style/style_signTitle"
+                android:layout_row="2"
+                android:layout_column="0"
+                android:text="비밀번호" />
+
+            <EditText
+                android:id="@+id/signup_password"
+                android:layout_row="2"
+                android:layout_column="1"
+                android:ems="9"
+                android:inputType="textPassword" />
+
+            <TextView
+                style="@style/style_signTitle"
+                android:layout_row="3"
+                android:layout_column="0"
+                android:text="비밀번호 확인" />
+
+            <EditText
+                android:id="@+id/signup_passwordagain"
+                android:layout_row="3"
+                android:layout_column="1"
+                android:ems="9"
+                android:inputType="textPassword" />
+
+            <Button
+                android:id="@+id/signup_save"
+                android:layout_row="4"
+                android:layout_column="0"
+                android:layout_columnSpan="2"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"
+                android:ems="20"
+                android:text="가입 완료"
+                android:theme="@style/style_Button" />
+
+        </GridLayout>
+    </ScrollView>
+
+
+</android.support.constraint.ConstraintLayout>

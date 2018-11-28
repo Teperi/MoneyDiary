@@ -43,7 +43,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_row="0"
-            android:layout_column="2"
+            android:layout_column="1"
             android:layout_gravity="start|center_vertical"
             android:layout_margin="8dp"
             android:textSize="15sp"
@@ -54,35 +54,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="0"
-            android:layout_column="3"
-            android:layout_gravity="end|center_vertical"
+            android:layout_column="2"
+            android:layout_gravity="start|center_vertical"
             android:layout_margin="8dp"
             android:textSize="15sp"
             tools:text="입금" />
 
         <TextView
             android:id="@+id/moneyflow_re_usage"
-            android:layout_width="wrap_content"
+            android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_row="1"
             android:layout_column="1"
-            android:layout_columnSpan="3"
             android:layout_gravity="start"
             android:layout_margin="8dp"
             android:textSize="24sp"
-            tools:text="월급" />
+            android:ellipsize="end"
+            android:singleLine="true"
+            tools:text="월급ssssssssss" />
 
 
         <TextView
             android:id="@+id/moneyflow_re_price"
-            android:layout_width="wrap_content"
+            android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:layout_row="1"
-            android:layout_column="4"
-            android:layout_gravity="end"
+            android:layout_column="2"
+            android:layout_gravity="end|center_vertical"
             android:layout_margin="8dp"
             android:textSize="24sp"
-            tools:text="200000" />
+            tools:text="20000000" />
 
     </GridLayout>
 

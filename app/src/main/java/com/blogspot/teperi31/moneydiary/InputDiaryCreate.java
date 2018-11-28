@@ -8,57 +8,42 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
+import java.util.Date;
 
 
 public class InputDiaryCreate extends AppCompatActivity {
 	Calendar myCalendar;
+	Date setDate;
 	TextView datepicker;
 	DatePickerDialog.OnDateSetListener date;
+	android.support.v7.widget.Toolbar myToolbar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.inputcreatediary);
 		
-		
-		myCalendar = Calendar.getInstance(Locale.KOREA);
-		
 		// 툴바 입력
-		Toolbar myToolbar = findViewById(R.id.my_toolbarTop_basic);
-		setActionBar(myToolbar);
+		myToolbar = findViewById(R.id.input_diary_toolbarTop);
+		setSupportActionBar(myToolbar);
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		
 		// 날짜 설정용 인스턴스
 		datepicker = findViewById(R.id.inputCreateDiaryDateEdit);
 		
-		// 현재 기기의 날짜 업데이트
-		updateLabel();
 		
-		// 선택한 날짜로 업데이트하는 함수 적용
-		date = new DatePickerDialog.OnDateSetListener() {
-			@Override
-			public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-				myCalendar.set(year, month, dayOfMonth);
-				updateLabel();
-			}
-		};
 		
-		// 선택 팝업 열기
-		datepicker.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				new DatePickerDialog(InputDiaryCreate.this, date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-			}
-		});
+		UtilDateTimePicker.setTodayDate(datepicker);
+		setDate = new Date();
+		UtilDateTimePicker.setDatepopup(this, setDate, datepicker);
 		
 		
 		// 인텐트 필터 사용
@@ -120,11 +105,11 @@ public class InputDiaryCreate extends AppCompatActivity {
 					Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 					
 					obj = new DataDiary(
-							myCalendar.getTime(),
+							setDate,
 							inputTitleText.getText().toString(),
 							inputContentText.getText().toString(),
 							imageUri.toString(),
-							ApplicationClass.dList.size()+1
+							ApplicationClass.dList.size()
 					);
 					
 					ApplicationClass.dList.add(obj);
@@ -144,14 +129,15 @@ public class InputDiaryCreate extends AppCompatActivity {
 				else {
 					
 					obj = new DataDiary(
-							myCalendar.getTime(),
+							setDate,
 							inputTitleText.getText().toString(),
 							inputContentText.getText().toString(),
 							null,
-							ApplicationClass.dList.size()+1
+							ApplicationClass.dList.size()
 					);
 					Intent i = new Intent(InputDiaryCreate.this, RecyclerviewDiary.class);
 					ApplicationClass.dList.add(obj);
+					UtilPreference.setDiary(InputDiaryCreate.this);
 					// 스택 관리
 					i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					
@@ -213,7 +199,7 @@ public class InputDiaryCreate extends AppCompatActivity {
 		
 		AlertDialog cancelpopup = cancelaction.create();
 		cancelpopup.setTitle("TEST");
-		cancelpopup.setMessage("지출 기록을 그만 하시겠습니까?");
+		cancelpopup.setMessage("기록을 지우겠습니까?");
 		cancelpopup.show();
 	}
 	
@@ -225,14 +211,32 @@ public class InputDiaryCreate extends AppCompatActivity {
 		super.onPause();
 	}
 	
-	//달력 string 으로 텍스트뷰 내보내기
-	private void updateLabel() {
-		String myFormat = "yyyy-MM-dd";
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
-		
-		datepicker.setText(sdf.format(myCalendar.getTime()));
-	}
 	
+	@Override
+	public boolean onSupportNavigateUp() {
+		AlertDialog.Builder cancelaction = new AlertDialog.Builder(InputDiaryCreate.this);
+		
+		cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			
+			}
+			
+		});
+		
+		cancelaction.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				InputDiaryCreate.super.onBackPressed();
+			}
+		});
+		
+		AlertDialog cancelpopup = cancelaction.create();
+		cancelpopup.setTitle("경고");
+		cancelpopup.setMessage("기록을 지우겠습니까?");
+		cancelpopup.show();
+		return true;
+	}
 	
 	// 카메라 앱 사용을 위한 코드
 

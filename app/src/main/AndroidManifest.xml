@@ -31,9 +31,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".InputMoneyFlowCreateExpense"/>
-        <activity android:name=".InputMoneyFlowCreateIncome"/>
-        <activity android:name=".InputMoneyFlowCreateTransfer"/>
+        <activity android:name=".SignupActivity"/>
+        <activity android:name=".InputMoneyFlowCreate"/>
         <activity android:name=".EditMoneyFlowData"/>
         <activity android:name=".test"/>
         <activity android:name=".RecyclerviewMoneyFlow"/>

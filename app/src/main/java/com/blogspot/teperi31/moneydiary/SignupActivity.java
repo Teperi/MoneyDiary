@@ -74,7 +74,7 @@ public class SignupActivity extends AppCompatActivity {
 				if(task.isSuccessful()) {
 					FirebaseUser user = mAuth.getCurrentUser();
 					//TODO : 테스트 이후 Toast 에서 UID 및 EMAIL 지우기
-					Toast.makeText(SignupActivity.this, "가입 완료 되었습니다. \n"+mAuth.getCurrentUser().getEmail()+"\n"+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+					Toast.makeText(SignupActivity.this, "가입 완료 되었습니다. \n"+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 					Intent intent = new Intent(SignupActivity.this, MainActivity.class);
 					startActivity(intent);
 				} else {

@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "628343088416",
-    "firebase_url": "https://moneydiary-7329d.firebaseio.com",
-    "project_id": "moneydiary-7329d",
-    "storage_bucket": "moneydiary-7329d.appspot.com"
+    "project_number": "739043768930",
+    "firebase_url": "https://testquickstart-ddb60.firebaseio.com",
+    "project_id": "testquickstart-ddb60",
+    "storage_bucket": "testquickstart-ddb60.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:628343088416:android:ac705f2e7523306b",
+        "mobilesdk_app_id": "1:739043768930:android:ac705f2e7523306b",
         "android_client_info": {
           "package_name": "com.blogspot.teperi31.moneydiary"
         }
       },
       "oauth_client": [
         {
-          "client_id": "628343088416-o183iemj2qthdqth23124u629gtt5u50.apps.googleusercontent.com",
+          "client_id": "739043768930-p95dbve716jet5pj8i8fr9lnqg7egvb3.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDfQehr3cV6p_J6SJsnXZU8ewBL_NvM3yc"
+          "current_key": "AIzaSyAQOCVRAz_5j6TeCEVH4QN_O-Kd9V-elI0"
         }
       ],
       "services": {

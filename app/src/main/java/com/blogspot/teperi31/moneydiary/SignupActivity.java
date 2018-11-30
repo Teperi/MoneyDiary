@@ -1,6 +1,7 @@
 package com.blogspot.teperi31.moneydiary;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class SignupActivity extends AppCompatActivity {
 	private FirebaseAuth mAuth;
@@ -52,14 +54,14 @@ public class SignupActivity extends AppCompatActivity {
 		findViewById(R.id.signup_save).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				createAccount(mIDField.getText().toString(), mPasswordField.getText().toString());
+				createAccount(mIDField.getText().toString(), mPasswordField.getText().toString(), mNicknameField.getText().toString());
 			}
 		});
 		
 		
 	}
 	
-	private void createAccount(String email, String password) {
+	private void createAccount(String email, String password, final String Nickname) {
 		// 형식에 맞지 않는 경우 여기서 끝내기
 		if(!validateForm()){
 			return;
@@ -73,10 +75,14 @@ public class SignupActivity extends AppCompatActivity {
 			public void onComplete(@NonNull Task<AuthResult> task) {
 				if(task.isSuccessful()) {
 					FirebaseUser user = mAuth.getCurrentUser();
-					//TODO : 테스트 이후 Toast 에서 UID 및 EMAIL 지우기
+					updateProfile(user, Nickname);
+					
+					// TODO : 고민해야 할 부분, 이걸 어떻게 처리하지?
+					// update profile 이 에러나면?? 그리고 Nickname 이 없다면??
 					Toast.makeText(SignupActivity.this, "가입 완료 되었습니다. \n"+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 					Intent intent = new Intent(SignupActivity.this, MainActivity.class);
 					startActivity(intent);
+					finish();
 				} else {
 					Log.w("signInWithEmail:failure", task.getException());
 					Toast.makeText(SignupActivity.this, "가입에 실패하였습니다. \n 조금 후에 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
@@ -124,6 +130,30 @@ public class SignupActivity extends AppCompatActivity {
 		}
 		
 		return valid;
+	}
+	
+	/*
+	* 아이디 생성 이후 Profile 에 NickName 설정
+	* */
+	public void updateProfile(FirebaseUser user , String NickName) {
+		// [START update_profile]
+		UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+				.setDisplayName(NickName)
+				.build();
+		
+		user.updateProfile(profileUpdates)
+				.addOnCompleteListener(new OnCompleteListener<Void>() {
+					@Override
+					public void onComplete(@NonNull Task<Void> task) {
+						if (task.isSuccessful()) {
+							Log.d("signup", "User profile updated.");
+						} else {
+							Toast.makeText(SignupActivity.this, "닉네임이 설정되지 않았습니다. 나중에 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+							return;
+						}
+					}
+				});
+		// [END update_profile]
 	}
 	
 	//뒤로가기 버튼 기능 넣기

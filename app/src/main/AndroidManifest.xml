@@ -16,14 +16,15 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_custom"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_custom_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".ApplicationClass">
 
-        <activity android:name=".MainActivity"
+        <activity android:name=".SplashActivity"
+            android:theme="@style/SplashTheme"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,14 +32,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SigninActivity"/>
+        <activity android:name=".SignInAppStartActivity"/>
         <activity android:name=".SignupActivity"/>
+        <activity android:name=".MainActivity"/>
         <activity android:name=".InputMoneyFlowCreate"/>
         <activity android:name=".EditMoneyFlowData"/>
         <activity android:name=".test"/>
         <activity android:name=".testDetail"/>
         <activity android:name=".testInput"/>
         <activity android:name=".RecyclerviewMoneyFlow"/>
+        <activity android:name=".RecyclerViewMoneyFlowFB"/>
+        <activity android:name=".EditMoneyFlowDataFB"/>
+        <activity android:name=".InputMoneyFlowCreateFB"/>
         <activity android:name=".RecyclerviewDiary"/>
         <activity android:name=".InputDiaryCreate">
             <intent-filter>

@@ -11,8 +11,7 @@
         <item name="actionMenuTextColor">@color/colorBackground</item>
         <item name="actionModeBackground">@color/colorAccent</item>
 
-        <!-- popup menu style-->
-        <item name="android:itemBackground">@color/colorBackground</item>
+
     </style>
 
     <style name="style_Button_accent" parent="Widget.AppCompat.Button">
@@ -20,13 +19,22 @@
         <item name="android:textColor">@color/colorBackground</item>
     </style>
 
-    <style name="style_Button_save" parent="Widget.AppCompat.Button">
-        <item name="colorButtonNormal">@color/colorGreen</item>
+    <style name="style_Button_save" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="colorPrimary">@color/colorGreen</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
+    <style name="stylePopupMenu" parent="ThemeOverlay.MaterialComponents">
+        <item name="android:textColor">@color/colorBlack</item>
+        <item name="android:background">@color/colorBackground</item>
     </style>
 
 
     <!--상단 툴바 스타일 지정-->
-    <style name="styleAppBar" parent="ThemeOverlay.AppCompat.ActionBar">
+    <style name="styleAppBar" parent="ThemeOverlay.MaterialComponents.ActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>

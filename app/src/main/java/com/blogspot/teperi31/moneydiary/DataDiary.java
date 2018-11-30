@@ -5,8 +5,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
+/*
+* 다이어리 부분의 데이터를 저장하는 Class
+* */
 
 public class DataDiary {
+	public String uid;
 	int DListId;
 	Date DListDate;
 	String DListDateString;

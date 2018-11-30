@@ -6,8 +6,13 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
+/*
+* 가계부 데이터를 저장하는 클래스
+* */
 
 public class DataMoneyFlow {
+	
+	
 	int MFListId;
 	String MFListType;
 	Date MFListDate;

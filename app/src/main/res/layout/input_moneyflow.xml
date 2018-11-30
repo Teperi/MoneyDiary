@@ -226,12 +226,12 @@
 
             </android.support.v7.widget.CardView>
 
-            <Button
+            <android.support.design.button.MaterialButton
                 android:id="@+id/input_moneyflow_save"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:theme="@style/style_Button_save"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:text="저장하기" />
 
         </LinearLayout>

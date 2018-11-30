@@ -19,7 +19,6 @@ import android.widget.CalendarView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				
-				Intent intent = new Intent(MainActivity.this, SigninActivity.class);
+				Intent intent = new Intent(MainActivity.this, SignInAppStartActivity.class);
 				startActivity(intent);
 				
 			}
@@ -131,8 +130,7 @@ public class MainActivity extends AppCompatActivity {
 		switch (item.getItemId()) {
 			
 			case R.id.actionmyblog:
-				Toast.makeText(this, "개발자 블로그로 연결합니다.", Toast.LENGTH_SHORT).show();
-				Intent actionBlogIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://naver.com"));
+				Intent actionBlogIntent = new Intent(this, RecyclerViewMoneyFlowFB.class);
 				startActivity(actionBlogIntent);
 				return true;
 			

@@ -13,7 +13,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/styleAppBar"
-        app:popupTheme="@style/Base.ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/stylePopupMenu" />
 
     <CalendarView
         android:id="@+id/calender1"

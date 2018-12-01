@@ -174,5 +174,12 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		}
 	}
 	
+	//뒤로가기 버튼 기능 넣기
+	@Override
+	public boolean onSupportNavigateUp() {
+		finish();
+		return true;
+	}
+	
 	
 }

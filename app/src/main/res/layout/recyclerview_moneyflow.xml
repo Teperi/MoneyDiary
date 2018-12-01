@@ -20,10 +20,11 @@
         android:layout_height="40dp"
         android:layout_margin="4dp"
 
-        app:layout_constraintBottom_toTopOf="@id/moneyflow_recycler_view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarTop_List_moneyflow">
+        app:layout_constraintTop_toBottomOf="@id/toolbarTop_List_moneyflow"
+        app:layout_constraintVertical_bias="0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -81,18 +82,42 @@
 
     </android.support.v7.widget.CardView>
 
+    <FrameLayout
+        android:id="@+id/moneyflow_recycler_progress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorBackground"
+        android:layout_margin="8dp"
+        android:visibility="gone"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/moneyflowcalc"
+        app:layout_constraintVertical_bias="0">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            />
+
+    </FrameLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/moneyflow_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
         android:scrollbars="vertical"
+        android:visibility="visible"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/moneyflowcalc"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintVertical_bias="0"
+        tools:listitem="@layout/recyclerviewrow_moneyflow"/>
 
 
 </android.support.constraint.ConstraintLayout>

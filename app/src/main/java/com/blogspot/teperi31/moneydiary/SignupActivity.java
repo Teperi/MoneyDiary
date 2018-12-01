@@ -159,7 +159,7 @@ public class SignupActivity extends AppCompatActivity {
 	//뒤로가기 버튼 기능 넣기
 	@Override
 	public boolean onSupportNavigateUp() {
-			SignupActivity.super.onBackPressed();
+		finish();
 		return true;
 	}
 	

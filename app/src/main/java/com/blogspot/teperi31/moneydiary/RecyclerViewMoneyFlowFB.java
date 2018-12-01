@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,28 +68,34 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 		
 		// 세로로 쌓기 기능
 		mLayoutManager = new LinearLayoutManager(this);
+		// Query 에 있는 정렬 기능을 역순으로 해 주는 부분
+		mLayoutManager.setReverseLayout(true);
+		mLayoutManager.setStackFromEnd(true);
+		
 		mRecycler.setLayoutManager(mLayoutManager);
 		
-		// 가져올 데이터 쿼리 정렬
-		//TODO : 날짜별 정렬 기능 넣어야 함
-		Query MoneyFlowQuery = mDatabase.child("moneyflow").child(user.getUid()).limitToLast(100);
-		// 어뎁터 만들기
+		
+		// 가져올 데이터 쿼리 정렬 - 날짜 데이터 기준 정렬
+		Query MoneyFlowQuery = mDatabase.child("moneyflow").child(user.getUid()).orderByChild("date");
+		// 데이터 가져오는 builder 설정
 		FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<DataMoneyFlowFB>()
 				.setQuery(MoneyFlowQuery, DataMoneyFlowFB.class)
 				.build();
-		
+		// 리사리클러 어뎁터 설정
+		// 어뎁터 클래스를 따로 만들어보다가 에러나서 여기서 새로 만들기로 결정함
 		mAdapter = new FirebaseRecyclerAdapter<DataMoneyFlowFB, ViewHolderMoneyFlow>(options) {
-			
+			// ViewHolder 만들기
 			@Override
 			public ViewHolderMoneyFlow onCreateViewHolder(ViewGroup viewGroup, int i) {
 				View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerviewrow_moneyflow, viewGroup, false);
 				return new ViewHolderMoneyFlow(itemView);
 			}
 			
+			// 묶어주기
 			@Override
 			protected void onBindViewHolder(@NonNull ViewHolderMoneyFlow holder, int position, @NonNull DataMoneyFlowFB model) {
 				holder.bindToMoneyFlow(model);
-				
+				// 키값 저장해서 에디트 페이지 갈 때 키값 넣어주기
 				DatabaseReference MFref = getRef(position);
 				final String MFKey = MFref.getKey();
 				holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +108,14 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 				});
 			}
 			
+			@Override
+			public void onDataChanged() {
+				// 데이터가 다 바뀌면 로딩화면 제거
+				mProgessStop();
+				super.onDataChanged();
+			}
 		};
+		// 어뎁터와 리사이클러뷰 연결
 		mRecycler.setAdapter(mAdapter);
 		
 	}
@@ -109,7 +123,9 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if(mAdapter != null) {
+		// 어뎁터가 있으면 실시간 연결
+		if (mAdapter != null) {
+			mProgessStart();
 			mAdapter.startListening();
 		}
 	}
@@ -117,7 +133,8 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if(mAdapter != null) {
+		// 페이지가 멈출 때 실시간 연결기능 해제
+		if (mAdapter != null) {
 			mAdapter.stopListening();
 		}
 	}
@@ -159,5 +176,18 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 		}
 		
 		
+	}
+	
+	
+	// 로딩 모양 보여주는 메소드
+	private void mProgessStart () {
+		findViewById(R.id.moneyflow_recycler_view).setVisibility(View.GONE);
+		findViewById(R.id.moneyflow_recycler_progress).setVisibility(View.VISIBLE);
+	}
+	
+	// 로딩이 끝난 경우 로딩 모양 없애주는
+	private void mProgessStop () {
+		findViewById(R.id.moneyflow_recycler_view).setVisibility(View.VISIBLE);
+		findViewById(R.id.moneyflow_recycler_progress).setVisibility(View.GONE);
 	}
 }

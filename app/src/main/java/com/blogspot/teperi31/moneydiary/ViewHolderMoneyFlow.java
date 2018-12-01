@@ -1,6 +1,9 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -41,5 +44,13 @@ public class ViewHolderMoneyFlow extends RecyclerView.ViewHolder {
 		CategoryView.setText(Data.category);
 		UsageView.setText(Data.usage);
 		PriceView.setText(String.valueOf(Data.price));
+		
+		if(Data.type.equals("수입")) {
+			PriceView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.colorError));
+		} else if (Data.type.equals("지출")) {
+			PriceView.setTextColor(ContextCompat.getColor(itemView.getContext(),R.color.colorPrimaryDark));
+		} else {
+			PriceView.setTextColor(ContextCompat.getColor(itemView.getContext(),R.color.colorBlack));
+		}
 	}
 }

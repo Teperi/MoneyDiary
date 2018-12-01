@@ -42,15 +42,17 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_signin);
 		
+		// 액션 바 설정
 		android.support.v7.widget.Toolbar mToolbar = findViewById(R.id.signin_toobarTop);
 		setSupportActionBar(mToolbar);
+		
 		
 		mIDField = findViewById(R.id.signin_inputid);
 		mPasswordField = findViewById(R.id.signin_inputpassword);
 		mProgressView = findViewById(R.id.signin_progress);
 		mLoginView = findViewById(R.id.signin_loginscrollview);
 		
-		
+		// 현재 계정 정보 가져오기
 		mAuth = FirebaseAuth.getInstance();
 		
 		findViewById(R.id.signin_loginButton).setOnClickListener(this);
@@ -79,7 +81,7 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 		
 		mProgressView.setVisibility(View.GONE);
 		// Go to MainActivity : 메인으로 이동
-		Toast.makeText(this, "자동 로그인 되었습니다.\n" + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "환영합니다.\n" + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
 		startActivity(new Intent(SignInAppStartActivity.this, MainActivity.class));
 		// 이 페이지는 종료시킴
 		finish();

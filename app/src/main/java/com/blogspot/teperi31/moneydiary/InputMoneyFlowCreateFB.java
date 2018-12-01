@@ -1,10 +1,10 @@
 package com.blogspot.teperi31.moneydiary;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
+import android.support.design.button.MaterialButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,10 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 	ArrayAdapter accountAdapter;
 	AppCompatSpinner spinnerCategory;
 	ArrayAdapter categoryAdapter;
+	
+	MaterialButton TypeIncome;
+	MaterialButton TypeExpense;
+	MaterialButton TypeTransfer;
 	
 	private DatabaseReference mDatabase;
 	private FirebaseUser user;
@@ -65,7 +70,6 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 		// 날짜 설정 view 연결 및 Datepick popup 생성
 		TextView mDatepick = findViewById(R.id.input_moneyflow_datepick);
 		
-		
 		UtilDateTimePicker.setTodayDate(mDatepick);
 		setDate = new Date();
 		UtilDateTimePicker.setDatepopup(this, setDate, mDatepick);
@@ -83,17 +87,22 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 		categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinnerCategory.setAdapter(categoryAdapter);
 		
+		// 지출 Type 기본설정
 		setType = "지출";
-		findViewById(R.id.input_moneyflow_type_expense).setBackgroundColor(getColor(R.color.colorAccentLight));
+		// Type 버튼 연결
+		TypeIncome = findViewById(R.id.input_moneyflow_type_income);
+		TypeExpense = findViewById(R.id.input_moneyflow_type_expense);
+		TypeTransfer = findViewById(R.id.input_moneyflow_type_Transfer);
 		
-		findViewById(R.id.input_moneyflow_type_income).setBackgroundColor(getColor(R.color.colorBackground));
-		findViewById(R.id.input_moneyflow_type_Transfer).setBackgroundColor(getColor(R.color.colorBackground));
+		// 버튼 색 및 글씨 색 변경
+		TypeExpense.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.colorAccent));
+		TypeExpense.setTextColor(ContextCompat.getColorStateList(this, R.color.colorBackground));
+		
 		
 		// Type 선택시 몇몇 변수를 바꿔주는 로직 설정
 		// 분류 스피너를 바꿔주면 됨
 		// 이체의 경우 분류 스피너를 입금계좌로 바꿈
-		// 버튼 색 변경
-		findViewById(R.id.input_moneyflow_type_income).setOnClickListener(new View.OnClickListener() {
+		TypeIncome.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				System.out.println(setDate.getTime());
@@ -109,13 +118,17 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				spinnerCategory.setAdapter(categoryAdapter);
 				
-				findViewById(R.id.input_moneyflow_type_income).setBackgroundColor(getColor(R.color.colorAccentLight));
-				findViewById(R.id.input_moneyflow_type_expense).setBackgroundColor(getColor(R.color.colorBackground));
-				findViewById(R.id.input_moneyflow_type_Transfer).setBackgroundColor(getColor(R.color.colorBackground));
+				// 버튼 색 및 글씨 색 변경
+				TypeIncome.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorAccent));
+				TypeIncome.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeExpense.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeExpense.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBlack));
+				TypeTransfer.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeTransfer.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBlack));
 			}
 		});
 		
-		findViewById(R.id.input_moneyflow_type_expense).setOnClickListener(new View.OnClickListener() {
+		TypeExpense.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				System.out.println(setDate.getTime());
@@ -132,16 +145,18 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				spinnerCategory.setAdapter(categoryAdapter);
 				
-				
-				findViewById(R.id.input_moneyflow_type_expense).setBackgroundColor(getColor(R.color.colorAccentLight));
-				
-				findViewById(R.id.input_moneyflow_type_income).setBackgroundColor(getColor(R.color.colorBackground));
-				findViewById(R.id.input_moneyflow_type_Transfer).setBackgroundColor(getColor(R.color.colorBackground));
+				// 버튼 색 및 글씨 색 변경
+				TypeExpense.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorAccent));
+				TypeExpense.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeIncome.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeIncome.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBlack));
+				TypeTransfer.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeTransfer.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBlack));
 				
 			}
 		});
 		
-		findViewById(R.id.input_moneyflow_type_Transfer).setOnClickListener(new View.OnClickListener() {
+		TypeTransfer.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				System.out.println(setDate.getTime());
@@ -155,9 +170,14 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 				TextView inputText = findViewById(R.id.input_moneyflow_categorytitle);
 				outputText.setText("출금");
 				inputText.setText("입금");
-				findViewById(R.id.input_moneyflow_type_Transfer).setBackgroundColor(getColor(R.color.colorAccentLight));
-				findViewById(R.id.input_moneyflow_type_expense).setBackgroundColor(getColor(R.color.colorBackground));
-				findViewById(R.id.input_moneyflow_type_income).setBackgroundColor(getColor(R.color.colorBackground));
+				
+				// 버튼 색 및 글씨 색 변경
+				TypeTransfer.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorAccent));
+				TypeTransfer.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeIncome.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeIncome.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBlack));
+				TypeExpense.setBackgroundTintList(ContextCompat.getColorStateList(v.getContext(), R.color.colorBackground));
+				TypeExpense.setTextColor(ContextCompat.getColorStateList(v.getContext(), R.color.colorBlack));
 			}
 		});
 		
@@ -181,30 +201,40 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 					Toast.makeText(InputMoneyFlowCreateFB.this, "같은 계좌로 이체할 수 없습니다", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				// 내용을 안쓴 경우 분류의 내용을 적어줌
+				// 문제가 없을 경우 Save
 				else {
-					mDatabase.child("moneyflow").child(user.getUid()).addListenerForSingleValueEvent(
-							new ValueEventListener() {
-								@Override
-								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-									if (user == null) {
-										Toast.makeText(InputMoneyFlowCreateFB.this,
-												"Error: could not fetch user.",
-												Toast.LENGTH_SHORT).show();
-									} else {
+					// Save 가 여러번 되는 것을 방지하기 위해 버튼 비활성화 및 로딩 바 생성
+					findViewById(R.id.input_moneyflow_save).setEnabled(false);
+					findViewById(R.id.input_moneyflow_progresslayout).setVisibility(View.VISIBLE);
+					
+					// 유저 상태 확인 후
+					if(user == null) {
+						Toast.makeText(InputMoneyFlowCreateFB.this, "로그인 정보가 없습니다.", Toast.LENGTH_SHORT).show();
+					}else {
+						// 데이터 저장 장소에 연결
+						mDatabase.child("moneyflow").child(user.getUid()).addListenerForSingleValueEvent(
+								new ValueEventListener() {
+									@Override
+									public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+										// 데이터 집어넣는 메소드 실행
 										writeNewMFData(Integer.parseInt(inputPrice.getText().toString().trim()),
 												inputContent.getText().toString());
+										// 비활성화 된 버튼 살리기
+										findViewById(R.id.input_moneyflow_save).setEnabled(true);
+										findViewById(R.id.input_moneyflow_progresslayout).setVisibility(View.GONE);
+										// 창 닫기
+										finish();
 									}
 									
-									finish();
+									@Override
+									public void onCancelled(@NonNull DatabaseError databaseError) {
+									
+									}
 								}
-								
-								@Override
-								public void onCancelled(@NonNull DatabaseError databaseError) {
-								
-								}
-							}
-					);
+						);
+					}
+					
+					
 				}
 			}
 		});
@@ -215,7 +245,7 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 		String key = mDatabase.child("moneyflow").child(user.getUid()).push().getKey();
 		// 데이터베이스에 데이터 목록을 추가
 		//데이터가 들어갈 순서 : String type, Long date, String account, String category, Long price, String usage
-		if(usage.length() <= 0){
+		if (usage.length() <= 0) {
 			usage = spinnerCategory.getSelectedItem().toString();
 		}
 		DataMoneyFlowFB newData = new DataMoneyFlowFB(setType,
@@ -257,55 +287,10 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 		
 	}*/
 	
-	
-	// 뒤로가기 버튼 눌렀을 시
-	@Override
-	public void onBackPressed() {
-		
-		AlertDialog.Builder cancelaction = new AlertDialog.Builder(InputMoneyFlowCreateFB.this);
-		
-		cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-			}
-		});
-		
-		cancelaction.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				InputMoneyFlowCreateFB.super.onBackPressed();
-			}
-		});
-		
-		AlertDialog cancelpopup = cancelaction.create();
-		cancelpopup.setTitle("경고");
-		cancelpopup.setMessage("기록을 지우겠습니까?");
-		cancelpopup.show();
-	}
-	
+	// 액션 바 뒤로가기 버튼을 눌렀을 시 바로 종료
 	@Override
 	public boolean onSupportNavigateUp() {
-		AlertDialog.Builder cancelaction = new AlertDialog.Builder(InputMoneyFlowCreateFB.this);
-		
-		cancelaction.setPositiveButton("계속 입력", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-			
-			}
-			
-		});
-		
-		cancelaction.setNegativeButton("삭제", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				InputMoneyFlowCreateFB.super.onBackPressed();
-			}
-		});
-		
-		AlertDialog cancelpopup = cancelaction.create();
-		cancelpopup.setTitle("경고");
-		cancelpopup.setMessage("기록을 지우겠습니까?");
-		cancelpopup.show();
-		return true;
+		finish();
+		return super.onSupportNavigateUp();
 	}
 }

@@ -12,6 +12,9 @@
         android:theme="@style/styleAppBar"
         app:popupTheme="@style/Base.ThemeOverlay.AppCompat.Light" />
 
+
+
+
     <LinearLayout
         android:id="@+id/input_moneyflow_type_button_layout"
         android:layout_width="match_parent"
@@ -27,58 +30,83 @@
         app:layout_constraintVertical_bias="0"
         app:layout_constraintVertical_chainStyle="packed">
 
-        <Button
+        <android.support.design.button.MaterialButton
             android:id="@+id/input_moneyflow_type_income"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="1dp"
             android:layout_weight="1"
-            android:background="@color/colorBackground"
-            android:text="수입"
+            android:layout_margin="2dp"
+            android:text="@string/TypeIncome"
             android:textColor="@color/colorBlack"
+            app:backgroundTint="@color/colorBackground"
+            app:cornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/input_moneyflow_type_expense"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <android.support.design.button.MaterialButton
             android:id="@+id/input_moneyflow_type_expense"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="1dp"
             android:layout_weight="1"
-            android:background="@color/colorBackground"
-            android:text="지출"
+            android:layout_margin="2dp"
+            android:text="@string/TypeExpense"
             android:textColor="@color/colorBlack"
+            app:backgroundTint="@color/colorBackground"
+            app:cornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/input_moneyflow_type_Transfer"
-            app:layout_constraintStart_toEndOf="@id/input_moneyflow_type_income"
+            app:layout_constraintEnd_toStartOf="@id/input_moneyflow_type_expense"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <android.support.design.button.MaterialButton
             android:id="@+id/input_moneyflow_type_Transfer"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="1dp"
             android:layout_weight="1"
-            android:background="@color/colorBackground"
-            android:text="이체"
+            android:layout_margin="2dp"
+            android:text="@string/TypeTransfer"
             android:textColor="@color/colorBlack"
+            app:backgroundTint="@color/colorBackground"
+            app:cornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/input_moneyflow_type_expense"
+            app:layout_constraintEnd_toStartOf="@id/input_moneyflow_type_expense"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/input_moneyflow_progresslayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/input_moneyflow_type_button_layout"
+        >
+
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-6dp"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            />
+
+    </FrameLayout>
 
     <ScrollView
         android:id="@+id/input_moneyflow_content_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/input_moneyflow_type_button_layout">
+        app:layout_constraintTop_toBottomOf="@id/input_moneyflow_type_button_layout"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"

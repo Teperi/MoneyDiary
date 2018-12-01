@@ -3,6 +3,11 @@
     <string name="dateTitle">날짜</string>
 
     <!--입력 창 사용 string-->
+
+    <string name="TypeIncome">수입</string>
+    <string name="TypeExpense">지출</string>
+    <string name="TypeTransfer">이체</string>
+
     <string name="accountTitle">계좌</string>
     <string name="categoryTitle">분류</string>
     <string name="priceTitle">금액</string>

@@ -10,8 +10,10 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionMenuTextColor">@color/colorBackground</item>
         <item name="actionModeBackground">@color/colorAccent</item>
+    </style>
 
-
+    <style name="style_tabButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="backgroundTint">@color/colorAccent</item>
     </style>
 
     <style name="style_Button_accent" parent="Widget.AppCompat.Button">

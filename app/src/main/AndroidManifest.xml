@@ -33,13 +33,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignInAppStartActivity"/>
+        <activity android:name=".SignInAccountInfo"/>
         <activity android:name=".SignupActivity"/>
         <activity android:name=".MainActivity"/>
         <activity android:name=".InputMoneyFlowCreate"/>
         <activity android:name=".EditMoneyFlowData"/>
-        <activity android:name=".test"/>
-        <activity android:name=".testDetail"/>
-        <activity android:name=".testInput"/>
         <activity android:name=".RecyclerviewMoneyFlow"/>
         <activity android:name=".RecyclerViewMoneyFlowFB"/>
         <activity android:name=".EditMoneyFlowDataFB"/>
@@ -57,7 +55,9 @@
                 <data android:mimeType="image/*"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ChatActivity"/>
         <activity android:name=".EditDiarydata"/>
+        <activity android:name=".MessengerUserList"/>
 
     </application>
 

@@ -40,7 +40,7 @@
             android:id="@+id/testbutton1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
+            android:layout_margin="8dp"
 
             android:text="다이어리"
 
@@ -54,7 +54,7 @@
             android:id="@+id/testbutton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_margin="8dp"
 
             android:text="가계부"
             app:layout_constraintTop_toTopOf="parent"
@@ -79,10 +79,10 @@
             android:id="@+id/signup_intent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
+            android:layout_margin="8dp"
 
 
-            android:text="가입"
+            android:text="회원 정보"
 
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -94,9 +94,9 @@
             android:id="@+id/testbutton3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
+            android:layout_margin="8dp"
 
-            android:text="DB TEST"
+            android:text="Messenger"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/testbutton1"

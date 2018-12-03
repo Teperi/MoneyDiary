@@ -20,6 +20,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 * 처음 시작할 때 Splash 이후 들어오는 창
@@ -36,6 +45,8 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 	private ProgressBar mProgressView;
 	private ScrollView mLoginView;
 	private ScrollView mLogoutView;
+	
+	private DatabaseReference mDatabase;
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +65,8 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 		
 		// 현재 계정 정보 가져오기
 		mAuth = FirebaseAuth.getInstance();
+		
+		mDatabase = FirebaseDatabase.getInstance().getReference();
 		
 		findViewById(R.id.signin_loginButton).setOnClickListener(this);
 		findViewById(R.id.signin_logoutButton).setOnClickListener(this);
@@ -78,6 +91,48 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 	
 	// 현재 로그인 토큰이 있는 경우 바로 다음 Activity로 넘어가기
 	private void onAuthSuccess() {
+		// 로그인 할 때 데이터 베이스에 내 정보 쌓기
+		final FirebaseUser user = mAuth.getCurrentUser();
+		
+		mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				for(DataSnapshot ds : dataSnapshot.getChildren()){
+					ds.child("isCurrent").getRef().setValue(false);
+				}
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		
+		mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				DataUser datauser;
+				// 유저 정보를 모아서
+				if(user.getPhotoUrl() == null){
+					datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
+				} else {
+					datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
+				}
+				
+				Map<String, Object> inputUserData = datauser.toMap();
+				Map<String, Object> childUpdates = new HashMap<>();
+				// Map 에 한번에 저장 후
+				childUpdates.put("/users/" + user.getUid(), inputUserData);
+				// 데이터베이스에 집어넣기
+				mDatabase.updateChildren(childUpdates);
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		
 		
 		mProgressView.setVisibility(View.GONE);
 		// Go to MainActivity : 메인으로 이동

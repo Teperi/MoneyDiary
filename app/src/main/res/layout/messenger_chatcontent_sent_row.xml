@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:id="@+id/messenger_chatcontent_sent_row_contentText"
+        android:background="@color/colorPrimaryLighit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="240dp"
+        android:padding="8dp"
+        android:textColor="@color/colorBlack"
+        android:textSize="18sp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/messenger_chatcontent_sent_row_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:layout_marginRight="4dp"
+        app:layout_constraintBottom_toBottomOf="@id/messenger_chatcontent_sent_row_contentText"
+        app:layout_constraintRight_toLeftOf="@id/messenger_chatcontent_sent_row_contentText" />
+
+    <ImageView
+        android:id="@+id/messenger_chatcontent_sent_row_contentImage"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="4dp"
+        android:maxWidth="240dp"
+        android:background="@color/colorAccent"
+        android:padding="8dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="invisible"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        android:scaleType="fitCenter" />
+
+</android.support.constraint.ConstraintLayout>

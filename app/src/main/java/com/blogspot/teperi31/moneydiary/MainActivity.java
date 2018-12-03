@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				
-				Intent intent = new Intent(MainActivity.this, RecyclerviewMoneyFlow.class);
+				Intent intent = new Intent(MainActivity.this, RecyclerViewMoneyFlowFB.class);
 				startActivity(intent);
 			}
 		});
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				
-				Intent intent = new Intent(MainActivity.this, SignInAppStartActivity.class);
+				Intent intent = new Intent(MainActivity.this, SignInAccountInfo.class);
 				startActivity(intent);
 				
 			}
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 		findViewById(R.id.testbutton3).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this, test.class);
+				Intent intent = new Intent(MainActivity.this, MessengerUserList.class);
 				startActivity(intent);
 				
 			}

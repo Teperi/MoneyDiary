@@ -20,6 +20,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignupActivity extends AppCompatActivity {
 	private FirebaseAuth mAuth;
@@ -28,6 +36,7 @@ public class SignupActivity extends AppCompatActivity {
 	private EditText mNicknameField;
 	private EditText mPasswordField;
 	private EditText mPasswordAgainField;
+	private DatabaseReference mDatabase;
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +58,7 @@ public class SignupActivity extends AppCompatActivity {
 		mPasswordAgainField = findViewById(R.id.signup_passwordagain);
 		
 		mAuth = FirebaseAuth.getInstance();
+		mDatabase = FirebaseDatabase.getInstance().getReference();
 		
 		// 가입하기 버튼을 누를 경우 동작 발생
 		findViewById(R.id.signup_save).setOnClickListener(new View.OnClickListener() {
@@ -74,13 +84,55 @@ public class SignupActivity extends AppCompatActivity {
 			@Override
 			public void onComplete(@NonNull Task<AuthResult> task) {
 				if(task.isSuccessful()) {
-					FirebaseUser user = mAuth.getCurrentUser();
+					final FirebaseUser user = mAuth.getCurrentUser();
 					updateProfile(user, Nickname);
+					
+					mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+						@Override
+						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+							for(DataSnapshot ds : dataSnapshot.getChildren()){
+								ds.child("isCurrent").getRef().setValue(false);
+							}
+						}
+						
+						@Override
+						public void onCancelled(@NonNull DatabaseError databaseError) {
+						
+						}
+					});
+					
+					mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+						@Override
+						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+							DataUser datauser;
+							// 유저 정보를 모아서
+							if(user.getPhotoUrl() == null){
+								datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
+							} else {
+								datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
+							}
+							
+							Map<String, Object> inputUserData = datauser.toMap();
+							Map<String, Object> childUpdates = new HashMap<>();
+							// Map 에 한번에 저장 후
+							childUpdates.put("/users/" + user.getUid(), inputUserData);
+							// 데이터베이스에 집어넣기
+							mDatabase.updateChildren(childUpdates);
+						}
+						
+						@Override
+						public void onCancelled(@NonNull DatabaseError databaseError) {
+						
+						}
+					});
+					
 					
 					// TODO : 고민해야 할 부분, 이걸 어떻게 처리하지?
 					// update profile 이 에러나면?? 그리고 Nickname 이 없다면??
 					Toast.makeText(SignupActivity.this, "가입 완료 되었습니다. \n"+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 					Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					startActivity(intent);
 					finish();
 				} else {

@@ -19,6 +19,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignInAccountInfo extends AppCompatActivity implements View.OnClickListener{
 	
@@ -29,6 +37,7 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 	private ProgressBar mProgressView;
 	private ScrollView mLoginView;
 	private ScrollView mLogoutView;
+	private DatabaseReference mDatabase;
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,7 +54,7 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		mProgressView = findViewById(R.id.signin_progress);
 		mLoginView = findViewById(R.id.signin_loginscrollview);
 		mLogoutView = findViewById(R.id.signin_logoutscrollview);
-		
+		mDatabase = FirebaseDatabase.getInstance().getReference();
 		
 		mAuth = FirebaseAuth.getInstance();
 		
@@ -68,10 +77,54 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 	
 	// 현재 로그인 토큰이 있는 경우 바로 다음 Activity로 넘어가기
 	private void onAuthSuccess() {
+		// 로그인 할 때 데이터 베이스에 내 정보 쌓기
+		final FirebaseUser user = mAuth.getCurrentUser();
+		
+		mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				for(DataSnapshot ds : dataSnapshot.getChildren()){
+					ds.child("isCurrent").getRef().setValue(false);
+				}
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		
+		mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				DataUser datauser;
+				// 유저 정보를 모아서
+				if(user.getPhotoUrl() == null){
+					datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
+				} else {
+					datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
+				}
+				
+				Map<String, Object> inputUserData = datauser.toMap();
+				Map<String, Object> childUpdates = new HashMap<>();
+				// Map 에 한번에 저장 후
+				childUpdates.put("/users/" + user.getUid(), inputUserData);
+				// 데이터베이스에 집어넣기
+				mDatabase.updateChildren(childUpdates);
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
 		
 		mProgressView.setVisibility(View.GONE);
 		// Go to MainActivity : 메인으로 이동
-		startActivity(new Intent(SignInAccountInfo.this, MainActivity.class));
+		Intent intent = new Intent(SignInAccountInfo.this, MainActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
 		// 이 페이지는 종료시킴
 		finish();
 	}
@@ -92,7 +145,6 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 					FirebaseUser user = mAuth.getCurrentUser();
 					Toast.makeText(SignInAccountInfo.this, "로그인 하셨습니다.\n"+user.getEmail(), Toast.LENGTH_SHORT).show();
 					onAuthSuccess();
-					finish();
 				} else {
 					// TODO : 로그인에 실패했을 경우 어떤 것이 틀렸는지 받아올 수 있는지 확인하기
 					Toast.makeText(SignInAccountInfo.this, "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();

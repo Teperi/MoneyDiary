@@ -238,6 +238,7 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 									findViewById(R.id.input_moneyflow_progresslayout).setVisibility(View.GONE);
 									finish();
 								}
+								
 							});
 						}
 					}

@@ -29,6 +29,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import java.util.ArrayList;
+
 /*
  * 파이어베이스와 연동한 리사이클러뷰 만들기
  *
@@ -61,6 +63,7 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 		setSupportActionBar(mToolbar);
 		// DB 연결
 		mDatabase = FirebaseDatabase.getInstance().getReference();
+		mDatabase.keepSynced(true);
 		user = FirebaseAuth.getInstance().getCurrentUser();
 		// 리사이클러뷰 연결 & 고정
 		mRecycler = findViewById(R.id.moneyflow_recycler_view);
@@ -117,6 +120,42 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 		};
 		// 어뎁터와 리사이클러뷰 연결
 		mRecycler.setAdapter(mAdapter);
+		
+		
+		// 액션 모드 설정을 위한 확인
+		
+//		// RecyclerItemClickListener 를 그
+//		mRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mRecycler, new RecyclerItemClickListener.OnItemClickListener() {
+//
+//
+//			@Override
+//			public void onItemClick(View view, int position) {
+//				if (isMultiSelect) {
+//					//if multiple selection is enabled then select item on single click else perform normal click on item.
+//					multiSelect(position);
+//				} else {
+//					Intent i = new Intent(RecyclerViewMoneyFlowFB.this, EditMoneyFlowData.class);
+//					i.putExtra("mfposition", position);
+//					startActivity(i);
+//				}
+//			}
+//
+//			@Override
+//			public void onItemLongClick(View view, int position) {
+//				if (!isMultiSelect) {
+//					selectedIds = new ArrayList<>();
+//					isMultiSelect = true;
+//
+//					if (actionMode == null) {
+//						actionMode = startSupportActionMode(RecyclerViewMoneyFlowFB.this); //show ActionMode.
+//					}
+//				}
+//
+//				multiSelect(position);
+//			}
+//		}
+//
+//		));
 		
 	}
 	

@@ -58,6 +58,8 @@
         <activity android:name=".ChatActivity"/>
         <activity android:name=".EditDiarydata"/>
         <activity android:name=".MessengerUserList"/>
+        <activity android:name=".ChartTestActivity"/>
+        <activity android:name=".MainTestActivity"/>
 
     </application>
 

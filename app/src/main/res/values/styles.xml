@@ -55,6 +55,12 @@
         <item name="android:layout_marginEnd">10dp</item>
     </style>
 
+    <!--메인 카드뷰 style-->
+    <style name="style_mainCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardUseCompatPadding">true</item>
+
+    </style>
+
 
 
     <!--가계부 입력창 스타일-->

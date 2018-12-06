@@ -70,6 +70,7 @@ public class ChatActivity extends AppCompatActivity {
 	
 	// 채팅 데이터
 	private DatabaseReference mDatabase;
+	private String ChatKey;
 	
 	
 	@Override
@@ -114,12 +115,19 @@ public class ChatActivity extends AppCompatActivity {
 		mRecycler.setLayoutManager(mLayoutManager);
 		
 		// 데이터베이스 연결
-		mDatabase = FirebaseDatabase.getInstance().getReference();
+		mDatabase = FirebaseDatabase.getInstance().getReference().child("Messenger").child("chatRoom");
 		
 		// 쿼리로 가져오기
 		// 가져올 데이터 쿼리
-		// TODO : 인텐트로 리스트 넘겨주어야 함
-		Query ChatContentQuery = mDatabase.child("messages");
+		ChatKey = getIntent().getStringExtra("ChatKey");
+		if (ChatKey == null) {
+			// key 는 새로운 키 생성
+			ChatKey = mDatabase.push().getKey();
+		} else {
+		
+		}
+		
+		Query ChatContentQuery = mDatabase.child(ChatKey).child(MESSAGES_CHILD).orderByChild("dateTime");
 		
 		// 날짜별 정렬을 위해 사용 예정
 		//.child(user.getUid()).orderByChild("date")
@@ -247,7 +255,7 @@ public class ChatActivity extends AppCompatActivity {
 						null /* no image */,
 						System.currentTimeMillis());
 				// 데이터 넣어주고
-				mDatabase.child(MESSAGES_CHILD)
+				mDatabase.child(ChatKey).child(MESSAGES_CHILD)
 						.push().setValue(dataChatContent);
 				// 텍스트 다 지우고
 				mSendText.setText("");

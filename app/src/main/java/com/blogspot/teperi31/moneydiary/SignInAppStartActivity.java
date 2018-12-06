@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
@@ -94,37 +95,28 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 		// 로그인 할 때 데이터 베이스에 내 정보 쌓기
 		final FirebaseUser user = mAuth.getCurrentUser();
 		
-		mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+		mDatabase.child("users").orderByKey().equalTo(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				for(DataSnapshot ds : dataSnapshot.getChildren()){
-					ds.child("isCurrent").getRef().setValue(false);
-				}
-			}
-			
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-			
-			}
-		});
-		
-		mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				DataUser datauser;
-				// 유저 정보를 모아서
-				if(user.getPhotoUrl() == null){
-					datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
+				if(dataSnapshot.hasChildren()) {
+					dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("isCurrent").getRef().setValue(true);
+					
 				} else {
-					datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
+					DataUser datauser;
+					// 유저 정보를 모아서
+					if(user.getPhotoUrl() == null){
+						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null, true);
+					} else {
+						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), true);
+					}
+					
+					Map<String, Object> inputUserData = datauser.toMap();
+					Map<String, Object> childUpdates = new HashMap<>();
+					// Map 에 한번에 저장 후
+					childUpdates.put("/users/" + user.getUid(), inputUserData);
+					// 데이터베이스에 집어넣기
+					mDatabase.updateChildren(childUpdates);
 				}
-				
-				Map<String, Object> inputUserData = datauser.toMap();
-				Map<String, Object> childUpdates = new HashMap<>();
-				// Map 에 한번에 저장 후
-				childUpdates.put("/users/" + user.getUid(), inputUserData);
-				// 데이터베이스에 집어넣기
-				mDatabase.updateChildren(childUpdates);
 			}
 			
 			@Override
@@ -132,14 +124,13 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 			
 			}
 		});
-		
-		
 		mProgressView.setVisibility(View.GONE);
 		// Go to MainActivity : 메인으로 이동
-		Toast.makeText(this, "환영합니다.\n" + mAuth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+		Toast.makeText(SignInAppStartActivity.this, "환영합니다.\n" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
 		startActivity(new Intent(SignInAppStartActivity.this, MainActivity.class));
 		// 이 페이지는 종료시킴
 		finish();
+		
 	}
 	
 	
@@ -156,9 +147,7 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 			public void onComplete(@NonNull Task<AuthResult> task) {
 				if(task.isSuccessful()) {
 					FirebaseUser user = mAuth.getCurrentUser();
-					Toast.makeText(SignInAppStartActivity.this, "로그인 하셨습니다.\n"+user.getEmail(), Toast.LENGTH_SHORT).show();
 					onAuthSuccess();
-					
 				} else {
 					// TODO : 로그인에 실패했을 경우 어떤 것이 틀렸는지 받아올 수 있는지 확인하기
 					Toast.makeText(SignInAppStartActivity.this, "로그인에 실패했습니다. \n", Toast.LENGTH_SHORT).show();
@@ -211,6 +200,4 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 				return;
 		}
 	}
-	
-	
 }

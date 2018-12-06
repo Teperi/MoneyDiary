@@ -1,24 +1,23 @@
 package com.blogspot.teperi31.moneydiary;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class MessengerUserList extends AppCompatActivity {
 	
@@ -29,9 +28,15 @@ public class MessengerUserList extends AppCompatActivity {
 	private FirebaseUser mUser;
 	private DatabaseReference mDatabase;
 	
+	// 유저 리스트
+	private ArrayList<DataUser> mUserList = new ArrayList<>();
+	
 	private RecyclerView mRecyclerView;
-	private FirebaseRecyclerAdapter<DataUser, ViewHolderChatUserList> mAdapter;
+	private AdapterMessengerUserList mAdapter;
 	private RecyclerView.LayoutManager mLayoutmanager;
+	
+	//플로팅 버튼
+	private FloatingActionButton fab;
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,56 +59,34 @@ public class MessengerUserList extends AppCompatActivity {
 		
 		mRecyclerView.setLayoutManager(mLayoutmanager);
 		
-		
-		
-		// 가져올 데이터 쿼리 정렬
-		Query mUserDatabase = mDatabase.child("users").orderByChild("isCurrent").equalTo(false);
-		
-		// 데이터 가져오는 builder 설정
-		FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<DataUser>()
-				.setQuery(mUserDatabase, DataUser.class)
-				.build();
-		
-		mAdapter = new FirebaseRecyclerAdapter<DataUser, ViewHolderChatUserList>(options) {
-			
+		// 데이터 리스트에 담기
+		mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
-			public ViewHolderChatUserList onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-				View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.messenger_chatlist_row,viewGroup,false);
-				return new ViewHolderChatUserList(itemView);
-			}
-			
-			@Override
-			protected void onBindViewHolder(@NonNull ViewHolderChatUserList holder, int position, @NonNull DataUser model) {
-				holder.bindToChatList(model);
-				holder.itemView.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Intent intent = new Intent(v.getContext(), ChatActivity.class);
-						startActivity(intent);
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				for (DataSnapshot ds : dataSnapshot.getChildren()) {
+					DataUser user = ds.getValue(DataUser.class);
+					if (!user.UID.equals(mUser.getUid())) {
+						mUserList.add(user);
 					}
-				});
+				}
+				mAdapter = new AdapterMessengerUserList(mUserList);
+				mRecyclerView.setAdapter(mAdapter);
 			}
-		};
-		mRecyclerView.setAdapter(mAdapter);
-		
-		
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
 	}
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		// 어뎁터가 있으면 실시간 연결
-		if (mAdapter != null) {
-			mAdapter.startListening();
-		}
 	}
 	
 	@Override
 	protected void onStop() {
 		super.onStop();
-		// 페이지가 멈출 때 실시간 연결기능 해제
-		if (mAdapter != null) {
-			mAdapter.stopListening();
-		}
 	}
 }

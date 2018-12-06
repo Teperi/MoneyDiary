@@ -80,11 +80,26 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		// 로그인 할 때 데이터 베이스에 내 정보 쌓기
 		final FirebaseUser user = mAuth.getCurrentUser();
 		
-		mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+		mDatabase.child("users").orderByKey().equalTo(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				for(DataSnapshot ds : dataSnapshot.getChildren()){
-					ds.child("isCurrent").getRef().setValue(false);
+				if(dataSnapshot.hasChildren()) {
+					dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("isCurrent").getRef().setValue(true);
+				} else {
+					DataUser datauser;
+					// 유저 정보를 모아서
+					if(user.getPhotoUrl() == null){
+						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null, true);
+					} else {
+						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), true);
+					}
+					
+					Map<String, Object> inputUserData = datauser.toMap();
+					Map<String, Object> childUpdates = new HashMap<>();
+					// Map 에 한번에 저장 후
+					childUpdates.put("/users/" + user.getUid(), inputUserData);
+					// 데이터베이스에 집어넣기
+					mDatabase.updateChildren(childUpdates);
 				}
 			}
 			
@@ -94,39 +109,17 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 			}
 		});
 		
-		mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				DataUser datauser;
-				// 유저 정보를 모아서
-				if(user.getPhotoUrl() == null){
-					datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
-				} else {
-					datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
-				}
-				
-				Map<String, Object> inputUserData = datauser.toMap();
-				Map<String, Object> childUpdates = new HashMap<>();
-				// Map 에 한번에 저장 후
-				childUpdates.put("/users/" + user.getUid(), inputUserData);
-				// 데이터베이스에 집어넣기
-				mDatabase.updateChildren(childUpdates);
-			}
-			
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-			
-			}
-		});
 		
 		mProgressView.setVisibility(View.GONE);
 		// Go to MainActivity : 메인으로 이동
-		Intent intent = new Intent(SignInAccountInfo.this, MainActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
+		Toast.makeText(SignInAccountInfo.this, "환영합니다.\n" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+		Intent i = new Intent(SignInAccountInfo.this, MainActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(i);
 		// 이 페이지는 종료시킴
 		finish();
+		
 	}
 	
 	
@@ -142,8 +135,6 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 			@Override
 			public void onComplete(@NonNull Task<AuthResult> task) {
 				if(task.isSuccessful()) {
-					FirebaseUser user = mAuth.getCurrentUser();
-					Toast.makeText(SignInAccountInfo.this, "로그인 하셨습니다.\n"+user.getEmail(), Toast.LENGTH_SHORT).show();
 					onAuthSuccess();
 				} else {
 					// TODO : 로그인에 실패했을 경우 어떤 것이 틀렸는지 받아올 수 있는지 확인하기
@@ -158,8 +149,21 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 	}
 	
 	private void signOut() {
-		mAuth.signOut();
-		updateUI(null);
+		// 로그아웃 버튼을 누르는 순간 현재 접속자 목록에서 삭제
+		mDatabase.child("users").orderByKey().equalTo(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("isCurrent").getRef().setValue(false);
+				mAuth.signOut();
+				updateUI(null);
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		
 	}
 	
 	private boolean validateForm() {

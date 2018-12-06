@@ -87,29 +87,15 @@ public class SignupActivity extends AppCompatActivity {
 					final FirebaseUser user = mAuth.getCurrentUser();
 					updateProfile(user, Nickname);
 					
-					mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
-						@Override
-						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-							for(DataSnapshot ds : dataSnapshot.getChildren()){
-								ds.child("isCurrent").getRef().setValue(false);
-							}
-						}
-						
-						@Override
-						public void onCancelled(@NonNull DatabaseError databaseError) {
-						
-						}
-					});
-					
-					mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+					mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 						@Override
 						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 							DataUser datauser;
 							// 유저 정보를 모아서
 							if(user.getPhotoUrl() == null){
-								datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
+								datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null, true);
 							} else {
-								datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
+								datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), true);
 							}
 							
 							Map<String, Object> inputUserData = datauser.toMap();

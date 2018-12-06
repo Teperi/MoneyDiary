@@ -372,7 +372,7 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 				Toast.makeText(EditMoneyFlowDataFB.this, "로딩 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
 			}
 		};
-		mMFListReference.addValueEventListener(mfDataLinstener);
+		mMFListReference.addListenerForSingleValueEvent(mfDataLinstener);
 		
 		
 	}

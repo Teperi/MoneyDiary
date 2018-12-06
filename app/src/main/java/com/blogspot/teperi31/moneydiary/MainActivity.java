@@ -18,10 +18,21 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.text.SimpleDateFormat;
 
 
 public class MainActivity extends AppCompatActivity {
+	// 파이어베이스 정보 받아오기
+	private FirebaseUser mUser;
+	private DatabaseReference mDatabase;
 	
 	String saveDate = null;
 	// 날짜를 저장하는 String
@@ -38,7 +49,14 @@ public class MainActivity extends AppCompatActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
+		// 이 페이지가 생성되는 순간 무조건 로그인 상태를 True 로 잡음
+		mUser = FirebaseAuth.getInstance().getCurrentUser();
+		mDatabase = FirebaseDatabase.getInstance().getReference();
+		
+		
+		
 		setContentView(R.layout.activity_main);
 		
 		// action bar 생성
@@ -74,10 +92,8 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				
-				
 				Intent i = new Intent(MainActivity.this, MainTestActivity.class);
 				startActivity(i);
-				
 				
 			}
 		});
@@ -113,6 +129,28 @@ public class MainActivity extends AppCompatActivity {
 		});
 		
 		
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mDatabase.child("users").orderByKey().equalTo(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				dataSnapshot.child(mUser.getUid()+"/isCurrent").getRef().setValue(false);
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		mDatabase.onDisconnect();
 	}
 	
 	//	toolbar 에 메뉴 띄워주는 함수

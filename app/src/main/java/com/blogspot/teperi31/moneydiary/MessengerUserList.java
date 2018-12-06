@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +21,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
+/*
+* 이 앱에 가입한 전체 유저 리스트 보여주는 화면
+* TODO : 추후 Floating 버튼을 통해 이 화면에 도달할수 있도록 설정/메신저 메인화면에는 채팅방 리스트 노출
+* */
 
 public class MessengerUserList extends AppCompatActivity {
 	
@@ -31,6 +39,7 @@ public class MessengerUserList extends AppCompatActivity {
 	// 유저 리스트
 	private ArrayList<DataUser> mUserList = new ArrayList<>();
 	
+	// 리사이클러뷰 관련
 	private RecyclerView mRecyclerView;
 	private AdapterMessengerUserList mAdapter;
 	private RecyclerView.LayoutManager mLayoutmanager;
@@ -59,12 +68,13 @@ public class MessengerUserList extends AppCompatActivity {
 		
 		mRecyclerView.setLayoutManager(mLayoutmanager);
 		
-		// 데이터 리스트에 담기
+		// USER 정보 데이터를 로컬 리스트에 담기
 		mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				for (DataSnapshot ds : dataSnapshot.getChildren()) {
 					DataUser user = ds.getValue(DataUser.class);
+					// 내 UID 뺴고 담도록 설정
 					if (!user.UID.equals(mUser.getUid())) {
 						mUserList.add(user);
 					}

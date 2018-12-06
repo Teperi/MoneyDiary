@@ -46,6 +46,19 @@
         />
 
     <TextView
+        android:id="@+id/messenger_chatcontent_recived_row_unreadCoutText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/colorAccentDark"
+        android:layout_margin="4dp"
+
+        app:layout_constraintStart_toEndOf="@id/messenger_chatcontent_recived_row_contentText"
+        app:layout_constraintBottom_toTopOf="@id/messenger_chatcontent_recived_row_time"
+
+        />
+
+    <TextView
         android:id="@+id/messenger_chatcontent_recived_row_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

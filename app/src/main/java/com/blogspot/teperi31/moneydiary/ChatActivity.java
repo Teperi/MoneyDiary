@@ -27,10 +27,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -69,8 +71,10 @@ public class ChatActivity extends AppCompatActivity {
 	
 	
 	// 채팅 데이터
-	private DatabaseReference mDatabase;
-	private String ChatKey;
+	private DatabaseReference mDatabaseChatRoom;
+	private DatabaseReference mDatabaseUserRoom;
+	
+	private String ChatRoomKey;
 	
 	
 	@Override
@@ -115,19 +119,21 @@ public class ChatActivity extends AppCompatActivity {
 		mRecycler.setLayoutManager(mLayoutManager);
 		
 		// 데이터베이스 연결
-		mDatabase = FirebaseDatabase.getInstance().getReference().child("Messenger").child("chatRoom");
+		mDatabaseChatRoom = FirebaseDatabase.getInstance().getReference().child("Messenger").child("chatRoom");
+		mDatabaseUserRoom = FirebaseDatabase.getInstance().getReference().child("UserRooms").child(mFirebaseUser.getUid());
+		
+		
 		
 		// 쿼리로 가져오기
 		// 가져올 데이터 쿼리
-		ChatKey = getIntent().getStringExtra("ChatKey");
-		if (ChatKey == null) {
-			// key 는 새로운 키 생성
-			ChatKey = mDatabase.push().getKey();
+		ChatRoomKey = getIntent().getStringExtra("ChatRoomKey");
+		if (ChatRoomKey == null) {
+			Log.w("test", "채팅방을 만들 때 키가 안넘어 왔다는데?");
 		} else {
-		
+			Log.d("test", "너 키가 뭐니 : " + ChatRoomKey);
 		}
 		
-		Query ChatContentQuery = mDatabase.child(ChatKey).child(MESSAGES_CHILD).orderByChild("dateTime");
+		Query ChatContentQuery = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD).orderByChild("dateTime");
 		
 		// 날짜별 정렬을 위해 사용 예정
 		//.child(user.getUid()).orderByChild("date")
@@ -176,14 +182,18 @@ public class ChatActivity extends AppCompatActivity {
 			@Override
 			protected void onBindViewHolder(RecyclerView.ViewHolder holder, int position, DataChatContent model) {
 				mProgressBar.setVisibility(View.INVISIBLE);
-				if(getItemViewType(position) == MY_MESSAGE){
-					((ViewHolderChatSent) holder).bindToChat(model);
+				if (getItemViewType(position) == MY_MESSAGE) {
+					// ChatRoomKey를 넘겨줘서 ChatRoomKey 안의 UnReadCount 에 접근할 수 있도록 함
+					((ViewHolderChatSent) holder).bindToChat(model, ChatRoomKey);
 				} else {
-					((ViewHolderChatRecived) holder).bindToChat(model);
+					((ViewHolderChatRecived) holder).bindToChat(model, ChatRoomKey);
 				}
 			}
+			
+			
 		};
-		
+		// 아직 얘가 뭐하는건지는 정확히 파악을 못했는데.....
+		// TODO : 파악하기
 		mFirebaseChatContentAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 			@Override
 			public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -247,20 +257,32 @@ public class ChatActivity extends AppCompatActivity {
 			public void onClick(View view) {
 				// 데이터가 2번 이상 들어가지 않도록 버튼 비활성화
 				mSendButton.setEnabled(false);
-				DataChatContent dataChatContent = new
-						DataChatContent(mFirebaseUser.getUid(),
-						mSendText.getText().toString(),
-						mUserNickname,
-						mUserPhoto,
-						null /* no image */,
-						System.currentTimeMillis());
-				// 데이터 넣어주고
-				mDatabase.child(ChatKey).child(MESSAGES_CHILD)
-						.push().setValue(dataChatContent);
-				// 텍스트 다 지우고
-				mSendText.setText("");
-				// 버튼 활성화
-				mSendButton.setEnabled(true);
+				mDatabaseUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+						String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+								.push().getKey();
+						DataChatContent dataChatContent = new
+								DataChatContent(mFirebaseUser.getUid(),
+								mSendText.getText().toString(),
+								mUserNickname,
+								mUserPhoto,
+								null /* no image */,
+								System.currentTimeMillis(),
+								dataSnapshot.getValue(DataMessengerUserRoom.class).UserCount,
+								key);
+						// 데이터 넣어주고
+						mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+								.child(key).setValue(dataChatContent);
+						// 텍스트 다 지우고
+						mSendText.setText("");
+					}
+					
+					@Override
+					public void onCancelled(@NonNull DatabaseError databaseError) {
+					
+					}
+				});
 			}
 		});
 		
@@ -269,16 +291,19 @@ public class ChatActivity extends AppCompatActivity {
 	
 	@Override
 	public void onPause() {
+		// 데이터 실시간 변경사항 체크 해제
 		mFirebaseChatContentAdapter.stopListening();
 		super.onPause();
 	}
 	
 	@Override
 	protected void onStart() {
+		// 데이터 실시간 변경사항 체크
 		mFirebaseChatContentAdapter.startListening();
 		super.onStart();
 	}
 	
+	// 사진 관련.. 아직 제대로 못봣다.
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -290,47 +315,77 @@ public class ChatActivity extends AppCompatActivity {
 					final Uri uri = data.getData();
 					Log.d("test", "Uri: " + uri.toString());
 					
-					DataChatContent tempMessage = new DataChatContent(mFirebaseUser.getUid(), null, mUserNickname, mUserPhoto,
-							LOADING_IMAGE_URL, System.currentTimeMillis());
-					mDatabase.child(MESSAGES_CHILD).push()
-							.setValue(tempMessage, new DatabaseReference.CompletionListener() {
-								@Override
-								public void onComplete(DatabaseError databaseError,
-								                       DatabaseReference databaseReference) {
-									if (databaseError == null) {
-										String key = databaseReference.getKey();
-										StorageReference storageReference =
-												FirebaseStorage.getInstance()
-														.getReference(mFirebaseUser.getUid())
-														.child(key)
-														.child(uri.getLastPathSegment());
-										
-										putImageInStorage(storageReference, uri, key);
-									} else {
-										Log.w("test", "Unable to write message to database.",
-												databaseError.toException());
-									}
-								}
-							});
+					mDatabaseUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
+						@Override
+						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+							String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+									.push().getKey();
+							DataChatContent tempMessage = new DataChatContent(mFirebaseUser.getUid(),
+									null, mUserNickname, mUserPhoto,
+									LOADING_IMAGE_URL, System.currentTimeMillis(),
+									dataSnapshot.getValue(DataMessengerUserRoom.class).UserCount,
+									key);
+							
+							
+							// 데이터 넣어주고
+							mDatabaseChatRoom.child(MESSAGES_CHILD).child(key)
+									.setValue(tempMessage, new DatabaseReference.CompletionListener() {
+										@Override
+										public void onComplete(DatabaseError databaseError,
+										                       DatabaseReference databaseReference) {
+											if (databaseError == null) {
+												String key = databaseReference.getKey();
+												StorageReference storageReference =
+														FirebaseStorage.getInstance()
+																.getReference(mFirebaseUser.getUid())
+																.child(key)
+																.child(uri.getLastPathSegment());
+												
+												putImageInStorage(storageReference, uri, key);
+											} else {
+												Log.w("test", "Unable to write message to database.",
+														databaseError.toException());
+											}
+										}
+									});
+						}
+						
+						@Override
+						public void onCancelled(@NonNull DatabaseError databaseError) {
+						
+						}
+					});
 				}
 			}
 		}
 	}
 	
+	// 사진 관련. 아직 제대로 못봤다.
 	private void putImageInStorage(StorageReference storageReference, Uri uri, final String key) {
 		storageReference.putFile(uri).addOnCompleteListener(ChatActivity.this,
-				
-				
 				new OnCompleteListener<UploadTask.TaskSnapshot>() {
 					@Override
-					public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+					public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
 						if (task.isSuccessful()) {
-							DataChatContent dataChatContent =
-									new DataChatContent(mFirebaseUser.getUid(), null, mUserNickname, mUserPhoto,
-											task.getResult().getStorage().getDownloadUrl()
-													.toString(), System.currentTimeMillis());
-							mDatabase.child(MESSAGES_CHILD).child(key)
-									.setValue(dataChatContent);
+							mDatabaseUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
+								@Override
+								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+									
+									DataChatContent dataChatContent =
+											new DataChatContent(mFirebaseUser.getUid(), null, mUserNickname, mUserPhoto,
+													task.getResult().getStorage().getDownloadUrl()
+															.toString(), System.currentTimeMillis(),
+													dataSnapshot.getValue(DataMessengerUserRoom.class).UserCount,
+													key);
+									mDatabaseChatRoom.child(MESSAGES_CHILD).child(key)
+											.setValue(dataChatContent);
+								}
+								
+								@Override
+								public void onCancelled(@NonNull DatabaseError databaseError) {
+								
+								}
+							});
 						} else {
 							Log.w("test", "Image upload task was not successful.",
 									task.getException());

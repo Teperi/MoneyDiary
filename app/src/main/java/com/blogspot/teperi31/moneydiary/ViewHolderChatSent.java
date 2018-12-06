@@ -11,25 +11,34 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 public class ViewHolderChatSent extends RecyclerView.ViewHolder {
 	TextView messageTextView;
 	ImageView messageImageView;
 	TextView messageTimeView;
+	TextView messengerUnreadCountTextView;
 	
 	public ViewHolderChatSent(View v) {
 		super(v);
 		messageTextView = itemView.findViewById(R.id.messenger_chatcontent_sent_row_contentText);
 		messageImageView = itemView.findViewById(R.id.messenger_chatcontent_sent_row_contentImage);
 		messageTimeView = itemView.findViewById(R.id.messenger_chatcontent_sent_row_time);
+		messengerUnreadCountTextView = itemView.findViewById(R.id.messenger_chatcontent_sent_row_unreadCoutText);
 	}
 	
-	public void bindToChat(DataChatContent usermessage) {
+	public void bindToChat(DataChatContent usermessage, String ChatRoomKey) {
 		//텍스트가 있는 경우 텍스트 연결
 		if (usermessage.getText() != null) {
 			messageTextView.setText(usermessage.getText());
@@ -68,6 +77,52 @@ public class ViewHolderChatSent extends RecyclerView.ViewHolder {
 		// 시간 데이터 가져오기
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		messageTimeView.setText(sdf.format(new Date(usermessage.getDateTime())));
+		if (usermessage.UnReadUserCount == 0) {
+			messengerUnreadCountTextView.setText("");
+			messengerUnreadCountTextView.setVisibility(TextView.GONE);
+		} else {
+			messengerUnreadCountTextView.setVisibility(TextView.VISIBLE);
+			messengerUnreadCountTextView.setText(String.valueOf(usermessage.UnReadUserCount));
+		}
+		
+		setReadCounter(usermessage, ChatRoomKey, usermessage.messageKey);
+	}
+	
+	
+	void setReadCounter(final DataChatContent usermessage, final String ChatRoomKey, final String MessageKey) {
+		final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+		
+		if (!usermessage.ReadUsers.containsKey(mUser.getUid())) {
+			
+			FirebaseDatabase.getInstance().getReference()
+					.child("Messenger/chatRoom").child(ChatRoomKey)
+					.child("messages").child(MessageKey).child("ReadUsers")
+					.addListenerForSingleValueEvent(new ValueEventListener() {
+						@Override
+						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+							Log.d("test", dataSnapshot.getKey());
+							Map<String, Boolean> readUsers = (Map<String, Boolean>) dataSnapshot.getValue();
+							readUsers.put(mUser.getUid(), true);
+							
+							FirebaseDatabase.getInstance().getReference()
+									.child("Messenger/chatRoom").child(ChatRoomKey)
+									.child("messages").child(MessageKey).child("ReadUsers")
+									.setValue(readUsers);
+							Long count = usermessage.UnReadUserCount - 1;
+							
+							FirebaseDatabase.getInstance().getReference()
+									.child("Messenger/chatRoom").child(ChatRoomKey)
+									.child("messages").child(MessageKey).child("UnReadUserCount").setValue(count);
+							
+						}
+						
+						@Override
+						public void onCancelled(@NonNull DatabaseError databaseError) {
+						
+						}
+					});
+		}
+		
 		
 	}
 }

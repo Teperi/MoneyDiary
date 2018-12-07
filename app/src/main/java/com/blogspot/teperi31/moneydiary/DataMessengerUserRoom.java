@@ -14,6 +14,9 @@ public class DataMessengerUserRoom {
 	public String location;
 	public Long UserCount;
 	public Map<String, Object> UserList;
+	public String lastMessage;
+	public Long lastTime;
+	public Long UnReadMessageCount;
 	
 	public DataMessengerUserRoom() {
 	

@@ -46,6 +46,9 @@ public class AdapterMessengerUserList extends RecyclerView.Adapter<AdapterMessen
 			super(view);
 			ProfileImage = view.findViewById(R.id.messenger_chatlist_row_profileCircleImage);
 			ProfileName = view.findViewById(R.id.messenger_chatlist_row_profileNicknameText);
+			// 숨겨야 하는 뷰 숨기기
+			view.findViewById(R.id.messenger_chatlist_row_LastMessageText).setVisibility(View.GONE);
+			view.findViewById(R.id.messenger_chatlist_row_UnReadMessagesCountText).setVisibility(View.GONE);
 		}
 	}
 	

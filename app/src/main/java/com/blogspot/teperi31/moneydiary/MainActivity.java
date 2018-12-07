@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 		findViewById(R.id.testbutton3).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this, MessengerUserList.class);
+				Intent intent = new Intent(MainActivity.this, MessengerChatRoomList.class);
 				startActivity(intent);
 				
 			}

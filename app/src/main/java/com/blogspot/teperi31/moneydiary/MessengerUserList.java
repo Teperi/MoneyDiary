@@ -1,9 +1,12 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,7 +48,7 @@ public class MessengerUserList extends AppCompatActivity {
 	private RecyclerView.LayoutManager mLayoutmanager;
 	
 	//플로팅 버튼
-	private FloatingActionButton fab;
+	private FloatingActionButton mFAB;
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +58,15 @@ public class MessengerUserList extends AppCompatActivity {
 		// 툴바 연결
 		mToolbar = findViewById(R.id.messenger_chatlist_toolbarTop);
 		setSupportActionBar(mToolbar);
+		
+		// 뒤로가기 버튼
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		
+		// 플로팅 버튼 숨김
+		findViewById(R.id.messenger_chatlist_floatingbutton).setVisibility(View.GONE);
+		
+		
 		
 		// 유저 정보 가져오기
 		mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -81,11 +93,23 @@ public class MessengerUserList extends AppCompatActivity {
 				}
 				mAdapter = new AdapterMessengerUserList(mUserList);
 				mRecyclerView.setAdapter(mAdapter);
+				
+				findViewById(R.id.messenger_chatlist_createchatGroup).setVisibility(View.VISIBLE);
+				
+				
 			}
 			
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
 			
+			}
+		});
+		
+		findViewById(R.id.messenger_chatlist_createchatGroup).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(v.getContext(), MessengerGroupCreateList.class);
+				startActivity(intent);
 			}
 		});
 	}
@@ -98,5 +122,12 @@ public class MessengerUserList extends AppCompatActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
+	}
+	
+	// 뒤로가기 버튼 기능
+	@Override
+	public boolean onSupportNavigateUp() {
+		MessengerUserList.super.onBackPressed();
+		return true;
 	}
 }

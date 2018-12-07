@@ -10,6 +10,8 @@
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/styleAppBar"/>
 
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messenger_chatlist_recyclerview"
         android:layout_width="0dp"
@@ -18,7 +20,7 @@
         android:scrollbars="vertical"
 
         app:layout_constraintTop_toBottomOf="@id/messenger_chatlist_toolbarTop"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/messenger_chatlist_createchatGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -29,6 +31,24 @@
         android:visibility="gone"
 
         app:layout_constraintTop_toBottomOf="@id/messenger_chatlist_toolbarTop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <android.support.design.button.MaterialButton
+        android:id="@+id/messenger_chatlist_createchatGroup"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:layout_margin="8dp"
+        app:icon="@drawable/ic_action_groupadd"
+        android:text="그룹 만들기"
+        android:textSize="20sp"
+        app:backgroundTint="@color/colorAccentLight"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        app:layout_constraintTop_toBottomOf="@id/messenger_chatlist_recyclerview"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

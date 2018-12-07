@@ -37,6 +37,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class ChatActivity extends AppCompatActivity {
 	// Child 정보
 	public static final String MESSAGES_CHILD = "messages";
@@ -72,7 +76,13 @@ public class ChatActivity extends AppCompatActivity {
 	
 	// 채팅 데이터
 	private DatabaseReference mDatabaseChatRoom;
-	private DatabaseReference mDatabaseUserRoom;
+	private DatabaseReference mDatabaseMyUserRoom;
+	private DatabaseReference mDatabaseOtherUserRoom;
+	private DatabaseReference mDatabaseOtherUserList;
+	
+	//채팅방에 있는 다른 유저 UID 저장
+	private Map<String, Boolean> OtherUIDInfo = new HashMap<>();
+	ArrayList<String> OtherUIDList = new ArrayList<>();
 	
 	private String ChatRoomKey;
 	
@@ -119,9 +129,12 @@ public class ChatActivity extends AppCompatActivity {
 		mRecycler.setLayoutManager(mLayoutManager);
 		
 		// 데이터베이스 연결
+		// 메시지가 쌓이는 곳의 채팅방 데이터
 		mDatabaseChatRoom = FirebaseDatabase.getInstance().getReference().child("Messenger").child("chatRoom");
-		mDatabaseUserRoom = FirebaseDatabase.getInstance().getReference().child("UserRooms").child(mFirebaseUser.getUid());
-		
+		// 내 UserRoom 데이터
+		mDatabaseMyUserRoom = FirebaseDatabase.getInstance().getReference().child("UserRooms").child(mFirebaseUser.getUid());
+		// 상대방 UserRoom 연결용
+		mDatabaseOtherUserRoom = FirebaseDatabase.getInstance().getReference().child("UserRooms");
 		
 		
 		// 쿼리로 가져오기
@@ -132,6 +145,28 @@ public class ChatActivity extends AppCompatActivity {
 		} else {
 			Log.d("test", "너 키가 뭐니 : " + ChatRoomKey);
 		}
+		
+		// 상대방 UserList 받아오기
+		mDatabaseOtherUserList = FirebaseDatabase.getInstance().getReference().child("UserRooms").child(mFirebaseUser.getUid()).child(ChatRoomKey).child("UserList");
+		mDatabaseOtherUserList.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				// 채팅방에 포함된 전체 리스트 받아와서
+				OtherUIDInfo = (Map<String, Boolean>) dataSnapshot.getValue();
+				// 내 UID 제외
+				OtherUIDInfo.remove(mFirebaseUser.getUid());
+				OtherUIDList.addAll(OtherUIDInfo.keySet());
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		
+		// 내 채팅방에 안읽은 메세지 수 삭제
+		mDatabaseMyUserRoom.child(ChatRoomKey).child("UnReadMessageCount").removeValue();
+		
 		
 		Query ChatContentQuery = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD).orderByChild("dateTime");
 		
@@ -193,7 +228,7 @@ public class ChatActivity extends AppCompatActivity {
 			
 		};
 		// 아직 얘가 뭐하는건지는 정확히 파악을 못했는데.....
-		// TODO : 파악하기
+		// TODO : 파악하기 / 파악해서 안읽은 포지션으로 보내는 방법 찾기
 		mFirebaseChatContentAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 			@Override
 			public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -257,23 +292,62 @@ public class ChatActivity extends AppCompatActivity {
 			public void onClick(View view) {
 				// 데이터가 2번 이상 들어가지 않도록 버튼 비활성화
 				mSendButton.setEnabled(false);
-				mDatabaseUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
+				// 데이터 넣어주는 부분
+				mDatabaseMyUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
 					@Override
 					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+						// 채팅방 내 메시지부분의 키 가져오기
 						String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
 								.push().getKey();
-						DataChatContent dataChatContent = new
+						// 마지막 채팅 내용 및 시간 기록
+						final String LastText = mSendText.getText().toString();
+						final Long LastTime = System.currentTimeMillis();
+						// Chat message 저장
+						final DataChatContent dataChatContent = new
 								DataChatContent(mFirebaseUser.getUid(),
-								mSendText.getText().toString(),
+								LastText,
 								mUserNickname,
 								mUserPhoto,
 								null /* no image */,
-								System.currentTimeMillis(),
+								LastTime,
 								dataSnapshot.getValue(DataMessengerUserRoom.class).UserCount,
 								key);
 						// 데이터 넣어주고
 						mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
 								.child(key).setValue(dataChatContent);
+						// 마지막 채팅 내용 채팅방에 띄우기 위해 저장 - 내 채팅방
+						mDatabaseMyUserRoom.child(ChatRoomKey).child("lastMessage").setValue(LastText);
+						mDatabaseMyUserRoom.child(ChatRoomKey).child("lastTime").setValue(LastTime);
+						
+						// 마지막 채팅 내용 채팅방에 띄우기 위해 저장 - 상대방 채팅방
+						// 채팅방의 다른 유저 수 만큼 돌리기
+						for (String UID : OtherUIDList) {
+							// 상대방의 채팅방 정보에 접근
+							mDatabaseOtherUserRoom.child(UID).child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
+								@Override
+								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+									// 만약 안읽은 메시지 수가 없으면
+									if (!dataSnapshot.child("UnReadMessageCount").exists()) {
+										// 안읽은 수 1개
+										dataSnapshot.child("UnReadMessageCount").getRef().setValue(1);
+									}
+									// 만약 안읽은 메시지 수가 있다면
+									else {
+										// 안읽은 수 +1
+										dataSnapshot.child("UnReadMessageCount").getRef().setValue((Long) dataSnapshot.child("UnReadMessageCount").getValue() + 1);
+									}
+									// 최근 온 채팅 글
+									dataSnapshot.child("lastMessage").getRef().setValue(LastText);
+									// 최근 온 채팅 시간
+									dataSnapshot.child("lastTime").getRef().setValue(LastTime);
+								}
+								
+								@Override
+								public void onCancelled(@NonNull DatabaseError databaseError) {
+								
+								}
+							});
+						}
 						// 텍스트 다 지우고
 						mSendText.setText("");
 					}
@@ -315,7 +389,7 @@ public class ChatActivity extends AppCompatActivity {
 					final Uri uri = data.getData();
 					Log.d("test", "Uri: " + uri.toString());
 					
-					mDatabaseUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
+					mDatabaseMyUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
 						@Override
 						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 							String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
@@ -367,7 +441,7 @@ public class ChatActivity extends AppCompatActivity {
 					@Override
 					public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
 						if (task.isSuccessful()) {
-							mDatabaseUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
+							mDatabaseMyUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
 								@Override
 								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 									

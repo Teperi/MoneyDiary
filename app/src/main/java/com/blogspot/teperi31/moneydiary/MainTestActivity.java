@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.Legend;
@@ -33,17 +36,17 @@ import java.util.Date;
 import java.util.Locale;
 
 /*
-* 12.05 현재 상황
-* 그래프는 처음에 뜨지만 데이터가 0 형태로 되어있다가 갑자기 값이 전달되는 형태임
-* 이 문제를 해결하기 위해서 데이터를 기본으로 만들었다가 변경하는 형태로 접근해야 한다고 생각됨
-* 핸들러나 AsyncTask 를 통해 데이터를 받아오는 로딩을 걸어서 데이터를 받아오도록 함.
-* 받아온 데이터로 그래프를 다시 그린 후 이후 데이터를 가지고 그래프를 그리는 형식의 변경방식을 접근해 보도록 함
-*
-* 이후 작업 : 네비게이션바 만들어서 메인에 삽입할 수 있도록 작업해야함.
-* 네비게이션 바는 모든 페이지에 들어가야 함
-* 네비게이션 바는 아래쪽, 크기는 현재 액션바 사이즈와 같게 하면 됨.
-* 모든 xml 과 데이터를 건드려야 함.
-* */
+ * 12.05 현재 상황
+ * 그래프는 처음에 뜨지만 데이터가 0 형태로 되어있다가 갑자기 값이 전달되는 형태임
+ * 이 문제를 해결하기 위해서 데이터를 기본으로 만들었다가 변경하는 형태로 접근해야 한다고 생각됨
+ * 핸들러나 AsyncTask 를 통해 데이터를 받아오는 로딩을 걸어서 데이터를 받아오도록 함.
+ * 받아온 데이터로 그래프를 다시 그린 후 이후 데이터를 가지고 그래프를 그리는 형식의 변경방식을 접근해 보도록 함
+ *
+ * 이후 작업 : 네비게이션바 만들어서 메인에 삽입할 수 있도록 작업해야함.
+ * 네비게이션 바는 모든 페이지에 들어가야 함
+ * 네비게이션 바는 아래쪽, 크기는 현재 액션바 사이즈와 같게 하면 됨.
+ * 모든 xml 과 데이터를 건드려야 함.
+ * */
 
 // 처음 접속시 보일 화면 선택
 public class MainTestActivity extends AppCompatActivity {
@@ -51,9 +54,15 @@ public class MainTestActivity extends AppCompatActivity {
 	private FirebaseUser mUser;
 	private DatabaseReference mDatabaseReference;
 	
-	// 대시보드 차트 변수
-	private CombinedChart chart;
-	private final int count = 30;
+	// 대시보드 차트
+	private CombinedChart mCombinedChart;
+	
+	// 차트 데이터를 최종적으로 담는 그릇
+	private CombinedData mCombinedData;
+	
+	// 전체 날짜 고정
+	private final int count = 31;
+	
 	
 	// 날짜 확인 변수
 	// 현재 날짜
@@ -67,8 +76,15 @@ public class MainTestActivity extends AppCompatActivity {
 	Date mDateFormerEnd;
 	Calendar mCalendarFormerEnd;
 	
+	// 바차트와 라인차트 데이터를 Arraylist 에 우선 담아야 함
 	ArrayList<BarEntry> barEntries;
-	ArrayList<Entry> entries;
+	ArrayList<Entry> lineEntries;
+	// Arraylist 에 담은 데이터를 데이터셋으로 저장
+	BarDataSet mBarDataSet;
+	LineDataSet mlineDataSet;
+	// 데이터셋을 만든후 세팅까지 하고 나서 -> 데이터로 저장해야 함
+	BarData mBarData;
+	LineData mlineData;
 	
 	
 	@Override
@@ -77,6 +93,11 @@ public class MainTestActivity extends AppCompatActivity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_test);
+		findViewById(R.id.activity_main_progressbar).setVisibility(View.VISIBLE);
+		findViewById(R.id.activity_main_ScrollView).setVisibility(View.GONE);
+		
+		Toolbar mToolbar = findViewById(R.id.activity_main_toolbarTop);
+		setSupportActionBar(mToolbar);
 		
 		//데이터 연결
 		mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -92,34 +113,33 @@ public class MainTestActivity extends AppCompatActivity {
 		mCalendarNow.setTime(mDateNow);
 		
 		// 한달 전 시작 및 끝 날짜 받아오기
-		mCalendarFormerStart.set(mCalendarNow.get(Calendar.YEAR),mCalendarNow.get(mCalendarNow.MONTH)-1,1);
+		mCalendarFormerStart.set(mCalendarNow.get(Calendar.YEAR), mCalendarNow.get(mCalendarNow.MONTH) - 1, 1);
 		mDateFormerStart = mCalendarFormerStart.getTime();
-		
-		mCalendarFormerEnd.set(mCalendarNow.get(Calendar.YEAR),mCalendarNow.get(mCalendarNow.MONTH),1);
+		mCalendarFormerEnd.set(mCalendarNow.get(Calendar.YEAR), mCalendarNow.get(mCalendarNow.MONTH), 1);
 		mDateFormerEnd = mCalendarFormerEnd.getTime();
 		
+		// 대시보
+		mCombinedChart = findViewById(R.id.activity_main_CombinedChart);
 		
-		chart = findViewById(R.id.activity_main_CombinedChart);
-		
-		chart.getDescription().setEnabled(false);
+		mCombinedChart.getDescription().setEnabled(false);
 //		// 전체 배경색
-//		chart.setBackgroundColor(R.color.colorPrimary);
+//		mCombinedChart.setBackgroundColor(R.color.colorPrimary);
 		// 차트 내 배경색
-		chart.setDrawGridBackground(false);
+		mCombinedChart.setDrawGridBackground(false);
 		// 차트 내 각각의 데이터의 배경색
-		chart.setDrawBarShadow(false);
+		mCombinedChart.setDrawBarShadow(false);
 		// 무슨역할인지.. 차이 없으므로 제외
-//		chart.setHighlightFullBarEnabled(true);
+//		mCombinedChart.setHighlightFullBarEnabled(true);
 		
 		
 		// 차트 종류 선택
 		// 라인 차트와 바 차트 모양 선택
-		chart.setDrawOrder(new CombinedChart.DrawOrder[]{
+		mCombinedChart.setDrawOrder(new CombinedChart.DrawOrder[]{
 				CombinedChart.DrawOrder.BAR, CombinedChart.DrawOrder.LINE
 		});
 		
 		// 범주 세팅하는 곳
-		Legend l = chart.getLegend();
+		Legend l = mCombinedChart.getLegend();
 		// l.setWordWrapEnabled(false);
 		// 위치 선정
 		l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
@@ -129,149 +149,87 @@ public class MainTestActivity extends AppCompatActivity {
 		
 		// Y 좌표 삭제
 		// Combined 의 경우 양쪽 Y 좌표가 나오기 때문에 둘 다 삭제 필요함
-		YAxis yAxis = chart.getAxisLeft();
+		YAxis yAxis = mCombinedChart.getAxisLeft();
 		yAxis.setAxisMinimum(0f); // start at zero
-		chart.getAxisLeft().setEnabled(false);
-		chart.getAxisRight().setEnabled(false);
+		mCombinedChart.getAxisLeft().setEnabled(false);
+		mCombinedChart.getAxisRight().setEnabled(false);
 		
 		// X좌표 보이기
-		XAxis xAxis = chart.getXAxis();
+		XAxis xAxis = mCombinedChart.getXAxis();
 		xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 		xAxis.setAxisMinimum(0f);
 //		xAxis.setGranularity(1f);
 		xAxis.setAxisMaximum(32f);
 		
-		CombinedData data = new CombinedData();
-		
-		data.notifyDataChanged();
-		
-		barEntries = new ArrayList<>();
-		Log.d("test","start");
-		
-		for(int i = 0; i < 31; i++) {
-			barEntries.add(new BarEntry(i+0.5f, 0f));
-		}
-		
-		BarDataSet set1 = new BarDataSet(barEntries, "지출액");
-		set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-//		set1.setColor(Color.rgb(60, 220, 78));
-//		set1.setValueTextColor(Color.rgb(60, 220, 78));
-//		set1.setValueTextSize(12f);
-//		set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-//		set1.setDrawValues(false);
-		
-		BarData d = new BarData(set1);
-		
-		Log.d("test","here");
-		
-		entries = new ArrayList<>();
-		
-		for(int i = 0; i < 31; i++) {
-			entries.add(new Entry(i+0.5f, 0f));
-		}
-		
-		LineDataSet set = new LineDataSet(entries, "Line DataSet");
-		
-		
-		
-		set.setColor(Color.rgb(240, 238, 70));
-		set.setLineWidth(2.5f);
-		set.setCircleColor(Color.rgb(240, 238, 70));
-		set.setCircleRadius(5f);
-//		set.setFillColor(getColor(R.color.colorAccent));
-		set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-//		set.setDrawValues(true);
-//		set.setValueTextSize(10f);
-//		set.setValueTextColor(Color.rgb(240, 238, 70));
-		
-		set.setDrawValues(false);
-		
-		set.setAxisDependency(YAxis.AxisDependency.LEFT);
-		
-		LineData e = new LineData(set);
-		
-		
-		
-		data.setData(d);
-		data.setData(e);
-		
-		
-		
-		chart.setData(data);
-//		yAxis.setAxisMaximum(barEntries.get(25).getY());
+		mDatabaseReference.child("moneyflow").child(mUser.getUid())
+				.orderByChild("date").startAt(mDateFormerStart.getTime(), "date")
+				.addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+						
+						SimpleDateFormat sdf = new SimpleDateFormat("dd");
+						// 바 데이터 새로 만들기
+						barEntries = new ArrayList<>();
+						for (int i = 0; i < 31; i++) {
+							barEntries.add(new BarEntry(i + 0.5f, 0f));
+						}
+						// 라인 데이터 새로 만들기
+						lineEntries = new ArrayList<>();
+						for (int i = 0; i < Integer.parseInt(sdf.format(mDateNow)); i++) {
+							lineEntries.add(new Entry(i + 0.5f, 0f));
+						}
+						
+						for (DataSnapshot item : dataSnapshot.getChildren()) {
+							DataMoneyFlowFB DMFdata = item.getValue(DataMoneyFlowFB.class);
+							if (DMFdata.date < mDateFormerEnd.getTime()) {
+								for (int i = Integer.parseInt(sdf.format(DMFdata.date)); i < 31; i++) {
+									barEntries.get(i).setY(barEntries.get(i).getY() + DMFdata.price);
+								}
+							} else {
+								for (int i = Integer.parseInt(sdf.format(DMFdata.date)); i < Integer.parseInt(sdf.format(mDateNow)); i++) {
+									lineEntries.get(i).setY(lineEntries.get(i).getY() + DMFdata.price);
+								}
+							}
+						}
+						Log.d("test", "여긴언제?");
+						
+						// 바데이터 셋 세팅 -> 바데이터로 저장
+						mBarDataSet = new BarDataSet(barEntries, "지난달");
+						mBarDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+						mBarData = new BarData(mBarDataSet);
+						
+						// 라인데이터 셋 및 세팅 -> 라인데이터로 저장
+						mlineDataSet = new LineDataSet(lineEntries, "이번달");
+						mlineDataSet.setColor(Color.rgb(240, 238, 70));
+						mlineDataSet.setLineWidth(2.5f);
+						mlineDataSet.setCircleColor(Color.rgb(240, 238, 70));
+						mlineDataSet.setCircleRadius(5f);
+						mlineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+						mlineDataSet.setDrawValues(false);
+						mlineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+						mlineData = new LineData(mlineDataSet);
+						
+						// 데이터들을 차트 내 데이터로 넣기
+						mCombinedData = new CombinedData();
+						mCombinedData.setData(mBarData);
+						mCombinedData.setData(mlineData);
+						
+						// 차트에 그리기
+						mCombinedChart.setData(mCombinedData);
+						findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
+						findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
+					}
+					
+					@Override
+					public void onCancelled(@NonNull DatabaseError databaseError) {
+					
+					}
+				});
 	}
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		CombinedData data2 = new CombinedData();
-		data2.setData(updateBarData());
-		data2.setData(updateLineData());
-		chart.notifyDataSetChanged();
-		chart.setData(data2);
-		chart.notifyDataSetChanged();
-		chart.invalidate();
-	}
-	
-	private BarData updateBarData () {
-		mDatabaseReference.child("moneyflow").child(mUser.getUid())
-				.orderByChild("date").startAt(mDateFormerStart.getTime(),"date").endAt(mDateFormerEnd.getTime(),"date")
-				.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						SimpleDateFormat sdf = new SimpleDateFormat("dd");
-						for(DataSnapshot item : dataSnapshot.getChildren()){
-							DataMoneyFlowFB data = item.getValue(DataMoneyFlowFB.class);
-							for(int i = Integer.parseInt(sdf.format(data.date)); i<31; i++){
-								barEntries.get(i).setY(barEntries.get(i).getY() + data.price);
-							}
-						}
-					}
-					
-					@Override
-					public void onCancelled(@NonNull DatabaseError databaseError) {
-					
-					}
-					
-				});
-		BarDataSet set = new BarDataSet(barEntries, "지출액");
-		
-		BarData d = new BarData(set);
-		
-		return d;
-	}
-	
-	
-	private LineData updateLineData () {
-		mDatabaseReference.child("moneyflow").child(mUser.getUid())
-				.orderByChild("date").startAt(mDateFormerEnd.getTime(),"date")
-				.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						SimpleDateFormat sdf = new SimpleDateFormat("dd");
-						for(DataSnapshot item : dataSnapshot.getChildren()){
-							DataMoneyFlowFB data = item.getValue(DataMoneyFlowFB.class);
-							for(int i = Integer.parseInt(sdf.format(data.date)); i<31; i++){
-								entries.get(i).setY(entries.get(i).getY() + data.price);
-							}
-						}
-					}
-					
-					@Override
-					public void onCancelled(@NonNull DatabaseError databaseError) {
-					
-					}
-					
-				});
-		
-		LineDataSet set = new LineDataSet(entries, "Line DataSet");
-		
-		LineData d = new LineData(set);
-		
-		return d;
-	}
-	
-	protected float getRandom(float range, float startsfrom) {
-		return (float) (Math.random() * range) + startsfrom;
+		((ImageView) findViewById(R.id.activity_main_dashboardicon)).setImageResource(R.drawable.ic_action_dashboard_clicked);
 	}
 }

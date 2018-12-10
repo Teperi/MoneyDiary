@@ -15,5 +15,7 @@
     <string name="inputComplete">입력 완료</string>
     <string name="inputCancel">취소</string>
 
+    <string name="default_notification_channel_id" translatable="false">MoneyDiary</string>
+
     <!---->
 </resources>

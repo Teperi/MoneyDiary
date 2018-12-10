@@ -49,6 +49,8 @@ public class AdapterMessengerUserList extends RecyclerView.Adapter<AdapterMessen
 			// 숨겨야 하는 뷰 숨기기
 			view.findViewById(R.id.messenger_chatlist_row_LastMessageText).setVisibility(View.GONE);
 			view.findViewById(R.id.messenger_chatlist_row_UnReadMessagesCountText).setVisibility(View.GONE);
+			view.findViewById(R.id.messenger_chatlist_row_lastTimeText).setVisibility(View.GONE);
+			view.findViewById(R.id.messenger_chatlist_row_groupUserCountText).setVisibility(View.GONE);
 		}
 	}
 	

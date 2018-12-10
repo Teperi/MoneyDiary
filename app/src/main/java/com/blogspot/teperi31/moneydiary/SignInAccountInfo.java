@@ -6,8 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,11 +27,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class SignInAccountInfo extends AppCompatActivity implements View.OnClickListener{
+public class SignInAccountInfo extends AppCompatActivity implements View.OnClickListener {
 	
 	private FirebaseAuth mAuth;
 	private EditText mIDField;
@@ -61,6 +66,7 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		findViewById(R.id.signin_loginButton).setOnClickListener(this);
 		findViewById(R.id.signin_logoutButton).setOnClickListener(this);
 		findViewById(R.id.signin_signupButton).setOnClickListener(this);
+		
 	}
 	
 	@Override
@@ -83,12 +89,12 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		mDatabase.child("users").orderByKey().equalTo(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				if(dataSnapshot.hasChildren()) {
+				if (dataSnapshot.hasChildren()) {
 					dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("isCurrent").getRef().setValue(true);
 				} else {
 					DataUser datauser;
 					// 유저 정보를 모아서
-					if(user.getPhotoUrl() == null){
+					if (user.getPhotoUrl() == null) {
 						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null, true);
 					} else {
 						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), true);
@@ -123,8 +129,6 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 	}
 	
 	
-	
-	
 	private void signIn(String ID, String password) {
 		if (!validateForm()) {
 			return;
@@ -134,7 +138,7 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		mAuth.signInWithEmailAndPassword(ID, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
 			@Override
 			public void onComplete(@NonNull Task<AuthResult> task) {
-				if(task.isSuccessful()) {
+				if (task.isSuccessful()) {
 					onAuthSuccess();
 				} else {
 					// TODO : 로그인에 실패했을 경우 어떤 것이 틀렸는지 받아올 수 있는지 확인하기

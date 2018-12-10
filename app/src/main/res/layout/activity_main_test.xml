@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_main_toolbarTop"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/styleAppBar"
-        app:popupTheme="@style/stylePopupMenu"/>
+        app:popupTheme="@style/stylePopupMenu"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/activity_main_ScrollView"
+        app:layout_constraintVertical_bias="0"/>
 
     <ScrollView
         android:id="@+id/activity_main_ScrollView"
@@ -17,72 +21,116 @@
         android:layout_height="0dp"
         android:background="@color/colorBackground"
 
-        app:layout_constraintTop_toBottomOf="@id/activity_main_toolbarTop"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/activity_main_bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_main_toolbarTop">
 
         <android.support.design.card.MaterialCardView
+            style="@style/style_mainCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
 
-            style="@style/style_mainCardView"
-            >
+            android:layout_margin="8dp">
 
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:text="2018.02"
+                    android:layout_row="0"
+                    android:layout_column="0"
                     android:layout_gravity="start|center_vertical"
                     android:layout_margin="8dp"
+                    android:text="2018.02"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="20sp" />
+
+                <TextView
                     android:layout_row="0"
                     android:layout_column="0"
-                    android:textSize="20sp"
-                    android:textColor="@color/colorBlack"
-                    />
-                <TextView
-                    android:text="소비 리포트"
                     android:layout_gravity="end|center_vertical"
                     android:layout_margin="8dp"
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:textSize="20sp"
+                    android:text="소비 리포트"
                     android:textColor="@color/colorBlack"
-                    />
-
+                    android:textSize="20sp" />
 
 
                 <com.github.mikephil.charting.charts.CombinedChart
                     android:id="@+id/activity_main_CombinedChart"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_margin="8dp"
                     android:layout_row="2"
                     android:layout_column="0"
                     android:layout_gravity="bottom|center_horizontal"
-                    >
+                    android:layout_margin="8dp">
 
                 </com.github.mikephil.charting.charts.CombinedChart>
-
             </GridLayout>
-
-
-
         </android.support.design.card.MaterialCardView>
-
-
-
-
     </ScrollView>
 
+    <ProgressBar
+        android:id="@+id/activity_main_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
+    <LinearLayout
+        android:id="@+id/activity_main_bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
 
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_main_ScrollView"
+        app:layout_constraintVertical_bias="1">
 
+        <ImageView
+            android:id="@+id/activity_main_dashboardicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_dashboard_unclick"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
 
+        <ImageView
+            android:id="@+id/activity_main_listicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_list_unclick"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:id="@+id/activity_main_messengericon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_messenger_unclick"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:id="@+id/activity_main_myinfoicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_myinfo_unclick"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

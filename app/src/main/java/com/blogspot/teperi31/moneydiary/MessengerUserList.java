@@ -110,6 +110,7 @@ public class MessengerUserList extends AppCompatActivity {
 			public void onClick(View v) {
 				Intent intent = new Intent(v.getContext(), MessengerGroupCreateList.class);
 				startActivity(intent);
+				finish();
 			}
 		});
 	}

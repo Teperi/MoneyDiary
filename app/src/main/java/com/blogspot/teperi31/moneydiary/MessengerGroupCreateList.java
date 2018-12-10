@@ -103,13 +103,7 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 						// 그룹 채팅방이 한개도 없다면..
 						if(dataSnapshot.getChildrenCount() <= 0){
 							// 그룹 채팅방 만들기
-							ChatRoomKey = createGroupChatRoom(mAdapter.CheckedUserList);
-//							// 채팅 화면으로 넘어감
-//							Intent intent = new Intent(v.getContext(), ChatActivity.class);
-//							intent.putExtra("ChatRoomKey", ChatRoomKey);
-//							v.getContext().startActivity(intent);
-//							// 버튼을 통해 채팅방에 접근하기 때문에 이 Activity 는 종료
-//							((Activity) v.getContext()).finish();
+							createGroupChatRoom(mAdapter.CheckedUserList);
 							
 						} else {
 							int count = 0;
@@ -124,14 +118,14 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 								// 만들어진 채팅방에 상대방의 UID 가 있는 채팅방이 있다면?
 								// 결국 : 과거의 채팅방을 만들어서 채팅한 데이터가 있다면
 								// 여기서 두가지 비교: 인원수 같아? 그리고 인원 리스트가 같아?
-								if (RoomInfo.UserCount == mAdapter.CheckedUserList.size()+1 || RoomInfo.UserList.keySet().equals(CheckUserListSet)) {
+								if (RoomInfo.UserCount == mAdapter.CheckedUserList.size() || RoomInfo.UserList.keySet().equals(CheckUserListSet)) {
 									// 그 채팅방의 Key 값을 넘겨서 채팅 시작
-//									Intent intent = new Intent(v.getContext(), ChatActivity.class);
-//									intent.putExtra("ChatRoomKey", RoomInfo.location);
-//									v.getContext().startActivity(intent);
-//									// 버튼을 통해 채팅방에 접근하기 때문에 이 Activity 는 종료
-//									((Activity) v.getContext()).finish();
-//									// count 가 늘어나지 않도록 for문 빠져나오기
+									Intent intent = new Intent(v.getContext(), ChatActivity.class);
+									intent.putExtra("ChatRoomKey", RoomInfo.location);
+									v.getContext().startActivity(intent);
+									// 버튼을 통해 채팅방에 접근하기 때문에 이 Activity 는 종료
+									((Activity) v.getContext()).finish();
+									// count 가 늘어나지 않도록 for문 빠져나오기
 									break loop1;
 								}
 								count++;
@@ -139,13 +133,8 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 							// 다 비교하고 왔는데도 없으면?
 							if(count == dataSnapshot.getChildrenCount()){
 								// 그룹 채팅방 만들기
-								ChatRoomKey = createGroupChatRoom(mAdapter.CheckedUserList);
-								// 채팅 화면으로 넘어감
-//								Intent intent = new Intent(v.getContext(), ChatActivity.class);
-//								intent.putExtra("ChatRoomKey", ChatRoomKey);
-//								v.getContext().startActivity(intent);
-//								// 버튼을 통해 채팅방에 접근하기 때문에 이 Activity 는 종료
-//								((Activity) v.getContext()).finish();
+								createGroupChatRoom(mAdapter.CheckedUserList);
+								
 							}
 						}
 					}
@@ -168,7 +157,7 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 	}
 	
 	// 채팅룸을 새로 만드는 메소드
-	public String createGroupChatRoom(final ArrayList<DataUser> CheckedUserList) {
+	public void createGroupChatRoom(final ArrayList<DataUser> CheckedUserList) {
 		// 채팅방 키 제작
 		final String ChatRoomKey = mDatabase.child("Messenger/chatRoom").push().getKey();
 		// 내 정보 받아와서 UserList에 같이 넣기
@@ -216,6 +205,13 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 					
 					mDatabase.child("UserRooms").child(CheckedUserList.get(i).UID).child(ChatRoomKey).updateChildren(updateRoomList);
 					
+					// 채팅 화면으로 넘어감
+					Intent intent = new Intent(MessengerGroupCreateList.this, ChatActivity.class);
+					intent.putExtra("ChatRoomKey", ChatRoomKey);
+					startActivity(intent);
+					// 버튼을 통해 채팅방에 접근하기 때문에 이 Activity 는 종료
+					finish();
+					
 				}
 			}
 			
@@ -224,7 +220,5 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 				throw new IllegalArgumentException("그룹채팅방 만들기 실패");
 			}
 		});
-		// 채팅방 키 리턴시켜서 intent 에 넘겨줌
-		return ChatRoomKey;
 	}
 }

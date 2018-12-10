@@ -67,9 +67,9 @@ public class MessengerChatRoomList extends AppCompatActivity {
 		
 		// 세로로 쌓기 기능
 		mLayoutManager = new LinearLayoutManager(this);
-//		// Query 에 있는 정렬 기능을 역순으로 해 주는 부분
-//		mLayoutManager.setReverseLayout(true);
-//		mLayoutManager.setStackFromEnd(true);
+		// Query 에 있는 정렬 기능을 역순으로 해 주는 부분
+		mLayoutManager.setReverseLayout(true);
+		mLayoutManager.setStackFromEnd(true);
 		
 		mRecycler.setLayoutManager(mLayoutManager);
 		

@@ -33,6 +33,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -79,6 +81,7 @@ public class ChatActivity extends AppCompatActivity {
 	private DatabaseReference mDatabaseMyUserRoom;
 	private DatabaseReference mDatabaseOtherUserRoom;
 	private DatabaseReference mDatabaseOtherUserList;
+	private FirebaseMessaging fm;
 	
 	//채팅방에 있는 다른 유저 UID 저장
 	private Map<String, Boolean> OtherUIDInfo = new HashMap<>();
@@ -108,6 +111,11 @@ public class ChatActivity extends AppCompatActivity {
 				mUserPhoto = mFirebaseUser.getPhotoUrl().toString();
 			}
 		}
+		
+		// 푸시 메시지 연결
+		fm = FirebaseMessaging.getInstance();
+		
+		
 		
 		// 화면 내 버튼들과 변수 연결
 		mProgressBar = findViewById(R.id.messenger_chatcontent_ProgressBar);

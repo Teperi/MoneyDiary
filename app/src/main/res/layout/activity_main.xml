@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
 
-            android:text="다이어리"
+            android:text="DashBoard TEST"
 
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +26,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.text.SimpleDateFormat;
 
@@ -33,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
 	// 파이어베이스 정보 받아오기
 	private FirebaseUser mUser;
 	private DatabaseReference mDatabase;
+	
+	//Fcm 연결을 위한 토큰 처리
+	UtilMyFirebaseMessagingService mFCM;
 	
 	String saveDate = null;
 	// 날짜를 저장하는 String
@@ -84,6 +90,17 @@ public class MainActivity extends AppCompatActivity {
 				
 			}
 		});
+		
+		// Get token
+		FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+			@Override
+			public void onSuccess(InstanceIdResult instanceIdResult) {
+				String deviceToken = instanceIdResult.getToken();
+				mFCM = new UtilMyFirebaseMessagingService();
+				mFCM.onNewToken(deviceToken);
+			}
+		});
+		
 		
 		// 버튼 누를 시 화면 전환
 		// 다이어리 이동

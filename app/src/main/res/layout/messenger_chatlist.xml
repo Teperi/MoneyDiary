@@ -61,8 +61,62 @@
         android:layout_margin="32dp"
         android:src="@drawable/ic_action_add"
 
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/messenger_chatlist_bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         />
+
+    <LinearLayout
+        android:id="@+id/messenger_chatlist_bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+        <ImageButton
+            android:id="@+id/messenger_chatlist_bottomBar_dashboardicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_dashboard_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/messenger_chatlist_bottomBar_listicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_list_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/messenger_chatlist_bottomBar_messengericon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_messenger_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/messenger_chatlist_bottomBar_myinfoicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_myinfo_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

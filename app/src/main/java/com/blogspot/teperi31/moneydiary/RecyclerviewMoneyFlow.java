@@ -48,14 +48,14 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.
 		
 		
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.recyclerview_moneyflow);
+		setContentView(R.layout.moneyflow_list);
 		
 		
 		// 액션 바 삽입
-		myToolbar = findViewById(R.id.toolbarTop_List_moneyflow);
+		myToolbar = findViewById(R.id.moneyflow_list_toolbarTop);
 		setSupportActionBar(myToolbar);
 		
-		mRecyclerView = findViewById(R.id.moneyflow_recycler_view);
+		mRecyclerView = findViewById(R.id.moneyflow_list_recyclerview);
 		
 		// 사이즈 고정, 리사이클러 뷰에서 content 사이즈를 바꾸지 말라?
 		mRecyclerView.setHasFixedSize(true);
@@ -135,6 +135,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.
 		
 		
 	}
+	
 	
 	private void multiSelect(int position) {
 		DataMoneyFlow data = myAdapter.getItem(position);

@@ -1,20 +1,15 @@
 package com.blogspot.teperi31.moneydiary;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +61,7 @@ public class AdapterMFRecycler extends RecyclerView.Adapter<AdapterMFRecycler.My
 		@Override
 		public AdapterMFRecycler.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 			
-			View v = LayoutInflater.from(context).inflate(R.layout.recyclerviewrow_moneyflow, parent, false);
+			View v = LayoutInflater.from(context).inflate(R.layout.moneyflow_list_row, parent, false);
 			
 			return new MyViewHolder(v);
 		}

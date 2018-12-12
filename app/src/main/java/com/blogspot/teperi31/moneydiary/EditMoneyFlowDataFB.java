@@ -58,7 +58,7 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.input_moneyflow);
+		setContentView(R.layout.moneyflow_input);
 		
 		// 유저 정보 가져오기
 		// 유저가 없는 경우 error 발생

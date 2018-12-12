@@ -63,8 +63,6 @@ public class MessengerUserList extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		
-		// 플로팅 버튼 숨김
-		findViewById(R.id.messenger_chatlist_floatingbutton).setVisibility(View.GONE);
 		
 		
 		
@@ -118,6 +116,10 @@ public class MessengerUserList extends AppCompatActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		// 그룹 만들기 버튼 숨기기 & 네비게이션바 및 플로팅 버튼 보이기
+		findViewById(R.id.messenger_chatlist_bottomBar).setVisibility(View.GONE);
+		findViewById(R.id.messenger_chatlist_floatingbutton).setVisibility(View.GONE);
+		findViewById(R.id.messenger_chatlist_createchatGroup).setVisibility(View.VISIBLE);
 	}
 	
 	@Override

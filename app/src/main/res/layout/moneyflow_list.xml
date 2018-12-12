@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbarTop_List_moneyflow"
+        android:id="@+id/moneyflow_list_toolbarTop"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -20,10 +20,10 @@
         android:layout_height="40dp"
         android:layout_margin="4dp"
 
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbarTop_List_moneyflow"
+        app:layout_constraintTop_toBottomOf="@id/moneyflow_list_toolbarTop"
         app:layout_constraintVertical_bias="0">
 
         <LinearLayout
@@ -90,7 +90,7 @@
         android:layout_margin="8dp"
         android:visibility="gone"
 
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/moneyflow_list_bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/moneyflowcalc"
@@ -105,19 +105,73 @@
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/moneyflow_recycler_view"
+        android:id="@+id/moneyflow_list_recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="8dp"
         android:scrollbars="vertical"
         android:visibility="visible"
 
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/moneyflow_list_bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/moneyflowcalc"
         app:layout_constraintVertical_bias="0"
-        tools:listitem="@layout/recyclerviewrow_moneyflow"/>
+        tools:listitem="@layout/moneyflow_list_row"/>
+
+    <LinearLayout
+        android:id="@+id/moneyflow_list_bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+        <ImageButton
+            android:id="@+id/moneyflow_list_bottomBar_dashboardicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_dashboard_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/moneyflow_list_bottomBar_listicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_list_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/moneyflow_list_bottomBar_messengericon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_messenger_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+
+        <ImageButton
+            android:id="@+id/moneyflow_list_bottomBar_myinfoicon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_action_myinfo_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

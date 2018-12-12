@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -21,7 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-public class MessengerChatRoomList extends AppCompatActivity {
+public class MessengerChatRoomList extends AppCompatActivity implements View.OnClickListener {
 	// 레이아웃 내 뷰 연결
 	private Toolbar mToolbar;
 	private FloatingActionButton mFAB;
@@ -45,8 +46,13 @@ public class MessengerChatRoomList extends AppCompatActivity {
 		mToolbar.setTitle("채팅방 목록");
 		setSupportActionBar(mToolbar);
 		
-		// 뷰 삭제시켜놓기
-		findViewById(R.id.messenger_chatlist_createchatGroup).setVisibility(View.GONE);
+		// 네비게이션 바 연결
+		findViewById(R.id.messenger_chatlist_bottomBar_dashboardicon).setOnClickListener(this);
+		findViewById(R.id.messenger_chatlist_bottomBar_listicon).setOnClickListener(this);
+		findViewById(R.id.messenger_chatlist_bottomBar_myinfoicon).setOnClickListener(this);
+		((ImageButton) findViewById(R.id.messenger_chatlist_bottomBar_messengericon)).setImageResource(R.drawable.ic_action_messenger_clicked);
+		
+		
 		
 		// 플로팅 버튼 연결
 		// 전체 유저 리스트 띄우기
@@ -120,6 +126,10 @@ public class MessengerChatRoomList extends AppCompatActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		// 그룹 만들기 버튼 숨기기 & 네비게이션바 및 플로팅 버튼 보이기
+		findViewById(R.id.messenger_chatlist_bottomBar).setVisibility(View.VISIBLE);
+		findViewById(R.id.messenger_chatlist_floatingbutton).setVisibility(View.VISIBLE);
+		findViewById(R.id.messenger_chatlist_createchatGroup).setVisibility(View.GONE);
 		// 어뎁터가 있으면 실시간 연결
 		if (mFirebaseAdapter != null) {
 			//mProgessStart();
@@ -133,6 +143,23 @@ public class MessengerChatRoomList extends AppCompatActivity {
 		// 페이지가 멈출 때 실시간 연결기능 해제
 		if (mFirebaseAdapter != null) {
 			mFirebaseAdapter.stopListening();
+		}
+	}
+	
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.messenger_chatlist_bottomBar_dashboardicon:
+				startActivity(new Intent(this, MainTestActivity.class));
+				break;
+			case R.id.messenger_chatlist_bottomBar_listicon:
+				startActivity(new Intent(this, RecyclerViewMoneyFlowFB.class));
+				break;
+			case R.id.messenger_chatlist_bottomBar_myinfoicon:
+				startActivity(new Intent(this, SignInAccountInfo.class));
+				break;
+			default:
+				break;
 		}
 	}
 }

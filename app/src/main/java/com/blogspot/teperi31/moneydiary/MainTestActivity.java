@@ -1,5 +1,6 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,10 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.MarkerImage;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -21,6 +25,7 @@ import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.renderer.LineChartRenderer;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +54,7 @@ import java.util.Locale;
  * */
 
 // 처음 접속시 보일 화면 선택
-public class MainTestActivity extends AppCompatActivity {
+public class MainTestActivity extends AppCompatActivity implements View.OnClickListener {
 	// 로그인 데이터 및 전체 통계 데이터 가져오기
 	private FirebaseUser mUser;
 	private DatabaseReference mDatabaseReference;
@@ -85,19 +90,23 @@ public class MainTestActivity extends AppCompatActivity {
 	// 데이터셋을 만든후 세팅까지 하고 나서 -> 데이터로 저장해야 함
 	BarData mBarData;
 	LineData mlineData;
+	MarkerImage mMarkerImage;
 	
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
-		
-		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_test);
 		findViewById(R.id.activity_main_progressbar).setVisibility(View.VISIBLE);
 		findViewById(R.id.activity_main_ScrollView).setVisibility(View.GONE);
-		
+		// 툴바 연결
 		Toolbar mToolbar = findViewById(R.id.activity_main_toolbarTop);
 		setSupportActionBar(mToolbar);
+		
+		// 네비게이션 바 연결 및 색 설정
+		findViewById(R.id.activity_main_bottomBar_listicon).setOnClickListener(this);
+		findViewById(R.id.activity_main_bottomBar_messengericon).setOnClickListener(this);
+		findViewById(R.id.activity_main_bottomBar_myinfoicon).setOnClickListener(this);
 		
 		//데이터 연결
 		mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -112,6 +121,12 @@ public class MainTestActivity extends AppCompatActivity {
 		mDateNow = new Date();
 		mCalendarNow.setTime(mDateNow);
 		
+		// 현재 날짜 소비 리포트에 넣기
+		TextView datetext = findViewById(R.id.activity_main_expense_dateText);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
+		datetext.setText(sdf.format(mDateNow));
+		
+		
 		// 한달 전 시작 및 끝 날짜 받아오기
 		mCalendarFormerStart.set(mCalendarNow.get(Calendar.YEAR), mCalendarNow.get(mCalendarNow.MONTH) - 1, 1);
 		mDateFormerStart = mCalendarFormerStart.getTime();
@@ -119,7 +134,7 @@ public class MainTestActivity extends AppCompatActivity {
 		mDateFormerEnd = mCalendarFormerEnd.getTime();
 		
 		// 대시보
-		mCombinedChart = findViewById(R.id.activity_main_CombinedChart);
+		mCombinedChart = findViewById(R.id.activity_main_expense_CombinedChart);
 		
 		mCombinedChart.getDescription().setEnabled(false);
 //		// 전체 배경색
@@ -153,71 +168,89 @@ public class MainTestActivity extends AppCompatActivity {
 		yAxis.setAxisMinimum(0f); // start at zero
 		mCombinedChart.getAxisLeft().setEnabled(false);
 		mCombinedChart.getAxisRight().setEnabled(false);
+		mCombinedChart.setMarker(mMarkerImage);
 		
 		// X좌표 보이기
 		XAxis xAxis = mCombinedChart.getXAxis();
 		xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
 		xAxis.setAxisMinimum(0f);
 //		xAxis.setGranularity(1f);
-		xAxis.setAxisMaximum(32f);
+		xAxis.setAxisMaximum(30f);
 		
 		mDatabaseReference.child("moneyflow").child(mUser.getUid())
 				.orderByChild("date").startAt(mDateFormerStart.getTime(), "date")
 				.addListenerForSingleValueEvent(new ValueEventListener() {
 					@Override
 					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						
-						SimpleDateFormat sdf = new SimpleDateFormat("dd");
-						// 바 데이터 새로 만들기
-						barEntries = new ArrayList<>();
-						for (int i = 0; i < 31; i++) {
-							barEntries.add(new BarEntry(i + 0.5f, 0f));
-						}
-						// 라인 데이터 새로 만들기
-						lineEntries = new ArrayList<>();
-						for (int i = 0; i < Integer.parseInt(sdf.format(mDateNow)); i++) {
-							lineEntries.add(new Entry(i + 0.5f, 0f));
-						}
-						
-						for (DataSnapshot item : dataSnapshot.getChildren()) {
-							DataMoneyFlowFB DMFdata = item.getValue(DataMoneyFlowFB.class);
-							if (DMFdata.date < mDateFormerEnd.getTime()) {
-								for (int i = Integer.parseInt(sdf.format(DMFdata.date)); i < 31; i++) {
-									barEntries.get(i).setY(barEntries.get(i).getY() + DMFdata.price);
-								}
-							} else {
-								for (int i = Integer.parseInt(sdf.format(DMFdata.date)); i < Integer.parseInt(sdf.format(mDateNow)); i++) {
-									lineEntries.get(i).setY(lineEntries.get(i).getY() + DMFdata.price);
+						if (dataSnapshot.exists()) {
+							findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.GONE);
+							findViewById(R.id.activity_main_expense_CombinedChart).setVisibility(View.VISIBLE);
+							SimpleDateFormat sdf = new SimpleDateFormat("dd");
+							// 바 데이터 새로 만들기
+							barEntries = new ArrayList<>();
+							for (int i = 0; i < 31; i++) {
+								barEntries.add(new BarEntry(i + 0.5f, 0f));
+							}
+							// 라인 데이터 새로 만들기
+							lineEntries = new ArrayList<>();
+							for (int i = 0; i < Integer.parseInt(sdf.format(mDateNow)); i++) {
+								if (i == 4 || i == 9 || i == 14 || i == 19 || i == 24 || i == 29) {
+									lineEntries.add(new Entry(i + 0.5f, 0f));
+									lineEntries.get(i).setIcon(getDrawable(R.drawable.ic_action_charticon));
+								} else {
+									lineEntries.add(new Entry(i + 0.5f, 0f));
 								}
 							}
+							
+							for (DataSnapshot item : dataSnapshot.getChildren()) {
+								DataMoneyFlowFB DMFdata = item.getValue(DataMoneyFlowFB.class);
+								if (DMFdata.date < mDateFormerEnd.getTime()) {
+									for (int i = Integer.parseInt(sdf.format(DMFdata.date)); i < 31; i++) {
+										barEntries.get(i).setY(barEntries.get(i).getY() + DMFdata.price);
+									}
+								} else {
+									for (int i = Integer.parseInt(sdf.format(DMFdata.date)); i < Integer.parseInt(sdf.format(mDateNow)); i++) {
+										if (i == 4 || i == 9 || i == 14 || i == 19 || i == 24 || i == 29) {
+											lineEntries.get(i).setY(lineEntries.get(i).getY() + DMFdata.price);
+//											lineEntries.get(i).setIcon(getDrawable(R.drawable.ic_action_charticon));
+										} else {
+											lineEntries.get(i).setY(lineEntries.get(i).getY() + DMFdata.price);
+										}
+									}
+								}
+							}
+							Log.d("test", "여긴언제?");
+							
+							// 바데이터 셋 세팅 -> 바데이터로 저장
+							mBarDataSet = new BarDataSet(barEntries, String.valueOf(mCalendarFormerStart.get(Calendar.MONTH) + 1) + "월");
+							mBarDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+							mBarDataSet.setDrawValues(false);
+							mBarDataSet.setColor(getColor(R.color.colorGrayline));
+							mBarData = new BarData(mBarDataSet);
+							
+							// 라인데이터 셋 및 세팅 -> 라인데이터로 저장
+							mlineDataSet = new LineDataSet(lineEntries, String.valueOf(mCalendarNow.get(Calendar.MONTH) + 1) + "월");
+							mlineDataSet.setColor(getColor(R.color.colorBlack));
+							mlineDataSet.setLineWidth(1.5f);
+							mlineDataSet.setMode(LineDataSet.Mode.LINEAR);
+							mlineDataSet.setDrawValues(false);
+							mlineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+							mlineDataSet.setDrawCircles(false);
+							mlineData = new LineData(mlineDataSet);
+							
+							// 데이터들을 차트 내 데이터로 넣기
+							mCombinedData = new CombinedData();
+							mCombinedData.setData(mBarData);
+							mCombinedData.setData(mlineData);
+							
+							// 차트에 그리기
+							mCombinedChart.setData(mCombinedData);
+							findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
+							findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
+						} else {
+							findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.VISIBLE);
+							findViewById(R.id.activity_main_expense_CombinedChart).setVisibility(View.GONE);
 						}
-						Log.d("test", "여긴언제?");
-						
-						// 바데이터 셋 세팅 -> 바데이터로 저장
-						mBarDataSet = new BarDataSet(barEntries, "지난달");
-						mBarDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-						mBarData = new BarData(mBarDataSet);
-						
-						// 라인데이터 셋 및 세팅 -> 라인데이터로 저장
-						mlineDataSet = new LineDataSet(lineEntries, "이번달");
-						mlineDataSet.setColor(Color.rgb(240, 238, 70));
-						mlineDataSet.setLineWidth(2.5f);
-						mlineDataSet.setCircleColor(Color.rgb(240, 238, 70));
-						mlineDataSet.setCircleRadius(5f);
-						mlineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-						mlineDataSet.setDrawValues(false);
-						mlineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-						mlineData = new LineData(mlineDataSet);
-						
-						// 데이터들을 차트 내 데이터로 넣기
-						mCombinedData = new CombinedData();
-						mCombinedData.setData(mBarData);
-						mCombinedData.setData(mlineData);
-						
-						// 차트에 그리기
-						mCombinedChart.setData(mCombinedData);
-						findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
-						findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
 					}
 					
 					@Override
@@ -230,6 +263,23 @@ public class MainTestActivity extends AppCompatActivity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		((ImageView) findViewById(R.id.activity_main_dashboardicon)).setImageResource(R.drawable.ic_action_dashboard_clicked);
+		((ImageButton) findViewById(R.id.activity_main_bottomBar_dashboardicon)).setImageResource(R.drawable.ic_action_dashboard_clicked);
+	}
+	
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.activity_main_bottomBar_listicon:
+				startActivity(new Intent(this, RecyclerViewMoneyFlowFB.class));
+				break;
+			case R.id.activity_main_bottomBar_messengericon:
+				startActivity(new Intent(this, MessengerChatRoomList.class));
+				break;
+			case R.id.activity_main_bottomBar_myinfoicon:
+				startActivity(new Intent(this, SignInAccountInfo.class));
+				break;
+			default:
+				break;
+		}
 	}
 }

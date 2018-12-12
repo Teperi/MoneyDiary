@@ -11,6 +11,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -52,6 +53,12 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		android.support.v7.widget.Toolbar mToolbar = findViewById(R.id.signin_toobarTop);
 		setSupportActionBar(mToolbar);
 		
+		// 네비게이션바
+		findViewById(R.id.activity_signin_bottomBar_dashboardicon).setOnClickListener(this);
+		findViewById(R.id.activity_signin_bottomBar_messengericon).setOnClickListener(this);
+		findViewById(R.id.activity_signin_bottomBar_listicon).setOnClickListener(this);
+		((ImageButton) findViewById(R.id.activity_signin_bottomBar_myinfoicon)).setImageResource(R.drawable.ic_action_myinfo_clicked);
+		
 		//
 		mIDField = findViewById(R.id.signin_inputid);
 		mPasswordField = findViewById(R.id.signin_inputpassword);
@@ -72,6 +79,8 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 	@Override
 	protected void onStart() {
 		super.onStart();
+		// 네비게이션 바 보이기
+		findViewById(R.id.activity_signin_bottomBar).setVisibility(View.VISIBLE);
 		mProgressView.setVisibility(View.VISIBLE);
 		FirebaseUser currentUser = mAuth.getCurrentUser();
 		if (currentUser != null) {
@@ -229,6 +238,15 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 				Intent intent = new Intent(this, SignupActivity.class);
 				startActivity(intent);
 				return;
+			case R.id.activity_signin_bottomBar_dashboardicon:
+				startActivity(new Intent(this, MainTestActivity.class));
+				break;
+			case R.id.activity_signin_bottomBar_messengericon:
+				startActivity(new Intent(this, MessengerChatRoomList.class));
+				break;
+			case R.id.activity_signin_bottomBar_myinfoicon:
+				startActivity(new Intent(this, SignInAccountInfo.class));
+				break;
 			default:
 				return;
 		}
@@ -240,6 +258,4 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		finish();
 		return true;
 	}
-	
-	
 }

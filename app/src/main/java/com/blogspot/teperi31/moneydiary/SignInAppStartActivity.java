@@ -58,6 +58,8 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 		android.support.v7.widget.Toolbar mToolbar = findViewById(R.id.signin_toobarTop);
 		setSupportActionBar(mToolbar);
 		
+		// 네비게이션 바 숨기기
+		findViewById(R.id.activity_signin_bottomBar).setVisibility(View.GONE);
 		
 		mIDField = findViewById(R.id.signin_inputid);
 		mPasswordField = findViewById(R.id.signin_inputpassword);

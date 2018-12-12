@@ -1,24 +1,20 @@
 package com.blogspot.teperi31.moneydiary;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -29,13 +25,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import java.util.ArrayList;
-
 /*
  * 파이어베이스와 연동한 리사이클러뷰 만들기
  *
  * */
-public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
+public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.OnClickListener {
 	
 	Toolbar mToolbar;
 	
@@ -56,17 +50,24 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.recyclerview_moneyflow);
+		setContentView(R.layout.moneyflow_list);
 		
 		// 액션바
-		mToolbar = findViewById(R.id.toolbarTop_List_moneyflow);
+		mToolbar = findViewById(R.id.moneyflow_list_toolbarTop);
 		setSupportActionBar(mToolbar);
+		// 네비게이션바
+		findViewById(R.id.moneyflow_list_bottomBar_dashboardicon).setOnClickListener(this);
+		findViewById(R.id.moneyflow_list_bottomBar_messengericon).setOnClickListener(this);
+		findViewById(R.id.moneyflow_list_bottomBar_myinfoicon).setOnClickListener(this);
+		((ImageButton) findViewById(R.id.moneyflow_list_bottomBar_listicon)).setImageResource(R.drawable.ic_action_list_clicked);
+		
+		
 		// DB 연결
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		mDatabase.keepSynced(true);
 		user = FirebaseAuth.getInstance().getCurrentUser();
 		// 리사이클러뷰 연결 & 고정
-		mRecycler = findViewById(R.id.moneyflow_recycler_view);
+		mRecycler = findViewById(R.id.moneyflow_list_recyclerview);
 		mRecycler.setHasFixedSize(true);
 		
 		// 세로로 쌓기 기능
@@ -90,7 +91,7 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 			// ViewHolder 만들기
 			@Override
 			public ViewHolderMoneyFlow onCreateViewHolder(ViewGroup viewGroup, int i) {
-				View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.recyclerviewrow_moneyflow, viewGroup, false);
+				View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.moneyflow_list_row, viewGroup, false);
 				return new ViewHolderMoneyFlow(itemView);
 			}
 			
@@ -123,7 +124,7 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 		
 		
 		// 액션 모드 설정을 위한 확인
-		
+
 //		// RecyclerItemClickListener 를 그
 //		mRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mRecycler, new RecyclerItemClickListener.OnItemClickListener() {
 //
@@ -219,14 +220,31 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity {
 	
 	
 	// 로딩 모양 보여주는 메소드
-	private void mProgessStart () {
-		findViewById(R.id.moneyflow_recycler_view).setVisibility(View.GONE);
+	private void mProgessStart() {
+		findViewById(R.id.moneyflow_list_recyclerview).setVisibility(View.GONE);
 		findViewById(R.id.moneyflow_recycler_progress).setVisibility(View.VISIBLE);
 	}
 	
 	// 로딩이 끝난 경우 로딩 모양 없애주는
-	private void mProgessStop () {
-		findViewById(R.id.moneyflow_recycler_view).setVisibility(View.VISIBLE);
+	private void mProgessStop() {
+		findViewById(R.id.moneyflow_list_recyclerview).setVisibility(View.VISIBLE);
 		findViewById(R.id.moneyflow_recycler_progress).setVisibility(View.GONE);
+	}
+	
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.moneyflow_list_bottomBar_dashboardicon:
+				startActivity(new Intent(this, MainTestActivity.class));
+				break;
+			case R.id.moneyflow_list_bottomBar_messengericon:
+				startActivity(new Intent(this, MessengerChatRoomList.class));
+				break;
+			case R.id.moneyflow_list_bottomBar_myinfoicon:
+				startActivity(new Intent(this, SignInAccountInfo.class));
+				break;
+			default:
+				break;
+		}
 	}
 }

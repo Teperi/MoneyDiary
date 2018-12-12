@@ -37,6 +37,8 @@ public class DataMoneyFlow {
 		
 	}
 	
+	
+	
 	public static Comparator<DataMoneyFlow> MoneyFlowDateComparator = new Comparator<DataMoneyFlow>() {
 		@Override
 		public int compare(DataMoneyFlow o1, DataMoneyFlow o2) {

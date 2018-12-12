@@ -12,7 +12,6 @@
         app:popupTheme="@style/stylePopupMenu"
 
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/activity_main_ScrollView"
         app:layout_constraintVertical_bias="0"/>
 
     <ScrollView
@@ -27,6 +26,7 @@
         app:layout_constraintTop_toBottomOf="@id/activity_main_toolbarTop">
 
         <android.support.design.card.MaterialCardView
+            android:id="@+id/activity_main_expense_card"
             style="@style/style_mainCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,6 +38,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
+                    android:id="@+id/activity_main_expense_dateText"
                     android:layout_row="0"
                     android:layout_column="0"
                     android:layout_gravity="start|center_vertical"
@@ -47,6 +48,7 @@
                     android:textSize="20sp" />
 
                 <TextView
+                    android:id="@+id/activity_main_expense_titleText"
                     android:layout_row="0"
                     android:layout_column="0"
                     android:layout_gravity="end|center_vertical"
@@ -55,11 +57,22 @@
                     android:textColor="@color/colorBlack"
                     android:textSize="20sp" />
 
+                <TextView
+                    android:id="@+id/activity_main_expense_noDataText"
+                    android:layout_row="2"
+                    android:layout_column="0"
+                    android:layout_gravity="center"
+                    android:layout_margin="8dp"
+                    android:text="데이터가 없습니다."
+                    android:textColor="@color/colorBlack"
+                    android:visibility="gone"
+                    android:textSize="20sp" />
+
 
                 <com.github.mikephil.charting.charts.CombinedChart
-                    android:id="@+id/activity_main_CombinedChart"
+                    android:id="@+id/activity_main_expense_CombinedChart"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="250dp"
                     android:layout_row="2"
                     android:layout_column="0"
                     android:layout_gravity="bottom|center_horizontal"
@@ -88,44 +101,47 @@
         android:orientation="horizontal"
 
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_main_ScrollView"
         app:layout_constraintVertical_bias="1">
 
-        <ImageView
-            android:id="@+id/activity_main_dashboardicon"
+        <ImageButton
+            android:id="@+id/activity_main_bottomBar_dashboardicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_dashboard_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
             android:scaleType="fitCenter"
             android:layout_weight="1"
             />
 
-        <ImageView
-            android:id="@+id/activity_main_listicon"
+        <ImageButton
+            android:id="@+id/activity_main_bottomBar_listicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_list_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
             android:scaleType="fitCenter"
             android:layout_weight="1"
             />
 
-        <ImageView
-            android:id="@+id/activity_main_messengericon"
+        <ImageButton
+            android:id="@+id/activity_main_bottomBar_messengericon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_messenger_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
             android:scaleType="fitCenter"
             android:layout_weight="1"
             />
 
-        <ImageView
-            android:id="@+id/activity_main_myinfoicon"
+        <ImageButton
+            android:id="@+id/activity_main_bottomBar_myinfoicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_action_myinfo_unclick"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
             android:scaleType="fitCenter"
             android:layout_weight="1"

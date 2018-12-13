@@ -37,6 +37,7 @@ public class AdapterMessengerGroupCreateList extends RecyclerView.Adapter<Adapte
 			ProfileImage = view.findViewById(R.id.messenger_chatlist_groupcreate_row_profileCircleImage);
 			ProfileName = view.findViewById(R.id.messenger_chatlist_groupcreate_row_profileNicknameText);
 			CheckBox = view.findViewById(R.id.messenger_chatlist_groupcreate_row_checkbox);
+			CheckBox.setVisibility(View.VISIBLE);
 		}
 	}
 	

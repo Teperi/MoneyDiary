@@ -119,6 +119,17 @@
         app:layout_constraintVertical_bias="0"
         tools:listitem="@layout/moneyflow_list_row"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/moneyflow_list_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:src="@drawable/ic_action_add"
+
+        app:layout_constraintBottom_toTopOf="@id/moneyflow_list_bottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
     <LinearLayout
         android:id="@+id/moneyflow_list_bottomBar"
         android:layout_width="match_parent"

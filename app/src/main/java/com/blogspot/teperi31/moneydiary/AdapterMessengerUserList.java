@@ -44,14 +44,10 @@ public class AdapterMessengerUserList extends RecyclerView.Adapter<AdapterMessen
 		
 		myViewHolder(View view) {
 			super(view);
-			ProfileImage = view.findViewById(R.id.messenger_chatlist_row_profileCircleImage);
-			ProfileName = view.findViewById(R.id.messenger_chatlist_row_profileNicknameText);
+			ProfileImage = view.findViewById(R.id.messenger_chatlist_groupcreate_row_profileCircleImage);
+			ProfileName = view.findViewById(R.id.messenger_chatlist_groupcreate_row_profileNicknameText);
 			// 숨겨야 하는 뷰 숨기기
-			view.findViewById(R.id.messenger_chatlist_row_LastMessageText).setVisibility(View.GONE);
-			view.findViewById(R.id.messenger_chatlist_row_UnReadMessagesCountText).setVisibility(View.GONE);
-			view.findViewById(R.id.messenger_chatlist_row_lastTimeText).setVisibility(View.GONE);
-			view.findViewById(R.id.messenger_chatlist_row_groupUserCountText).setVisibility(View.GONE);
-			view.findViewById(R.id.messenger_chatlist_row_groupUserImage).setVisibility(View.GONE);
+			view.findViewById(R.id.messenger_chatlist_groupcreate_row_checkbox).setVisibility(View.GONE);
 		}
 	}
 	
@@ -62,7 +58,7 @@ public class AdapterMessengerUserList extends RecyclerView.Adapter<AdapterMessen
 	// 틀 만들기
 	@Override
 	public myViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-		View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.messenger_chatlist_row, viewGroup, false);
+		View itemView = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.messenger_chatlist_groupcreate_row, viewGroup, false);
 		return new myViewHolder(itemView);
 	}
 	

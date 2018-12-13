@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -24,6 +27,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
  * 파이어베이스와 연동한 리사이클러뷰 만들기
@@ -40,6 +47,9 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 	private RecyclerView mRecycler;
 	private LinearLayoutManager mLayoutManager;
 	
+	// 액션모드 선택을 위한 저장 데이터
+	private Map<String, String> selectedItems = new HashMap<>();
+	
 	/*
 	 * 뷰 생성 시
 	 * 액션바 생성
@@ -51,6 +61,15 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.moneyflow_list);
+		
+		findViewById(R.id.moneyflow_list_fab).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Animation animation = AnimationUtils.loadAnimation(RecyclerViewMoneyFlowFB.this, R.anim.scale_up);
+				animation.start();
+			}
+		});
+		
 		
 		// 액션바
 		mToolbar = findViewById(R.id.moneyflow_list_toolbarTop);
@@ -99,6 +118,8 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 			@Override
 			protected void onBindViewHolder(@NonNull ViewHolderMoneyFlow holder, int position, @NonNull DataMoneyFlowFB model) {
 				holder.bindToMoneyFlow(model);
+				
+				
 				// 키값 저장해서 에디트 페이지 갈 때 키값 넣어주기
 				DatabaseReference MFref = getRef(position);
 				final String MFKey = MFref.getKey();
@@ -110,6 +131,13 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 						startActivity(intent);
 					}
 				});
+				
+//				holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//					@Override
+//					public boolean onLongClick(View v) {
+//						if(toggleSelection(se))
+//					}
+//				});
 			}
 			
 			@Override
@@ -121,42 +149,6 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 		};
 		// 어뎁터와 리사이클러뷰 연결
 		mRecycler.setAdapter(mAdapter);
-		
-		
-		// 액션 모드 설정을 위한 확인
-
-//		// RecyclerItemClickListener 를 그
-//		mRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mRecycler, new RecyclerItemClickListener.OnItemClickListener() {
-//
-//
-//			@Override
-//			public void onItemClick(View view, int position) {
-//				if (isMultiSelect) {
-//					//if multiple selection is enabled then select item on single click else perform normal click on item.
-//					multiSelect(position);
-//				} else {
-//					Intent i = new Intent(RecyclerViewMoneyFlowFB.this, EditMoneyFlowData.class);
-//					i.putExtra("mfposition", position);
-//					startActivity(i);
-//				}
-//			}
-//
-//			@Override
-//			public void onItemLongClick(View view, int position) {
-//				if (!isMultiSelect) {
-//					selectedIds = new ArrayList<>();
-//					isMultiSelect = true;
-//
-//					if (actionMode == null) {
-//						actionMode = startSupportActionMode(RecyclerViewMoneyFlowFB.this); //show ActionMode.
-//					}
-//				}
-//
-//				multiSelect(position);
-//			}
-//		}
-//
-//		));
 		
 	}
 	
@@ -179,44 +171,6 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 		}
 	}
 	
-	//	toolbar 에 메뉴 띄워주는 함수
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.topbar_actions_moneyflow, menu);
-		return true;
-	}
-	
-	//	메뉴 버튼 클릭시 나올 상황 입력
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.actionAdd:
-				Intent i = new Intent(RecyclerViewMoneyFlowFB.this, InputMoneyFlowCreateFB.class);
-				startActivity(i);
-				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
-				return true;
-			
-			case R.id.main_menu_AppInfo:
-				Toast.makeText(this, "개발자 블로그로 연결합니다.", Toast.LENGTH_SHORT).show();
-				Intent actionBlogIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://naver.com"));
-				startActivity(actionBlogIntent);
-				return true;
-			
-			case R.id.actionmyemail:
-				Toast.makeText(this, "개발자에게 메일을 보냅니다.", Toast.LENGTH_SHORT).show();
-				Intent actionEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:teperi31@gmail.com"));
-				startActivity(actionEmailIntent);
-				return true;
-			
-			case R.id.main_menu_AppSetting:
-				return true;
-			
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-		
-		
-	}
 	
 	
 	// 로딩 모양 보여주는 메소드
@@ -257,4 +211,32 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 				break;
 		}
 	}
+	
+//	public boolean toggleSelection(String key) {
+//		boolean b;
+//		if (selectedItems.get(key)!=null) {
+//			selectedItems.remove(key);
+//			b = false;
+//		}
+//		else {
+//			selectedItems.put(key, key);
+//			b = true;
+//		}
+//		int n = getSelectedItemCount();
+//		if (n>0 && actionMode!=null) {
+//			actionMode.setTitle(String.valueOf(n) + (n==1 ? " selecionado" : " selecionados"));
+//		}
+//		return b;
+//	}
+//
+//	private void removeItems() {
+//		String userId = fragment.getUid();
+//
+//		Iterator iterator = selectedItems.keySet().iterator();
+//		while(iterator.hasNext()) {
+//			String key=(String) iterator.next();
+//			fragment.mDatabase.child("user-news").child(userId).child(key).removeValue();
+//		}
+//		selectedItems.clear();
+//	}
 }

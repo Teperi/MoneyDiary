@@ -51,6 +51,7 @@ public class AdapterMessengerUserList extends RecyclerView.Adapter<AdapterMessen
 			view.findViewById(R.id.messenger_chatlist_row_UnReadMessagesCountText).setVisibility(View.GONE);
 			view.findViewById(R.id.messenger_chatlist_row_lastTimeText).setVisibility(View.GONE);
 			view.findViewById(R.id.messenger_chatlist_row_groupUserCountText).setVisibility(View.GONE);
+			view.findViewById(R.id.messenger_chatlist_row_groupUserImage).setVisibility(View.GONE);
 		}
 	}
 	

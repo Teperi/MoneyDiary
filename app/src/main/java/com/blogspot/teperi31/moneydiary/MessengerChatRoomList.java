@@ -149,14 +149,24 @@ public class MessengerChatRoomList extends AppCompatActivity implements View.OnC
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+			//네비게이션 버튼 클릭시 이동하는 인텐트
 			case R.id.messenger_chatlist_bottomBar_dashboardicon:
 				startActivity(new Intent(this, MainTestActivity.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 				break;
 			case R.id.messenger_chatlist_bottomBar_listicon:
 				startActivity(new Intent(this, RecyclerViewMoneyFlowFB.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 				break;
 			case R.id.messenger_chatlist_bottomBar_myinfoicon:
 				startActivity(new Intent(this, SignInAccountInfo.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
 				break;
 			default:
 				break;

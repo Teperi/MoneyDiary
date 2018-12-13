@@ -21,11 +21,8 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
@@ -156,24 +153,12 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mDatabase.child("users").orderByKey().equalTo(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				dataSnapshot.child(mUser.getUid()+"/isCurrent").getRef().setValue(false);
-			}
-			
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-			
-			}
-		});
-		mDatabase.onDisconnect();
 	}
 	
 	//	toolbar 에 메뉴 띄워주는 함수
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.topbar_actions_main, menu);
+		getMenuInflater().inflate(R.menu.main_menu, menu);
 		return true;
 	}
 	
@@ -184,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			
-			case R.id.actionmyblog:
+			case R.id.main_menu_AppInfo:
 				Intent actionBlogIntent = new Intent(this, RecyclerViewMoneyFlowFB.class);
 				startActivity(actionBlogIntent);
 				return true;
@@ -195,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 				startActivity(actionEmailIntent);
 				return true;
 			
-			case R.id.actionmyphone:
+			case R.id.main_menu_AppSetting:
 				Intent actionTelIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:010-2061-3823"));
 				int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE);
 				

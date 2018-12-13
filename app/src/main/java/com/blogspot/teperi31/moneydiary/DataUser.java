@@ -10,16 +10,14 @@ public class DataUser {
 	public String NickName;
 	public String Email;
 	public String Photo;
-	public boolean isCurrent;
 	
 	public DataUser () {}
 	
-	public DataUser(String UID, String NickName, String email, String photouri, boolean isCurrent) {
+	public DataUser(String UID, String NickName, String email, String photouri) {
 		this.UID = UID;
 		this.NickName = NickName;
 		this.Email = email;
 		this.Photo = photouri;
-		this.isCurrent = isCurrent;
 	}
 	
 	public Map<String, Object> toMap() {
@@ -32,7 +30,6 @@ public class DataUser {
 		}
 		result.put("Email", Email);
 		result.put("Photo", Photo);
-		result.put("isCurrent",isCurrent);
 		
 		return result;
 	}

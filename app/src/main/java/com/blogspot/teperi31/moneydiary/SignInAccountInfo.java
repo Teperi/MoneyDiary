@@ -98,15 +98,13 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		mDatabase.child("users").orderByKey().equalTo(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				if (dataSnapshot.hasChildren()) {
-					dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("isCurrent").getRef().setValue(true);
-				} else {
+				if (!dataSnapshot.hasChildren()) {
 					DataUser datauser;
 					// 유저 정보를 모아서
 					if (user.getPhotoUrl() == null) {
-						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null, true);
+						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
 					} else {
-						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), true);
+						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
 					}
 					
 					Map<String, Object> inputUserData = datauser.toMap();
@@ -115,7 +113,20 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 					childUpdates.put("/users/" + user.getUid(), inputUserData);
 					// 데이터베이스에 집어넣기
 					mDatabase.updateChildren(childUpdates);
+					
 				}
+				
+				mProgressView.setVisibility(View.GONE);
+				// Go to MainActivity : 메인으로 이동
+				Toast.makeText(SignInAccountInfo.this, "환영합니다.\n" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+				Intent i = new Intent(SignInAccountInfo.this, MainTestActivity.class);
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(i);
+				// 이 페이지는 종료시킴
+				finish();
+				//페이드 아웃 애니메이션
+				overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 			}
 			
 			@Override
@@ -124,16 +135,6 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 			}
 		});
 		
-		
-		mProgressView.setVisibility(View.GONE);
-		// Go to MainActivity : 메인으로 이동
-		Toast.makeText(SignInAccountInfo.this, "환영합니다.\n" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-		Intent i = new Intent(SignInAccountInfo.this, MainActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(i);
-		// 이 페이지는 종료시킴
-		finish();
 		
 	}
 	
@@ -166,7 +167,6 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		mDatabase.child("users").orderByKey().equalTo(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("isCurrent").getRef().setValue(false);
 				mAuth.signOut();
 				updateUI(null);
 			}
@@ -238,24 +238,27 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 				Intent intent = new Intent(this, SignupActivity.class);
 				startActivity(intent);
 				return;
+			//네비게이션 버튼 클릭시 이동하는 인텐트
 			case R.id.activity_signin_bottomBar_dashboardicon:
 				startActivity(new Intent(this, MainTestActivity.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
+				break;
+			case R.id.activity_signin_bottomBar_listicon:
+				startActivity(new Intent(this, RecyclerViewMoneyFlowFB.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 				break;
 			case R.id.activity_signin_bottomBar_messengericon:
 				startActivity(new Intent(this, MessengerChatRoomList.class));
-				break;
-			case R.id.activity_signin_bottomBar_myinfoicon:
-				startActivity(new Intent(this, SignInAccountInfo.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 				break;
 			default:
 				return;
 		}
-	}
-	
-	//뒤로가기 버튼 기능 넣기
-	@Override
-	public boolean onSupportNavigateUp() {
-		finish();
-		return true;
 	}
 }

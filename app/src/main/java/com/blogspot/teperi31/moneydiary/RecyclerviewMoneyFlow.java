@@ -176,7 +176,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.
 				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
 				return true;
 			
-			case R.id.actionmyblog:
+			case R.id.main_menu_AppInfo:
 				Toast.makeText(this, "개발자 블로그로 연결합니다.", Toast.LENGTH_SHORT).show();
 				Intent actionBlogIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://naver.com"));
 				startActivity(actionBlogIntent);
@@ -188,7 +188,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.
 				startActivity(actionEmailIntent);
 				return true;
 			
-			case R.id.actionmyphone:
+			case R.id.main_menu_AppSetting:
 				Intent actionTelIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:010-2061-3823"));
 				int permissionCheck = ContextCompat.checkSelfPermission(RecyclerviewMoneyFlow.this, Manifest.permission.CALL_PHONE);
 				

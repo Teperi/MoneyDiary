@@ -73,7 +73,7 @@ public class SignupActivity extends AppCompatActivity {
 	
 	private void createAccount(String email, String password, final String Nickname) {
 		// 형식에 맞지 않는 경우 여기서 끝내기
-		if(!validateForm()){
+		if (!validateForm()) {
 			return;
 		}
 		
@@ -83,27 +83,52 @@ public class SignupActivity extends AppCompatActivity {
 		mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
 			@Override
 			public void onComplete(@NonNull Task<AuthResult> task) {
-				if(task.isSuccessful()) {
+				if (task.isSuccessful()) {
 					final FirebaseUser user = mAuth.getCurrentUser();
-					updateProfile(user, Nickname);
 					
 					mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 						@Override
 						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-							DataUser datauser;
-							// 유저 정보를 모아서
-							if(user.getPhotoUrl() == null){
-								datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null, true);
-							} else {
-								datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), true);
-							}
 							
-							Map<String, Object> inputUserData = datauser.toMap();
-							Map<String, Object> childUpdates = new HashMap<>();
-							// Map 에 한번에 저장 후
-							childUpdates.put("/users/" + user.getUid(), inputUserData);
-							// 데이터베이스에 집어넣기
-							mDatabase.updateChildren(childUpdates);
+							// [START update_profile]
+							UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+									.setDisplayName(Nickname)
+									.build();
+							
+							user.updateProfile(profileUpdates)
+									.addOnCompleteListener(new OnCompleteListener<Void>() {
+										@Override
+										public void onComplete(@NonNull Task<Void> task) {
+											if (task.isSuccessful()) {
+												Log.d("signup", "User profile updated.");
+											} else {
+												Toast.makeText(SignupActivity.this, "닉네임이 설정되지 않았습니다. 나중에 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+												return;
+											}
+											DataUser datauser;
+											// 유저 정보를 모아서
+											if (user.getPhotoUrl() == null) {
+												datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
+											} else {
+												datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
+											}
+											
+											Map<String, Object> inputUserData = datauser.toMap();
+											Map<String, Object> childUpdates = new HashMap<>();
+											// Map 에 한번에 저장 후
+											childUpdates.put("/users/" + user.getUid(), inputUserData);
+											// 데이터베이스에 집어넣기
+											mDatabase.updateChildren(childUpdates);
+											
+											Toast.makeText(SignupActivity.this, "가입 완료 되었습니다. \n" + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+											Intent intent = new Intent(SignupActivity.this, MainTestActivity.class);
+											intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+											intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+											startActivity(intent);
+											finish();
+										}
+									});
+							
 						}
 						
 						@Override
@@ -112,15 +137,6 @@ public class SignupActivity extends AppCompatActivity {
 						}
 					});
 					
-					
-					// TODO : 고민해야 할 부분, 이걸 어떻게 처리하지?
-					// update profile 이 에러나면?? 그리고 Nickname 이 없다면??
-					Toast.makeText(SignupActivity.this, "가입 완료 되었습니다. \n"+mAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
-					Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					startActivity(intent);
-					finish();
 				} else {
 					Log.w("signInWithEmail:failure", task.getException());
 					Toast.makeText(SignupActivity.this, "가입에 실패하였습니다. \n 조금 후에 다시 시도해 주세요.", Toast.LENGTH_SHORT).show();
@@ -135,7 +151,7 @@ public class SignupActivity extends AppCompatActivity {
 		
 		// ID 전용
 		String ID = mIDField.getText().toString();
-		if(TextUtils.isEmpty(ID)) {
+		if (TextUtils.isEmpty(ID)) {
 			mIDField.setError("아이디를 입력하세요.");
 			valid = false;
 		} else if (!Patterns.EMAIL_ADDRESS.matcher(ID).matches()) {
@@ -168,30 +184,6 @@ public class SignupActivity extends AppCompatActivity {
 		}
 		
 		return valid;
-	}
-	
-	/*
-	* 아이디 생성 이후 Profile 에 NickName 설정
-	* */
-	public void updateProfile(FirebaseUser user , String NickName) {
-		// [START update_profile]
-		UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-				.setDisplayName(NickName)
-				.build();
-		
-		user.updateProfile(profileUpdates)
-				.addOnCompleteListener(new OnCompleteListener<Void>() {
-					@Override
-					public void onComplete(@NonNull Task<Void> task) {
-						if (task.isSuccessful()) {
-							Log.d("signup", "User profile updated.");
-						} else {
-							Toast.makeText(SignupActivity.this, "닉네임이 설정되지 않았습니다. 나중에 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
-							return;
-						}
-					}
-				});
-		// [END update_profile]
 	}
 	
 	//뒤로가기 버튼 기능 넣기

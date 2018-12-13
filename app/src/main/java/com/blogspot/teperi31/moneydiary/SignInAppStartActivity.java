@@ -100,16 +100,13 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 		mDatabase.child("users").orderByKey().equalTo(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				if(dataSnapshot.hasChildren()) {
-					dataSnapshot.child(mAuth.getCurrentUser().getUid()).child("isCurrent").getRef().setValue(true);
-					
-				} else {
+				if(!dataSnapshot.hasChildren()) {
 					DataUser datauser;
 					// 유저 정보를 모아서
 					if(user.getPhotoUrl() == null){
-						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null, true);
+						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), null);
 					} else {
-						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), true);
+						datauser = new DataUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
 					}
 					
 					Map<String, Object> inputUserData = datauser.toMap();
@@ -118,7 +115,17 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 					childUpdates.put("/users/" + user.getUid(), inputUserData);
 					// 데이터베이스에 집어넣기
 					mDatabase.updateChildren(childUpdates);
+				} else {
+				
 				}
+				mProgressView.setVisibility(View.GONE);
+				// Go to MainActivity : 메인으로 이동
+				Toast.makeText(SignInAppStartActivity.this, "환영합니다.\n" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+				startActivity(new Intent(SignInAppStartActivity.this, MainTestActivity.class));
+				// 이 페이지는 종료시킴
+				finish();
+				// 애니메이션
+				overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 			}
 			
 			@Override
@@ -126,13 +133,6 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 			
 			}
 		});
-		mProgressView.setVisibility(View.GONE);
-		// Go to MainActivity : 메인으로 이동
-		Toast.makeText(SignInAppStartActivity.this, "환영합니다.\n" + user.getDisplayName(), Toast.LENGTH_SHORT).show();
-		startActivity(new Intent(SignInAppStartActivity.this, MainActivity.class));
-		// 이 페이지는 종료시킴
-		finish();
-		
 	}
 	
 	

@@ -1,17 +1,25 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.Legend;
@@ -26,6 +34,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.renderer.LineChartRenderer;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +42,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,6 +69,8 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 	// 로그인 데이터 및 전체 통계 데이터 가져오기
 	private FirebaseUser mUser;
 	private DatabaseReference mDatabaseReference;
+	//Fcm 연결을 위한 토큰 처리
+	UtilMyFirebaseMessagingService mFCM;
 	
 	// 대시보드 차트
 	private CombinedChart mCombinedChart;
@@ -111,6 +124,16 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 		//데이터 연결
 		mUser = FirebaseAuth.getInstance().getCurrentUser();
 		mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+		
+		// Get token
+		FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+			@Override
+			public void onSuccess(InstanceIdResult instanceIdResult) {
+				String deviceToken = instanceIdResult.getToken();
+				mFCM = new UtilMyFirebaseMessagingService();
+				mFCM.onNewToken(deviceToken);
+			}
+		});
 		
 		//캘린더 날짜 초기화
 		mCalendarNow = Calendar.getInstance(Locale.KOREA);
@@ -248,6 +271,8 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 							findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
 							findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
 						} else {
+							findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
+							findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
 							findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.VISIBLE);
 							findViewById(R.id.activity_main_expense_CombinedChart).setVisibility(View.GONE);
 						}
@@ -271,15 +296,51 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 		switch (v.getId()) {
 			case R.id.activity_main_bottomBar_listicon:
 				startActivity(new Intent(this, RecyclerViewMoneyFlowFB.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
 				break;
 			case R.id.activity_main_bottomBar_messengericon:
 				startActivity(new Intent(this, MessengerChatRoomList.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
 				break;
 			case R.id.activity_main_bottomBar_myinfoicon:
 				startActivity(new Intent(this, SignInAccountInfo.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
 				break;
 			default:
 				break;
+		}
+	}
+	
+	//	toolbar 에 메뉴 띄워주는 함수
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main_menu, menu);
+		return true;
+	}
+	
+	
+	//	메뉴 버튼 클릭시 나올 상황 입력
+	//  일단 toast만 연결함 / 추후 Intent 기능 넣어야 함
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			
+			case R.id.main_menu_AppInfo:
+				Toast.makeText(this, "앱 소개", Toast.LENGTH_SHORT).show();
+				return true;
+			
+			case R.id.main_menu_AppSetting:
+				Toast.makeText(this, "환경 설정", Toast.LENGTH_SHORT).show();
+				return true;
+			
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 }

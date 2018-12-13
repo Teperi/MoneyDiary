@@ -9,12 +9,12 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/actionmyblog"
+        android:id="@+id/main_menu_AppInfo"
         android:title="개발자 블로그"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/actionmyphone"
+        android:id="@+id/main_menu_AppSetting"
         android:title="개발자 전화"
         app:showAsAction="never" />
 

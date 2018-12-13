@@ -196,7 +196,7 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 				Toast.makeText(this, "추가", Toast.LENGTH_SHORT).show();
 				return true;
 			
-			case R.id.actionmyblog:
+			case R.id.main_menu_AppInfo:
 				Toast.makeText(this, "개발자 블로그로 연결합니다.", Toast.LENGTH_SHORT).show();
 				Intent actionBlogIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://naver.com"));
 				startActivity(actionBlogIntent);
@@ -208,7 +208,7 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 				startActivity(actionEmailIntent);
 				return true;
 			
-			case R.id.actionmyphone:
+			case R.id.main_menu_AppSetting:
 				return true;
 			
 			default:
@@ -234,14 +234,24 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+			//네비게이션 버튼 클릭시 이동하는 인텐트
 			case R.id.moneyflow_list_bottomBar_dashboardicon:
 				startActivity(new Intent(this, MainTestActivity.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_right_in, R.anim.push_left_out);
 				break;
 			case R.id.moneyflow_list_bottomBar_messengericon:
 				startActivity(new Intent(this, MessengerChatRoomList.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
 				break;
 			case R.id.moneyflow_list_bottomBar_myinfoicon:
 				startActivity(new Intent(this, SignInAccountInfo.class));
+				// 애니메이션
+				finish();
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_right_out);
 				break;
 			default:
 				break;

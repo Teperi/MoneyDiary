@@ -3,11 +3,13 @@ package com.blogspot.teperi31.moneydiary;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.button.MaterialButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -22,8 +24,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InputMoneyFlowCreateFB extends AppCompatActivity {
@@ -40,6 +44,10 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 	
 	private DatabaseReference mDatabase;
 	private FirebaseUser user;
+	
+	List<String> accountList;
+	List<String> expenseCategoryList;
+	List<String> incomeCategoryList;
 	
 	
 	@Override
@@ -73,18 +81,36 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 		setDate = new Date();
 		UtilDateTimePicker.setDatepopup(this, setDate, mDatepick);
 		
+		// 스피너 데이터 가져오기
+		mDatabase.child("users-setting").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				accountList = (List<String>) dataSnapshot.child("accountList").getValue();
+				expenseCategoryList = (List<String>) dataSnapshot.child("expenseCategoryList").getValue();
+				incomeCategoryList = (List<String>) dataSnapshot.child("incomeCategoryList").getValue();
+				
+				accountAdapter = new ArrayAdapter(InputMoneyFlowCreateFB.this, android.R.layout.simple_spinner_item, accountList);
+				accountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				spinnerAccount.setAdapter(accountAdapter);
+				
+				categoryAdapter = new ArrayAdapter(InputMoneyFlowCreateFB.this, android.R.layout.simple_spinner_item, expenseCategoryList);
+				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				spinnerCategory.setAdapter(categoryAdapter);
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		
 		
 		//계좌 스피너
 		spinnerAccount = findViewById(R.id.input_moneyflow_accountspinner);
-		accountAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, ApplicationClass.mfAccountList);
-		accountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinnerAccount.setAdapter(accountAdapter);
 		
 		//분류 스피너
 		spinnerCategory = findViewById(R.id.input_moneyflow_categoryspinner);
-		categoryAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, ApplicationClass.mfExpenseCategoryList);
-		categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinnerCategory.setAdapter(categoryAdapter);
+		
 		
 		// 지출 Type 기본설정
 		setType = "지출";
@@ -113,7 +139,7 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 				inputText.setText("분류");
 				
 				//분류 스피너
-				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, ApplicationClass.mfIncomeCategoryList);
+				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, incomeCategoryList);
 				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				spinnerCategory.setAdapter(categoryAdapter);
 				
@@ -140,7 +166,7 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 				inputText.setText("분류");
 				
 				//분류 스피너
-				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, ApplicationClass.mfExpenseCategoryList);
+				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, expenseCategoryList);
 				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				spinnerCategory.setAdapter(categoryAdapter);
 				
@@ -161,7 +187,7 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 				System.out.println(setDate.getTime());
 				setType = "이체";
 				//분류 스피너
-				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, ApplicationClass.mfAccountList);
+				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, accountList);
 				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				spinnerCategory.setAdapter(categoryAdapter);
 				

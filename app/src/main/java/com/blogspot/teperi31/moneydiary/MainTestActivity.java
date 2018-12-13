@@ -1,39 +1,27 @@
 package com.blogspot.teperi31.moneydiary;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.CombinedChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.MarkerImage;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.CombinedData;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.renderer.LineChartRenderer;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,7 +37,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /*
  * 12.05 현재 상황
@@ -72,38 +63,26 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 	//Fcm 연결을 위한 토큰 처리
 	UtilMyFirebaseMessagingService mFCM;
 	
-	// 대시보드 차트
-	private CombinedChart mCombinedChart;
-	
-	// 차트 데이터를 최종적으로 담는 그릇
-	private CombinedData mCombinedData;
-	
-	// 전체 날짜 고정
-	private final int count = 31;
-	
-	
 	// 날짜 확인 변수
 	// 현재 날짜
 	Date mDateNow;
 	Calendar mCalendarNow;
+	//월 초 날짜 확인
+	Calendar mCalendarMonthStart;
 	
-	// 한달전 시작 날짜
-	Date mDateFormerStart;
-	Calendar mCalendarFormerStart;
-	// 한달전 끝 날짜
-	Date mDateFormerEnd;
-	Calendar mCalendarFormerEnd;
+	// 분류 설정 가져오기
+	List<String> accountList;
+	List<String> expenseCategoryList;
+	List<String> incomeCategoryList;
 	
-	// 바차트와 라인차트 데이터를 Arraylist 에 우선 담아야 함
-	ArrayList<BarEntry> barEntries;
-	ArrayList<Entry> lineEntries;
-	// Arraylist 에 담은 데이터를 데이터셋으로 저장
-	BarDataSet mBarDataSet;
-	LineDataSet mlineDataSet;
-	// 데이터셋을 만든후 세팅까지 하고 나서 -> 데이터로 저장해야 함
-	BarData mBarData;
-	LineData mlineData;
-	MarkerImage mMarkerImage;
+	HashMap<String,Integer> expenseCategoryHashmap = new HashMap<>();
+	
+	// 하프 파이 차트 연결
+	PieChart mExpenseChart;
+	// 하프 파이 차트 데이터
+	ArrayList<PieEntry> pieExpenselist = new ArrayList<>();
+	PieDataSet pieExpenseDataSet;
+	PieData pieExpenseData;
 	
 	
 	@Override
@@ -137,152 +116,118 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 		
 		//캘린더 날짜 초기화
 		mCalendarNow = Calendar.getInstance(Locale.KOREA);
-		mCalendarFormerEnd = Calendar.getInstance(Locale.KOREA);
-		mCalendarFormerStart = Calendar.getInstance(Locale.KOREA);
+		mCalendarMonthStart = Calendar.getInstance(Locale.KOREA);
 		
 		//현재 월 받기
 		mDateNow = new Date();
 		mCalendarNow.setTime(mDateNow);
+		mCalendarMonthStart.set(mCalendarNow.get(Calendar.YEAR), mCalendarNow.get(Calendar.MONTH),1);
 		
 		// 현재 날짜 소비 리포트에 넣기
 		TextView datetext = findViewById(R.id.activity_main_expense_dateText);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM", Locale.KOREA);
 		datetext.setText(sdf.format(mDateNow));
 		
 		
-		// 한달 전 시작 및 끝 날짜 받아오기
-		mCalendarFormerStart.set(mCalendarNow.get(Calendar.YEAR), mCalendarNow.get(mCalendarNow.MONTH) - 1, 1);
-		mDateFormerStart = mCalendarFormerStart.getTime();
-		mCalendarFormerEnd.set(mCalendarNow.get(Calendar.YEAR), mCalendarNow.get(mCalendarNow.MONTH), 1);
-		mDateFormerEnd = mCalendarFormerEnd.getTime();
-		
-		// 대시보
-		mCombinedChart = findViewById(R.id.activity_main_expense_CombinedChart);
-		
-		mCombinedChart.getDescription().setEnabled(false);
-//		// 전체 배경색
-//		mCombinedChart.setBackgroundColor(R.color.colorPrimary);
-		// 차트 내 배경색
-		mCombinedChart.setDrawGridBackground(false);
-		// 차트 내 각각의 데이터의 배경색
-		mCombinedChart.setDrawBarShadow(false);
-		// 무슨역할인지.. 차이 없으므로 제외
-//		mCombinedChart.setHighlightFullBarEnabled(true);
-		
-		
-		// 차트 종류 선택
-		// 라인 차트와 바 차트 모양 선택
-		mCombinedChart.setDrawOrder(new CombinedChart.DrawOrder[]{
-				CombinedChart.DrawOrder.BAR, CombinedChart.DrawOrder.LINE
-		});
-		
-		// 범주 세팅하는 곳
-		Legend l = mCombinedChart.getLegend();
-		// l.setWordWrapEnabled(false);
-		// 위치 선정
-		l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-		l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-		// 방향 선정
-		l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-		
-		// Y 좌표 삭제
-		// Combined 의 경우 양쪽 Y 좌표가 나오기 때문에 둘 다 삭제 필요함
-		YAxis yAxis = mCombinedChart.getAxisLeft();
-		yAxis.setAxisMinimum(0f); // start at zero
-		mCombinedChart.getAxisLeft().setEnabled(false);
-		mCombinedChart.getAxisRight().setEnabled(false);
-		mCombinedChart.setMarker(mMarkerImage);
-		
-		// X좌표 보이기
-		XAxis xAxis = mCombinedChart.getXAxis();
-		xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-		xAxis.setAxisMinimum(0f);
-//		xAxis.setGranularity(1f);
-		xAxis.setAxisMaximum(30f);
-		
-		mDatabaseReference.child("moneyflow").child(mUser.getUid())
-				.orderByChild("date").startAt(mDateFormerStart.getTime(), "date")
-				.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						if (dataSnapshot.exists()) {
-							findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.GONE);
-							findViewById(R.id.activity_main_expense_CombinedChart).setVisibility(View.VISIBLE);
-							SimpleDateFormat sdf = new SimpleDateFormat("dd");
-							// 바 데이터 새로 만들기
-							barEntries = new ArrayList<>();
-							for (int i = 0; i < 31; i++) {
-								barEntries.add(new BarEntry(i + 0.5f, 0f));
-							}
-							// 라인 데이터 새로 만들기
-							lineEntries = new ArrayList<>();
-							for (int i = 0; i < Integer.parseInt(sdf.format(mDateNow)); i++) {
-								if (i == 4 || i == 9 || i == 14 || i == 19 || i == 24 || i == 29) {
-									lineEntries.add(new Entry(i + 0.5f, 0f));
-									lineEntries.get(i).setIcon(getDrawable(R.drawable.ic_action_charticon));
-								} else {
-									lineEntries.add(new Entry(i + 0.5f, 0f));
-								}
-							}
-							
-							for (DataSnapshot item : dataSnapshot.getChildren()) {
-								DataMoneyFlowFB DMFdata = item.getValue(DataMoneyFlowFB.class);
-								if (DMFdata.date < mDateFormerEnd.getTime()) {
-									for (int i = Integer.parseInt(sdf.format(DMFdata.date)); i < 31; i++) {
-										barEntries.get(i).setY(barEntries.get(i).getY() + DMFdata.price);
-									}
-								} else {
-									for (int i = Integer.parseInt(sdf.format(DMFdata.date)); i < Integer.parseInt(sdf.format(mDateNow)); i++) {
-										if (i == 4 || i == 9 || i == 14 || i == 19 || i == 24 || i == 29) {
-											lineEntries.get(i).setY(lineEntries.get(i).getY() + DMFdata.price);
-//											lineEntries.get(i).setIcon(getDrawable(R.drawable.ic_action_charticon));
-										} else {
-											lineEntries.get(i).setY(lineEntries.get(i).getY() + DMFdata.price);
+		mExpenseChart = findViewById(R.id.activity_main_expense_halfpieChart);
+		mExpenseChart.setUsePercentValues(true);
+		// 총 소비액 가운데에 쓰기
+		mExpenseChart.setTransparentCircleColor(Color.WHITE);
+		mExpenseChart.setHoleRadius(58f);
+		mExpenseChart.setTransparentCircleRadius(61f);
+		mExpenseChart.setMaxAngle(180f); // HALF CHART
+		mExpenseChart.setRotationAngle(180f);
+		mExpenseChart.setEntryLabelTextSize(20f);
+		// 분류 데이터 및 지출 데이터 가져오기
+		mDatabaseReference.child("users-setting").child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				// 분류 데이터 우선 가져오기
+				expenseCategoryList = (List<String>) dataSnapshot.child("expenseCategoryList").getValue();
+				for(int i = 0; i < expenseCategoryList.size(); i++) {
+					expenseCategoryHashmap.put(expenseCategoryList.get(i),0);
+				}
+				// 지출 데이터 가져오기
+				// 최근 월을 찾아서 그 데이터만 가져오기
+				mDatabaseReference.child("moneyflow").child(mUser.getUid()).orderByChild("date")
+						.startAt(mCalendarMonthStart.getTimeInMillis())
+						.addListenerForSingleValueEvent(new ValueEventListener() {
+							@Override
+							public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+								// 데이터가 있으면
+								if(dataSnapshot.exists()){
+									// 데이터 없다는 글씨 지우기
+									findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.GONE);
+									// 날짜에 맞는 전체 데이터 중
+									for(DataSnapshot item : dataSnapshot.getChildren()) {
+										DataMoneyFlowFB test = item.getValue(DataMoneyFlowFB.class);
+										// 실제 데이터 넣기
+										for(int i = 0; i < expenseCategoryList.size(); i++){
+											if(test.category.equals(expenseCategoryList.get(i)) && test.type.equals("지출")){
+												expenseCategoryHashmap.put(expenseCategoryList.get(i),expenseCategoryHashmap.get(expenseCategoryList.get(i)) + Math.toIntExact(test.price));
+											}
 										}
 									}
+									// 실제에서 뽑은 데이터를 차트에 넣기
+									Integer expenseTotal = 0;
+									for(int i = 0; i<expenseCategoryHashmap.size();i++){
+										if(expenseCategoryHashmap.get(expenseCategoryList.get(i)) > 0){
+											pieExpenselist.add(new PieEntry(expenseCategoryHashmap.get(expenseCategoryList.get(i)),expenseCategoryList.get(i)));
+											expenseTotal += expenseCategoryHashmap.get(expenseCategoryList.get(i));
+										}
+									}
+									
+									pieExpenseDataSet = new PieDataSet(pieExpenselist, "지출 리포트");
+									pieExpenseDataSet.setSliceSpace(3f);
+									pieExpenseDataSet.setSelectionShift(5f);
+									
+									pieExpenseDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+									//dataSet.setSelectionShift(0f);
+									pieExpenseData = new PieData(pieExpenseDataSet);
+									pieExpenseData.setValueFormatter(new PercentFormatter());
+									pieExpenseData.setValueTextSize(20f);
+									pieExpenseData.setValueTextColor(Color.WHITE);
+									
+									
+									mExpenseChart.setCenterText("총 소비액 :" + String.valueOf(expenseTotal));
+									mExpenseChart.setData(pieExpenseData);
+									
+									mExpenseChart.invalidate();
+									
+									findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
+									findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
+									mExpenseChart.setVisibility(View.VISIBLE);
+									
+								} else {
+									// 데이터가 없으면 없다고 띄우기
+									mExpenseChart.setVisibility(View.GONE);
+									findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.VISIBLE);
+									findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
+									findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
 								}
+								
 							}
-							Log.d("test", "여긴언제?");
 							
-							// 바데이터 셋 세팅 -> 바데이터로 저장
-							mBarDataSet = new BarDataSet(barEntries, String.valueOf(mCalendarFormerStart.get(Calendar.MONTH) + 1) + "월");
-							mBarDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-							mBarDataSet.setDrawValues(false);
-							mBarDataSet.setColor(getColor(R.color.colorGrayline));
-							mBarData = new BarData(mBarDataSet);
+							@Override
+							public void onCancelled(@NonNull DatabaseError databaseError) {
 							
-							// 라인데이터 셋 및 세팅 -> 라인데이터로 저장
-							mlineDataSet = new LineDataSet(lineEntries, String.valueOf(mCalendarNow.get(Calendar.MONTH) + 1) + "월");
-							mlineDataSet.setColor(getColor(R.color.colorBlack));
-							mlineDataSet.setLineWidth(1.5f);
-							mlineDataSet.setMode(LineDataSet.Mode.LINEAR);
-							mlineDataSet.setDrawValues(false);
-							mlineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-							mlineDataSet.setDrawCircles(false);
-							mlineData = new LineData(mlineDataSet);
-							
-							// 데이터들을 차트 내 데이터로 넣기
-							mCombinedData = new CombinedData();
-							mCombinedData.setData(mBarData);
-							mCombinedData.setData(mlineData);
-							
-							// 차트에 그리기
-							mCombinedChart.setData(mCombinedData);
-							findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
-							findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
-						} else {
-							findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
-							findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
-							findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.VISIBLE);
-							findViewById(R.id.activity_main_expense_CombinedChart).setVisibility(View.GONE);
-						}
-					}
-					
-					@Override
-					public void onCancelled(@NonNull DatabaseError databaseError) {
-					
-					}
-				});
+							}
+						});
+				
+				
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		
+		
+		
+		
+		
+		
 	}
 	
 	@Override

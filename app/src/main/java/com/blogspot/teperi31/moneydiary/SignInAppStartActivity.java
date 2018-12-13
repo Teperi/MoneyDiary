@@ -28,7 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -111,8 +113,34 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 					
 					Map<String, Object> inputUserData = datauser.toMap();
 					Map<String, Object> childUpdates = new HashMap<>();
+					
+					// 기본 세팅값 만들기
+					Map<String, Object> basicSetting = new HashMap<>();
+					List<String> AccountList = new ArrayList<>();
+					List<String> ExpenseCategoryList = new ArrayList<>();
+					List<String> IncomeCategoryList = new ArrayList<>();
+					
+					AccountList.add("현금");
+					AccountList.add("체크카드");
+					
+					ExpenseCategoryList.add("점심");
+					ExpenseCategoryList.add("저녁");
+					ExpenseCategoryList.add("간식");
+					ExpenseCategoryList.add("회식");
+					ExpenseCategoryList.add("영화");
+					ExpenseCategoryList.add("기타");
+					
+					IncomeCategoryList.add("월급");
+					IncomeCategoryList.add("기타");
+					
+					basicSetting.put("accountList",AccountList);
+					basicSetting.put("expenseCategoryList",ExpenseCategoryList);
+					basicSetting.put("incomeCategoryList",IncomeCategoryList);
+					
 					// Map 에 한번에 저장 후
 					childUpdates.put("/users/" + user.getUid(), inputUserData);
+					// 기본 세팅값 넣기
+					childUpdates.put("/users-setting/" + user.getUid(), basicSetting);
 					// 데이터베이스에 집어넣기
 					mDatabase.updateChildren(childUpdates);
 				} else {

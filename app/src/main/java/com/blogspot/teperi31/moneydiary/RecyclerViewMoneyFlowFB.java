@@ -65,8 +65,10 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 		findViewById(R.id.moneyflow_list_fab).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Animation animation = AnimationUtils.loadAnimation(RecyclerViewMoneyFlowFB.this, R.anim.scale_up);
-				animation.start();
+				Intent intent = new Intent(RecyclerViewMoneyFlowFB.this, InputMoneyFlowCreateFB.class);
+				startActivity(intent);
+//				Animation animation = AnimationUtils.loadAnimation(RecyclerViewMoneyFlowFB.this, R.anim.scale_up);
+//				animation.start();
 			}
 		});
 		

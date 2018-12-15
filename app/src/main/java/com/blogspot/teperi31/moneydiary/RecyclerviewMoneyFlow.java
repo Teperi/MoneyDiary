@@ -75,9 +75,9 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.
 		int moneyflowDepositint = 0;
 		int moneyflowWithdrawint = 0;
 		int moneyflowTotalint;
-		TextView moneyflowDeposittext = findViewById(R.id.moneyflowcalcdeposit);
-		TextView moneyflowWithdrawtext = findViewById(R.id.moneyflowcalcwithdraw);
-		TextView moneyflowTotaltext = findViewById(R.id.moneyflowcalctotal);
+		TextView moneyflowDeposittext = findViewById(R.id.moneyflow_list_incomeText);
+		TextView moneyflowWithdrawtext = findViewById(R.id.moneyflow_list_expenseText);
+		TextView moneyflowTotaltext = findViewById(R.id.moneyflow_list_balanceText);
 		
 		// 수입 및 지출 계산
 		for (int i = 0; i < ApplicationClass.mfList.size(); i++) {
@@ -162,7 +162,7 @@ public class RecyclerviewMoneyFlow extends AppCompatActivity implements android.
 	//	toolbar 에 메뉴 띄워주는 함수
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.topbar_actions_moneyflow, menu);
+		getMenuInflater().inflate(R.menu.moneyflow_list_menu, menu);
 		return true;
 	}
 	

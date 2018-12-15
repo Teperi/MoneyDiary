@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 /*
 * 이 앱에 가입한 전체 유저 리스트 보여주는 화면
-* TODO : 추후 Floating 버튼을 통해 이 화면에 도달할수 있도록 설정/메신저 메인화면에는 채팅방 리스트 노출
+*
 * */
 
 public class MessengerUserList extends AppCompatActivity {

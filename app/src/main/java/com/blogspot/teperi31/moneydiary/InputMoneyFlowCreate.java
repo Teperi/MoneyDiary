@@ -215,7 +215,6 @@ public class InputMoneyFlowCreate extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.topbar_input_setting:
-				//TODO : 설정 창 만들어서 분류 변경 가능하도록 허용
 				Toast.makeText(this, "설정 창 이동", Toast.LENGTH_SHORT).show();
 			default:
 				return super.onOptionsItemSelected(item);

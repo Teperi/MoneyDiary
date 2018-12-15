@@ -9,10 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/styleAppBar"
-        app:popupTheme="@style/stylePopupMenu"
-
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"/>
+
+        app:layout_constraintVertical_bias="0"
+        app:popupTheme="@style/stylePopupMenu" />
 
     <ScrollView
         android:id="@+id/activity_main_ScrollView"
@@ -25,62 +25,129 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_main_toolbarTop">
 
-        <android.support.design.card.MaterialCardView
-            android:id="@+id/activity_main_expense_card"
-            style="@style/style_mainCardView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            android:layout_margin="8dp">
-
-            <GridLayout
+            <android.support.design.card.MaterialCardView
+                android:id="@+id/activity_main_expense_card"
+                style="@style/style_mainCardView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
 
-                <TextView
-                    android:id="@+id/activity_main_expense_dateText"
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_margin="8dp"
-                    android:text="2018.02"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="20sp" />
+                android:layout_margin="8dp">
 
-                <TextView
-                    android:id="@+id/activity_main_expense_titleText"
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_margin="8dp"
-                    android:text="소비 리포트"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/activity_main_expense_noDataText"
-                    android:layout_row="2"
-                    android:layout_column="0"
-                    android:layout_gravity="center"
-                    android:layout_margin="8dp"
-                    android:text="데이터가 없습니다."
-                    android:textColor="@color/colorBlack"
-                    android:visibility="gone"
-                    android:textSize="20sp" />
-
-
-                <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/activity_main_expense_halfpieChart"
+                <GridLayout
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_row="2"
-                    android:layout_column="0"
-                    android:layout_gravity="bottom|center_horizontal"
-                    android:layout_margin="8dp">
+                    android:layout_height="match_parent">
 
-                </com.github.mikephil.charting.charts.PieChart>
-            </GridLayout>
-        </android.support.design.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/activity_main_expense_dateText"
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_margin="8dp"
+                        android:text="2018.02"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/activity_main_expense_titleText"
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_margin="8dp"
+                        android:text="소비 리포트"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/activity_main_expense_noDataText"
+                        android:layout_row="2"
+                        android:layout_column="0"
+                        android:layout_gravity="center"
+                        android:layout_margin="8dp"
+                        android:text="데이터가 없습니다."
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20sp"
+                        android:visibility="gone" />
+
+
+                    <com.github.mikephil.charting.charts.PieChart
+                        android:id="@+id/activity_main_expense_pieChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_row="2"
+                        android:layout_column="0"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:layout_margin="8dp">
+
+                    </com.github.mikephil.charting.charts.PieChart>
+                </GridLayout>
+            </android.support.design.card.MaterialCardView>
+
+            <android.support.design.card.MaterialCardView
+                android:id="@+id/activity_main_balance_card"
+                style="@style/style_mainCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="8dp"
+                >
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/activity_main_balance_dateText"
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        android:layout_gravity="start|center_vertical"
+                        android:layout_margin="8dp"
+                        android:text="2018.02"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/activity_main_balance_titleText"
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        android:layout_gravity="end|center_vertical"
+                        android:layout_margin="8dp"
+                        android:text="입출금 리포트"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/activity_main_balance_noDataText"
+                        android:layout_row="2"
+                        android:layout_column="0"
+                        android:layout_gravity="center"
+                        android:layout_margin="8dp"
+                        android:text="데이터가 없습니다."
+                        android:textColor="@color/colorBlack"
+                        android:textSize="20sp"
+                        android:visibility="gone" />
+
+
+                    <com.github.mikephil.charting.charts.HorizontalBarChart
+                        android:id="@+id/activity_main_balance_barChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_row="2"
+                        android:layout_column="0"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:layout_margin="8dp">
+
+                    </com.github.mikephil.charting.charts.HorizontalBarChart>
+                </GridLayout>
+            </android.support.design.card.MaterialCardView>
+
+        </LinearLayout>
+
+
     </ScrollView>
 
     <ProgressBar
@@ -88,17 +155,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/activity_main_bottomBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:orientation="horizontal"
+        android:background="@color/colorWhite"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="1">
@@ -107,45 +174,41 @@
             android:id="@+id/activity_main_bottomBar_dashboardicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_action_dashboard_unclick"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
-            android:scaleType="fitCenter"
             android:layout_weight="1"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_dashboard_unclick" />
 
         <ImageButton
             android:id="@+id/activity_main_bottomBar_listicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_action_list_unclick"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
-            android:scaleType="fitCenter"
             android:layout_weight="1"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_list_unclick" />
 
         <ImageButton
             android:id="@+id/activity_main_bottomBar_messengericon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_action_messenger_unclick"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
-            android:scaleType="fitCenter"
             android:layout_weight="1"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_messenger_unclick" />
 
         <ImageButton
             android:id="@+id/activity_main_bottomBar_myinfoicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_action_myinfo_unclick"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
-            android:scaleType="fitCenter"
             android:layout_weight="1"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_myinfo_unclick" />
     </LinearLayout>
 
 

@@ -42,8 +42,8 @@ public class InputMoneyFlowCreateFB extends AppCompatActivity {
 	MaterialButton TypeExpense;
 	MaterialButton TypeTransfer;
 	
-	private DatabaseReference mDatabase;
 	private FirebaseUser user;
+	private DatabaseReference mDatabase;
 	
 	List<String> accountList;
 	List<String> expenseCategoryList;

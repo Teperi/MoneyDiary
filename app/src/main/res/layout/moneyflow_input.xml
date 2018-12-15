@@ -138,10 +138,11 @@
                         android:layout_column="1"
                         android:layout_gravity="start|center_vertical"
                         android:background="@drawable/input_borderline_topleft"
-                        android:padding="12dp"
+                        android:padding="10dp"
+
                         android:text="2018-01-01"
                         android:textColor="@color/colorBlack"
-                        android:textSize="17dp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -152,7 +153,7 @@
                         android:padding="10dp"
                         android:text=""
                         android:textColor="@color/colorBlack"
-                        android:textSize="20dp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/input_moneyflow_accounttitle"

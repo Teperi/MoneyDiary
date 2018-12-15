@@ -23,7 +23,7 @@ public class UtilDateTimePicker {
 		// 텍스트뷰에 있는 날짜로 선택
 		datepicker = datetextid;
 		// 현재 날짜로 선택
-		updateLabel();
+		updateLabel(datepicker);
 	}
 	
 	
@@ -48,7 +48,7 @@ public class UtilDateTimePicker {
 			public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 				myCalendar.set(year, month, dayOfMonth);
 				datetime.setTime(myCalendar.getTimeInMillis());
-				updateLabel();
+				updateLabel(datepicker);
 			}
 		};
 		
@@ -64,7 +64,7 @@ public class UtilDateTimePicker {
 	}
 	
 	
-	private static void updateLabel(){
+	private static void updateLabel(TextView datepicker){
 		String myFormat = "yyyy-MM-dd";
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
 		

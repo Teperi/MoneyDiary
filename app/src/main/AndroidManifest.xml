@@ -5,13 +5,11 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
 
     <uses-feature android:name="android.hardware.camera"
         android:required="true"/>
-
-
-
 
     <application
         android:allowBackup="true"
@@ -52,6 +50,7 @@
         <activity android:name=".SignInAccountInfo"/>
         <activity android:name=".SignupActivity"/>
         <activity android:name=".MainActivity"/>
+        <activity android:name=".AppInfo"/>
         <activity android:name=".InputMoneyFlowCreate"/>
         <activity android:name=".EditMoneyFlowData"/>
         <activity android:name=".RecyclerviewMoneyFlow"/>

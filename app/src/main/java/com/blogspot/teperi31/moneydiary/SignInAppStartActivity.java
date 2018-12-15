@@ -179,7 +179,6 @@ public class SignInAppStartActivity extends AppCompatActivity implements View.On
 					FirebaseUser user = mAuth.getCurrentUser();
 					onAuthSuccess();
 				} else {
-					// TODO : 로그인에 실패했을 경우 어떤 것이 틀렸는지 받아올 수 있는지 확인하기
 					Toast.makeText(SignInAppStartActivity.this, "로그인에 실패했습니다. \n", Toast.LENGTH_SHORT).show();
 				}
 				mProgressView.setVisibility(View.GONE);

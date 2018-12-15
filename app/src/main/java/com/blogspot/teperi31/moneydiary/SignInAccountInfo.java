@@ -51,6 +51,7 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 		setContentView(R.layout.activity_signin);
 		
 		android.support.v7.widget.Toolbar mToolbar = findViewById(R.id.signin_toobarTop);
+		mToolbar.setTitle("회원 정보");
 		setSupportActionBar(mToolbar);
 		
 		// 네비게이션바
@@ -149,7 +150,6 @@ public class SignInAccountInfo extends AppCompatActivity implements View.OnClick
 				if (task.isSuccessful()) {
 					onAuthSuccess();
 				} else {
-					// TODO : 로그인에 실패했을 경우 어떤 것이 틀렸는지 받아올 수 있는지 확인하기
 					Toast.makeText(SignInAccountInfo.this, "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show();
 					updateUI(null);
 				}

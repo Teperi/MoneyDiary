@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorBackground">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/activity_appinfo_toolbarTop"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/styleAppBar"
+        />
+
+    <ImageView
+        android:id="@+id/activity_appinfo_IconImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@mipmap/ic_launcher_custom_foreground"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@id/activity_appinfo_toolbarTop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/activity_appinfo_Text"
+        />
+
+    <TextView
+        android:id="@+id/activity_appinfo_Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MoneyDiary\n\n만든이 : 이승균\n버전 : v.0.6.35"
+        android:textSize="20sp"
+        android:textColor="@color/colorBlack"
+        android:gravity="center"
+
+        app:layout_constraintTop_toBottomOf="@id/activity_appinfo_IconImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+</android.support.constraint.ConstraintLayout>

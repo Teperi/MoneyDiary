@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -52,6 +53,13 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 	private String mMFListKey;
 	private DatabaseReference mMFListReference;
 	private ValueEventListener mMFListListener;
+	
+	private DatabaseReference mDatabase;
+	
+	List<String> accountList;
+	List<String> expenseCategoryList;
+	List<String> incomeCategoryList;
+	
 	
 	public static final String EXTRA_MFDATA_KEY = "mflist_key";
 	
@@ -98,6 +106,24 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		
+		mDatabase = FirebaseDatabase.getInstance().getReference();
+		
+		
+		// 스피너 데이터 가져오기
+		mDatabase.child("users-setting").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				accountList = (List<String>) dataSnapshot.child("accountList").getValue();
+				expenseCategoryList = (List<String>) dataSnapshot.child("expenseCategoryList").getValue();
+				incomeCategoryList = (List<String>) dataSnapshot.child("incomeCategoryList").getValue();
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
+		
 		// Type 선택시 몇몇 변수를 바꿔주는 로직 설정
 		// 분류 스피너를 바꿔주면 됨
 		// 이체의 경우 분류 스피너를 입금계좌로 바꿈
@@ -112,7 +138,7 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 				inputText.setText("분류");
 				
 				//분류 스피너
-				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, ApplicationClass.mfIncomeCategoryList);
+				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, incomeCategoryList);
 				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				EditCategory.setAdapter(categoryAdapter);
 				
@@ -138,7 +164,7 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 				inputText.setText("분류");
 				
 				//분류 스피너
-				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, ApplicationClass.mfExpenseCategoryList);
+				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, expenseCategoryList);
 				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				EditCategory.setAdapter(categoryAdapter);
 				
@@ -158,7 +184,7 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 			public void onClick(View v) {
 				EditType = "이체";
 				//분류 스피너
-				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, ApplicationClass.mfAccountList);
+				categoryAdapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_spinner_item, accountList);
 				categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				EditCategory.setAdapter(categoryAdapter);
 				
@@ -270,13 +296,13 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 				UtilDateTimePicker.setDatepopup(EditMoneyFlowDataFB.this, EditDate, EditDateString);
 				
 				//계좌 스피너
-				accountAdapter = new ArrayAdapter(EditMoneyFlowDataFB.this, android.R.layout.simple_spinner_item, ApplicationClass.mfAccountList);
+				accountAdapter = new ArrayAdapter(EditMoneyFlowDataFB.this, android.R.layout.simple_spinner_item, accountList);
 				accountAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				EditAccount.setAdapter(accountAdapter);
 				
 				int accountSelect = 0;
-				for (int i = 0; i < ApplicationClass.mfAccountList.size(); i++) {
-					if (ApplicationClass.mfAccountList.get(i).equals(mfData.account)) {
+				for (int i = 0; i < accountList.size(); i++) {
+					if (accountList.get(i).equals(mfData.account)) {
 						accountSelect = i;
 					}
 				}
@@ -292,13 +318,13 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 					EditType = "지출";
 					
 					//분류 스피너
-					categoryAdapter = new ArrayAdapter(EditMoneyFlowDataFB.this, android.R.layout.simple_spinner_item, ApplicationClass.mfExpenseCategoryList);
+					categoryAdapter = new ArrayAdapter(EditMoneyFlowDataFB.this, android.R.layout.simple_spinner_item, expenseCategoryList);
 					categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 					EditCategory.setAdapter(categoryAdapter);
 					
 					int categorySelect = 0;
-					for (int i = 0; i < ApplicationClass.mfExpenseCategoryList.size(); i++) {
-						if (ApplicationClass.mfExpenseCategoryList.get(i).equals(mfData.category)) {
+					for (int i = 0; i < expenseCategoryList.size(); i++) {
+						if (expenseCategoryList.get(i).equals(mfData.category)) {
 							categorySelect = i;
 						}
 					}
@@ -317,13 +343,13 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 					EditType = "수입";
 					
 					//분류 스피너
-					categoryAdapter = new ArrayAdapter(EditMoneyFlowDataFB.this, android.R.layout.simple_spinner_item, ApplicationClass.mfIncomeCategoryList);
+					categoryAdapter = new ArrayAdapter(EditMoneyFlowDataFB.this, android.R.layout.simple_spinner_item, incomeCategoryList);
 					categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 					EditCategory.setAdapter(categoryAdapter);
 					
 					int categorySelect = 0;
-					for (int i = 0; i < ApplicationClass.mfIncomeCategoryList.size(); i++) {
-						if (ApplicationClass.mfIncomeCategoryList.get(i).equals(mfData.category)) {
+					for (int i = 0; i < incomeCategoryList.size(); i++) {
+						if (incomeCategoryList.get(i).equals(mfData.category)) {
 							categorySelect = i;
 						}
 					}
@@ -340,13 +366,13 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 				} else {
 					EditType = "이체";
 					//분류 스피너
-					categoryAdapter = new ArrayAdapter(EditMoneyFlowDataFB.this, android.R.layout.simple_spinner_item, ApplicationClass.mfAccountList);
+					categoryAdapter = new ArrayAdapter(EditMoneyFlowDataFB.this, android.R.layout.simple_spinner_item, accountList);
 					categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 					EditCategory.setAdapter(categoryAdapter);
 					
 					int categorySelect = 0;
-					for (int i = 0; i < ApplicationClass.mfAccountList.size(); i++) {
-						if (ApplicationClass.mfAccountList.get(i).equals(mfData.category)) {
+					for (int i = 0; i < accountList.size(); i++) {
+						if (accountList.get(i).equals(mfData.category)) {
 							categorySelect = i;
 						}
 					}

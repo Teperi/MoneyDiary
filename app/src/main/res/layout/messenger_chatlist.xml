@@ -2,7 +2,8 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorBackground">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/messenger_chatlist_toolbarTop"
@@ -18,7 +19,7 @@
         android:layout_height="0dp"
         android:layout_margin="8dp"
         android:scrollbars="vertical"
-
+        android:background="@color/colorBackground"
         app:layout_constraintTop_toBottomOf="@id/messenger_chatlist_toolbarTop"
         app:layout_constraintBottom_toTopOf="@id/messenger_chatlist_createchatGroup"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:orientation="horizontal"
-
+        android:background="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="1">
 

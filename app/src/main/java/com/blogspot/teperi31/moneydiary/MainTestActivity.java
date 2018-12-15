@@ -11,17 +11,27 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +43,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
+import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -40,7 +52,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /*
  * 12.05 현재 상황
@@ -77,12 +88,21 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 	
 	HashMap<String,Integer> expenseCategoryHashmap = new HashMap<>();
 	
-	// 하프 파이 차트 연결
+	// 파이 차트 연결 - 소비 리포트 용
 	PieChart mExpenseChart;
-	// 하프 파이 차트 데이터
+	// 파이 차트 데이터 - 소비 리포트 용
 	ArrayList<PieEntry> pieExpenselist = new ArrayList<>();
 	PieDataSet pieExpenseDataSet;
 	PieData pieExpenseData;
+	
+	// 바 차트 연결 - 입출금 리포트 용
+	HorizontalBarChart mBalanceChart;
+	// 바 차트 데이터 - 입출금 리포트 용
+	ArrayList<BarEntry> barBalancelist = new ArrayList<>();
+	BarDataSet barBalanceDataSet;
+	BarData barBalanceData;
+	
+	ArrayList<IBarDataSet> barBalancelistValue = new ArrayList<>();
 	
 	
 	@Override
@@ -93,6 +113,7 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 		findViewById(R.id.activity_main_ScrollView).setVisibility(View.GONE);
 		// 툴바 연결
 		Toolbar mToolbar = findViewById(R.id.activity_main_toolbarTop);
+		mToolbar.setTitle("DashBoard");
 		setSupportActionBar(mToolbar);
 		
 		// 네비게이션 바 연결 및 색 설정
@@ -121,24 +142,42 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 		//현재 월 받기
 		mDateNow = new Date();
 		mCalendarNow.setTime(mDateNow);
-		mCalendarMonthStart.set(mCalendarNow.get(Calendar.YEAR), mCalendarNow.get(Calendar.MONTH),1);
-		
+		mCalendarMonthStart.set(mCalendarNow.get(Calendar.YEAR), mCalendarNow.get(Calendar.MONTH),0);
+		Log.d("test", String.valueOf(mCalendarMonthStart.getTimeInMillis()));
 		// 현재 날짜 소비 리포트에 넣기
-		TextView datetext = findViewById(R.id.activity_main_expense_dateText);
+		TextView dateExpensetext = findViewById(R.id.activity_main_expense_dateText);
+		TextView dateBalancetext = findViewById(R.id.activity_main_balance_dateText);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM", Locale.KOREA);
-		datetext.setText(sdf.format(mDateNow));
+		dateExpensetext.setText(sdf.format(mDateNow));
+		dateBalancetext.setText(sdf.format(mDateNow));
 		
 		
-		mExpenseChart = findViewById(R.id.activity_main_expense_halfpieChart);
+		mExpenseChart = findViewById(R.id.activity_main_expense_pieChart);
+		mBalanceChart = findViewById(R.id.activity_main_balance_barChart);
+		// 소비 리포트 차트 세팅
+		// 퍼센트 값 사용하기
 		mExpenseChart.setUsePercentValues(true);
-		// 총 소비액 가운데에 쓰기
+		// 배경 색 지정
 		mExpenseChart.setTransparentCircleColor(Color.WHITE);
+		// 가운데 빈 공간 크기 지정
 		mExpenseChart.setHoleRadius(58f);
-		mExpenseChart.setTransparentCircleRadius(61f);
-		mExpenseChart.setMaxAngle(180f); // HALF CHART
-		mExpenseChart.setRotationAngle(180f);
-		mExpenseChart.setEntryLabelTextSize(20f);
-		// 분류 데이터 및 지출 데이터 가져오기
+		// 가운데 반투명 공간 크기 지정
+		mExpenseChart.setTransparentCircleRadius(62f);
+		// 범주 및 아래 설명 텍스트 지우기
+		mExpenseChart.getLegend().setEnabled(false);   // Hide the legend
+		mExpenseChart.getDescription().setEnabled(false);
+		
+		// 입출금 리포트 차트 세팅
+		// 범주 및 아래 설명 텍스트 지우기
+		mBalanceChart.getLegend().setEnabled(false);
+		mBalanceChart.getDescription().setEnabled(false);
+		
+		// 눈금이 있는 값 모두 지우기
+		mBalanceChart.getXAxis().setEnabled(false);
+		mBalanceChart.getAxisLeft().setEnabled(false);
+		mBalanceChart.getAxisRight().setEnabled(false);
+		
+		// 분류 데이터 및 리포트할 값 가져오기
 		mDatabaseReference.child("users-setting").child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -147,8 +186,8 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 				for(int i = 0; i < expenseCategoryList.size(); i++) {
 					expenseCategoryHashmap.put(expenseCategoryList.get(i),0);
 				}
-				// 지출 데이터 가져오기
 				// 최근 월을 찾아서 그 데이터만 가져오기
+				// 지출 데이터 및 입출금 데이터 같이 만들기
 				mDatabaseReference.child("moneyflow").child(mUser.getUid()).orderByChild("date")
 						.startAt(mCalendarMonthStart.getTimeInMillis())
 						.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -159,50 +198,80 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 									// 데이터 없다는 글씨 지우기
 									findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.GONE);
 									// 날짜에 맞는 전체 데이터 중
+									int incometotal = 0;
+									int expensetotal = 0;
 									for(DataSnapshot item : dataSnapshot.getChildren()) {
 										DataMoneyFlowFB test = item.getValue(DataMoneyFlowFB.class);
 										// 실제 데이터 넣기
 										for(int i = 0; i < expenseCategoryList.size(); i++){
 											if(test.category.equals(expenseCategoryList.get(i)) && test.type.equals("지출")){
 												expenseCategoryHashmap.put(expenseCategoryList.get(i),expenseCategoryHashmap.get(expenseCategoryList.get(i)) + Math.toIntExact(test.price));
+												expensetotal += Math.toIntExact(test.price);
+											} else if(test.type.equals("수입")) {
+												incometotal += Math.toIntExact(test.price);
 											}
 										}
 									}
+									// 입출금 리포트 차트 넣기
+									barBalancelist.add(new BarEntry(0f,incometotal));
+									barBalancelist.add(new BarEntry(1f,expensetotal));
+									Log.i("test", "수입 : " + String.valueOf(incometotal));
+									Log.i("test", "지출 : " + String.valueOf(expensetotal));
 									// 실제에서 뽑은 데이터를 차트에 넣기
-									Integer expenseTotal = 0;
 									for(int i = 0; i<expenseCategoryHashmap.size();i++){
 										if(expenseCategoryHashmap.get(expenseCategoryList.get(i)) > 0){
 											pieExpenselist.add(new PieEntry(expenseCategoryHashmap.get(expenseCategoryList.get(i)),expenseCategoryList.get(i)));
-											expenseTotal += expenseCategoryHashmap.get(expenseCategoryList.get(i));
 										}
 									}
-									
+									// 지출 리포트 데이터 집어넣기
 									pieExpenseDataSet = new PieDataSet(pieExpenselist, "지출 리포트");
 									pieExpenseDataSet.setSliceSpace(3f);
 									pieExpenseDataSet.setSelectionShift(5f);
 									
 									pieExpenseDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
-									//dataSet.setSelectionShift(0f);
+									
 									pieExpenseData = new PieData(pieExpenseDataSet);
 									pieExpenseData.setValueFormatter(new PercentFormatter());
-									pieExpenseData.setValueTextSize(20f);
+									pieExpenseData.setValueTextSize(15f);
 									pieExpenseData.setValueTextColor(Color.WHITE);
 									
+									// 값 글씨 크기 지정
+									mExpenseChart.setEntryLabelTextSize(15f);
 									
-									mExpenseChart.setCenterText("총 소비액 :" + String.valueOf(expenseTotal));
-									mExpenseChart.setData(pieExpenseData);
+									// 총 소비액 가운데에 쓰기
+									mExpenseChart.setCenterTextSize(20f);
+									mExpenseChart.setCenterText("총 소비액 :" + toNumFormat(expensetotal));
 									
-									mExpenseChart.invalidate();
+									// 입출금 리포트 데이터 집어넣기
+									barBalanceDataSet = new BarDataSet(barBalancelist, "입출금 리포트");
+									barBalanceDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+									barBalanceDataSet.setDrawValues(true);
+									
+									
+									barBalanceData = new BarData(barBalanceDataSet);
+									
 									
 									findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
 									findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
+									findViewById(R.id.activity_main_balance_card).setVisibility(View.GONE);
 									mExpenseChart.setVisibility(View.VISIBLE);
+									mBalanceChart.setVisibility(View.VISIBLE);
+									findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.GONE);
+									findViewById(R.id.activity_main_balance_noDataText).setVisibility(View.GONE);
+									
+									mBalanceChart.animateY(1400);
+									mExpenseChart.animateY(1400, Easing.EaseInOutQuad);
+									mBalanceChart.setData(barBalanceData);
+									mExpenseChart.setData(pieExpenseData);
 									
 								} else {
+									findViewById(R.id.activity_main_balance_card).setVisibility(View.GONE);
 									// 데이터가 없으면 없다고 띄우기
-									mExpenseChart.setVisibility(View.GONE);
-									findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.VISIBLE);
 									findViewById(R.id.activity_main_ScrollView).setVisibility(View.VISIBLE);
+									findViewById(R.id.activity_main_expense_noDataText).setVisibility(View.VISIBLE);
+									findViewById(R.id.activity_main_balance_noDataText).setVisibility(View.VISIBLE);
+									mExpenseChart.setVisibility(View.GONE);
+									mBalanceChart.setVisibility(View.GONE);
 									findViewById(R.id.activity_main_progressbar).setVisibility(View.GONE);
 								}
 								
@@ -222,12 +291,6 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 			
 			}
 		});
-		
-		
-		
-		
-		
-		
 	}
 	
 	@Override
@@ -277,7 +340,8 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 		switch (item.getItemId()) {
 			
 			case R.id.main_menu_AppInfo:
-				Toast.makeText(this, "앱 소개", Toast.LENGTH_SHORT).show();
+				startActivity(new Intent(this, AppInfo.class));
+				overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 				return true;
 			
 			case R.id.main_menu_AppSetting:
@@ -288,4 +352,10 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 				return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	public static String toNumFormat(int num) {
+		DecimalFormat df = new DecimalFormat("#,###");
+		return df.format(num);
+	}
+	
 }

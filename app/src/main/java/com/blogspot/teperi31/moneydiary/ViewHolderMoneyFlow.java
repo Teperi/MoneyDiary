@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -43,14 +44,19 @@ public class ViewHolderMoneyFlow extends RecyclerView.ViewHolder {
 		AccountView.setText(Data.account);
 		CategoryView.setText(Data.category);
 		UsageView.setText(Data.usage);
-		PriceView.setText(String.valueOf(Data.price));
+		PriceView.setText(toNumFormat(Data.price));
 		
 		if(Data.type.equals("수입")) {
-			PriceView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.colorError));
+			PriceView.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.colorPrimaryDark));
 		} else if (Data.type.equals("지출")) {
-			PriceView.setTextColor(ContextCompat.getColor(itemView.getContext(),R.color.colorPrimaryDark));
+			PriceView.setTextColor(ContextCompat.getColor(itemView.getContext(),R.color.colorError));
 		} else {
 			PriceView.setTextColor(ContextCompat.getColor(itemView.getContext(),R.color.colorBlack));
 		}
+	}
+	
+	public static String toNumFormat(Long num) {
+		DecimalFormat df = new DecimalFormat("#,###");
+		return df.format(num);
 	}
 }

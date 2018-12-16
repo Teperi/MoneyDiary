@@ -1,7 +1,7 @@
 package com.blogspot.teperi31.moneydiary;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,8 +23,6 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,67 +31,82 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChatActivity extends AppCompatActivity {
-	// Child 정보
+import ai.api.AIDataService;
+import ai.api.AIListener;
+import ai.api.AIServiceException;
+import ai.api.android.AIConfiguration;
+import ai.api.android.AIService;
+import ai.api.model.AIRequest;
+import ai.api.model.AIResponse;
+import ai.api.model.Result;
+
+public class ChatBotTest extends AppCompatActivity implements AIListener {
+	
 	public static final String MESSAGES_CHILD = "messages";
-	private static final int REQUEST_INVITE = 1;
-	private static final int REQUEST_IMAGE = 2;
-	private static final String LOADING_IMAGE_URL = "https://www.google.com/images/spin-32.gif";
-	public static final int DEFAULT_MSG_LENGTH_LIMIT = 10;
-	public static final String ANONYMOUS = "anonymous";
-	private static final String MESSAGE_SENT_EVENT = "message_sent";
 	
-	
-	// 유저 정보
-	private FirebaseUser mFirebaseUser;
-	private String mUserNickname;
-	private String mUserPhoto;
-	
-	// 뷰 필요 연결
 	// 로딩바, topbar, 버튼 등등
 	private ProgressBar mProgressBar;
 	private Toolbar mTopBar;
 	
-	// 내용을 보내기 위한 text 및 버튼 연결
-	private MaterialButton mSendButton;
-	private EditText mSendText;
-	private ImageView mSendImage;
+	// 전체 서버 데이터 연결
+	private DatabaseReference mDatabase;
 	
-	
-	// 리싸이클러뷰 관련 연결
-	private RecyclerView mRecycler;
-	private LinearLayoutManager mLayoutManager;
-	private FirebaseRecyclerAdapter<DataChatContent, RecyclerView.ViewHolder> mFirebaseChatContentAdapter;
-	
+	// 유저 연결
+	private FirebaseUser mFirebaseUser;
 	
 	// 채팅 데이터
 	private DatabaseReference mDatabaseChatRoom;
 	private DatabaseReference mDatabaseMyUserRoom;
 	private DatabaseReference mDatabaseOtherUserRoom;
 	private DatabaseReference mDatabaseOtherUserList;
-	private FirebaseMessaging fm;
 	
-	//채팅방에 있는 다른 유저 UID 저장
-	private Map<String, Boolean> OtherUIDInfo = new HashMap<>();
-	ArrayList<String> OtherUIDList = new ArrayList<>();
+	private String mUserNickname;
+	private String mUserPhoto;
+	
+	// 리싸이클러뷰 관련 연결
+	private RecyclerView mRecycler;
+	private LinearLayoutManager mLayoutManager;
+	private FirebaseRecyclerAdapter<DataChatContent, RecyclerView.ViewHolder> mFirebaseChatContentAdapter;
 	
 	private String ChatRoomKey;
+	
+	// 내용을 보내기 위한 text 및 버튼 연결
+	private MaterialButton mSendButton;
+	private EditText mSendText;
+	private ImageView mSendImage;
+	
+	//챗봇 데이터 저장
+	ArrayList<String> OtherUIDList = new ArrayList<>();
+	
+	// 가위바위봇 가져오는 변수
+	private AIService aiService;
 	
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.messenger_chatcontent);
+		
+		
+		
+		mDatabase = FirebaseDatabase.getInstance().getReference();
+		
+		DataUser datauser;
+		
+		datauser = new DataUser("chatbot", "chatbot","chatbot@test.com", null);
+		Map<String, Object> inputUserData = datauser.toMap();
+		Map<String, Object> childUpdates = new HashMap<>();
+		// Map 에 한번에 저장 후
+		childUpdates.put("/users/" + "chatbot", inputUserData);
+		// 데이터베이스에 집어넣기
+		mDatabase.updateChildren(childUpdates);
+		
+		
 		
 		mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 		// 유저가 없으면 로그인 창으로 바로 이동
@@ -111,12 +124,6 @@ public class ChatActivity extends AppCompatActivity {
 				mUserPhoto = mFirebaseUser.getPhotoUrl().toString();
 			}
 		}
-		
-		// 푸시 메시지 연결
-		fm = FirebaseMessaging.getInstance();
-		
-		
-		
 		// 화면 내 버튼들과 변수 연결
 		mProgressBar = findViewById(R.id.messenger_chatcontent_ProgressBar);
 		
@@ -127,6 +134,8 @@ public class ChatActivity extends AppCompatActivity {
 		// 리사이클러뷰 연결 & 고정
 		mRecycler = findViewById(R.id.messenger_chatcontent_recyclerview);
 		mRecycler.setHasFixedSize(true);
+		
+		
 		
 		// 세로로 쌓기 기능
 		mLayoutManager = new LinearLayoutManager(this);
@@ -147,34 +156,12 @@ public class ChatActivity extends AppCompatActivity {
 		
 		// 쿼리로 가져오기
 		// 가져올 데이터 쿼리
-		ChatRoomKey = getIntent().getStringExtra("ChatRoomKey");
-		if (ChatRoomKey == null) {
-			Log.w("test", "채팅방을 만들 때 키가 안넘어 왔다는데?");
-		} else {
-			Log.d("test", "너 키가 뭐니 : " + ChatRoomKey);
-		}
+		ChatRoomKey = createSingleChatRoom();
 		
-		// 상대방 UserList 받아오기
-		mDatabaseOtherUserList = FirebaseDatabase.getInstance().getReference().child("UserRooms").child(mFirebaseUser.getUid()).child(ChatRoomKey).child("UserList");
-		mDatabaseOtherUserList.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				// 채팅방에 포함된 전체 리스트 받아와서
-				OtherUIDInfo = (Map<String, Boolean>) dataSnapshot.getValue();
-				// 내 UID 제외
-				OtherUIDInfo.remove(mFirebaseUser.getUid());
-				OtherUIDList.addAll(OtherUIDInfo.keySet());
-			}
-			
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-			
-			}
-		});
+		OtherUIDList.add("chatbot");
 		
 		// 내 채팅방에 안읽은 메세지 수 삭제
 		mDatabaseMyUserRoom.child(ChatRoomKey).child("UnReadMessageCount").removeValue();
-		
 		
 		Query ChatContentQuery = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD).orderByChild("dateTime");
 		
@@ -182,6 +169,19 @@ public class ChatActivity extends AppCompatActivity {
 		final FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<DataChatContent>()
 				.setQuery(ChatContentQuery, DataChatContent.class)
 				.build();
+		
+		// AI 설정 (가위바위봇 설정)
+		final AIConfiguration config = new AIConfiguration("368bd415dab144a4a5bad975c7eed151",
+				AIConfiguration.SupportedLanguages.Korean,
+				AIConfiguration.RecognitionEngine.System);
+		// 설정된 봇 가져오기
+		aiService = AIService.getService(this, config);
+		aiService.setListener(this);
+		
+		final AIDataService aiDataService = new AIDataService(config);
+		
+		final AIRequest aiRequest = new AIRequest();
+		
 		
 		// 어뎁터 설정
 		mFirebaseChatContentAdapter = new FirebaseRecyclerAdapter<DataChatContent, RecyclerView.ViewHolder>(options) {
@@ -277,24 +277,12 @@ public class ChatActivity extends AppCompatActivity {
 			}
 		});
 		
-		// 이미지 전송
-		mSendImage = findViewById(R.id.messenger_chatcontent_addImageView);
-		mSendImage.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-				intent.addCategory(Intent.CATEGORY_OPENABLE);
-				intent.setType("image/*");
-				startActivityForResult(intent, REQUEST_IMAGE);
-			}
-		});
-		
-		
 		// 전송 버튼 누를 경우
 		mSendButton = findViewById(R.id.messenger_chatcontent_sendButton);
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				
 				// 데이터가 2번 이상 들어가지 않도록 버튼 비활성화
 				mSendButton.setEnabled(false);
 				// 데이터 넣어주는 부분
@@ -353,6 +341,49 @@ public class ChatActivity extends AppCompatActivity {
 								}
 							});
 						}
+						
+						aiService.startListening();
+						
+						String message = mSendText.getText().toString();
+						if(!message.equals("")){
+							aiRequest.setQuery(message);
+							new AsyncTask<AIRequest,Void,AIResponse>(){
+								
+								@Override
+								protected AIResponse doInBackground(AIRequest... aiRequests) {
+									final AIRequest request = aiRequests[0];
+									try {
+										Log.d("DialogFlowAsyncTask","Request" + aiRequest.toString());
+										final AIResponse response = aiDataService.request(aiRequest);
+										return response;
+									} catch (AIServiceException e) {
+									}
+									return null;
+								}
+								@Override
+								protected void onPostExecute(AIResponse response) {
+									if (response != null) {
+										
+										Result result = response.getResult();
+										String reply = result.getFulfillment().getSpeech();
+										DataChatContent botChatMessage = new DataChatContent("chatbot",
+												reply,
+												"chatbot",
+												null,
+												null,
+												System.currentTimeMillis(),
+												2L,
+												"bot");
+										String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+												.push().getKey();
+										mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+												.child(key).setValue(botChatMessage);
+									}
+								}
+							}.execute(aiRequest);
+						}
+						
+						
 						// 텍스트 다 지우고
 						mSendText.setText("");
 					}
@@ -382,94 +413,71 @@ public class ChatActivity extends AppCompatActivity {
 		super.onStart();
 	}
 	
-	// 사진 관련.. 아직 제대로 못봣다.
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		Log.d("test", "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
+	
+	// 채팅룸을 새로 만드는 메소드
+	public String createSingleChatRoom() {
+		// 채팅방 키 제작
+		String ChatRoomKey = mDatabase.child("Messenger/chatRoom").push().getKey();
+		// UserList 를 각 유저마다 넣어주어야 하기 때문에 제작
+		Map<String, Object> UserList = new HashMap<>();
 		
-		if (requestCode == REQUEST_IMAGE) {
-			if (resultCode == RESULT_OK) {
-				if (data != null) {
-					final Uri uri = data.getData();
-					Log.d("test", "Uri: " + uri.toString());
-					
-					mDatabaseMyUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
-						@Override
-						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-							String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
-									.push().getKey();
-							DataChatContent tempMessage = new DataChatContent(mFirebaseUser.getUid(),
-									null, mUserNickname, mUserPhoto,
-									LOADING_IMAGE_URL, System.currentTimeMillis(),
-									dataSnapshot.getValue(DataMessengerUserRoom.class).UserCount,
-									key);
-							
-							
-							// 데이터 넣어주고
-							mDatabaseChatRoom.child(MESSAGES_CHILD).child(key)
-									.setValue(tempMessage, new DatabaseReference.CompletionListener() {
-										@Override
-										public void onComplete(DatabaseError databaseError,
-										                       DatabaseReference databaseReference) {
-											if (databaseError == null) {
-												String key = databaseReference.getKey();
-												StorageReference storageReference =
-														FirebaseStorage.getInstance()
-																.getReference(mFirebaseUser.getUid())
-																.child(key)
-																.child(uri.getLastPathSegment());
-												
-												putImageInStorage(storageReference, uri, key);
-											} else {
-												Log.w("test", "Unable to write message to database.",
-														databaseError.toException());
-											}
-										}
-									});
-						}
-						
-						@Override
-						public void onCancelled(@NonNull DatabaseError databaseError) {
-						
-						}
-					});
-				}
-			}
-		}
+		UserList.put(mFirebaseUser.getUid(), true);
+		UserList.put("chatbot", true);
+		
+		// 채팅방 만들 때 사용할 내용 저장
+		Map<String, Object> updateMyRoomList = new HashMap<>();
+		Map<String, Object> updateYourRoomList = new HashMap<>();
+		// 제목, 그룹or1:1, 유저 리스트 저장
+		// 나에게는 상대방의 이름이, 상대방에게는 나의 이름이 나오도록 정리
+		// 나머지 데이터는 모드 같으므로 같은 데이터 집어넣기
+		updateMyRoomList.put("title", "chatbot");
+		updateYourRoomList.put("title", mFirebaseUser.getDisplayName());
+		updateMyRoomList.put("RoomType", "Single");
+		updateYourRoomList.put("RoomType", "Single");
+		updateMyRoomList.put("UserList", UserList);
+		updateYourRoomList.put("UserList", UserList);
+		updateMyRoomList.put("location", ChatRoomKey);
+		updateYourRoomList.put("location", ChatRoomKey);
+		updateMyRoomList.put("UserCount",2);
+		updateYourRoomList.put("UserCount",2);
+		
+		// 각각 UID 마다 같은 정보를 저장해주기 위해서 저장
+		Map<String, Object> childUpdates = new HashMap<>();
+		childUpdates.put("/UserRooms/" + mFirebaseUser.getUid() + "/" + ChatRoomKey, updateMyRoomList);
+		childUpdates.put("/UserRooms/" + "chatbot" + "/" + ChatRoomKey, updateYourRoomList);
+		// 한번에 데이터베이스에 업데이트
+		mDatabase.updateChildren(childUpdates);
+		// 채팅방 키 리턴시켜서 intent 에 넘겨줌
+		return ChatRoomKey;
 	}
 	
-	// 사진 관련. 아직 제대로 못봤다.
-	private void putImageInStorage(StorageReference storageReference, Uri uri, final String key) {
-		storageReference.putFile(uri).addOnCompleteListener(ChatActivity.this,
-				new OnCompleteListener<UploadTask.TaskSnapshot>() {
-					@Override
-					public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
-						if (task.isSuccessful()) {
-							mDatabaseMyUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
-								@Override
-								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-									
-									DataChatContent dataChatContent =
-											new DataChatContent(mFirebaseUser.getUid(), null, mUserNickname, mUserPhoto,
-													task.getResult().getStorage().getDownloadUrl()
-															.toString(), System.currentTimeMillis(),
-													dataSnapshot.getValue(DataMessengerUserRoom.class).UserCount,
-													key);
-									mDatabaseChatRoom.child(MESSAGES_CHILD).child(key)
-											.setValue(dataChatContent);
-								}
-								
-								@Override
-								public void onCancelled(@NonNull DatabaseError databaseError) {
-								
-								}
-							});
-						} else {
-							Log.w("test", "Image upload task was not successful.",
-									task.getException());
-						}
-					}
-				});
+	@Override
+	public void onResult(ai.api.model.AIResponse response) {
+	
+	}
+	
+	@Override
+	public void onError(ai.api.model.AIError error) {
+	
+	}
+	
+	@Override
+	public void onAudioLevel(float level) {
+	
+	}
+	
+	@Override
+	public void onListeningStarted() {
+	
+	}
+	
+	@Override
+	public void onListeningCanceled() {
+	
+	}
+	
+	@Override
+	public void onListeningFinished() {
+	
 	}
 }

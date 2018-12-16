@@ -109,44 +109,46 @@ public class ViewHolderChatRecived extends RecyclerView.ViewHolder {
 	// 채팅 읽은 사람 수 계산해주는 메소드
 	// FirebaseRecyclerView 를 통해 변환된 데이터와 채팅 목록에서 Intent로 넘어온 채팅방 Key 값을 받아서 사용
 	void setReadCounter(final DataChatContent usermessage, final String ChatRoomKey, final String MessageKey) {
-		// 현재 유저 정보 저장
-		final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-		// 만약 이 채팅을 읽은 사람 목록에 내가 없다면
-		if (!usermessage.ReadUsers.containsKey(mUser.getUid())) {
-			//ReadUser 목록이 있는 곳으로 접근
-			FirebaseDatabase.getInstance().getReference()
-					.child("Messenger/chatRoom").child(ChatRoomKey)
-					.child("messages").child(MessageKey).child("ReadUsers")
-					.addListenerForSingleValueEvent(new ValueEventListener() {
-						@Override
-						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-							// ReadUser 목록을 저장
-							Map<String, Boolean> readUsers = (Map<String, Boolean>) dataSnapshot.getValue();
-							// 내 UID 추가
-							readUsers.put(mUser.getUid(), true);
-							// ReadUser 목록 교체(내 UID 를 추가해서 저장)
-							FirebaseDatabase.getInstance().getReference()
-									.child("Messenger/chatRoom").child(ChatRoomKey)
-									.child("messages").child(MessageKey).child("ReadUsers")
-									.setValue(readUsers);
+		if(usermessage.getId().equals("chatbot")) {
+		
+		} else {
+			// 현재 유저 정보 저장
+			final FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+			// 만약 이 채팅을 읽은 사람 목록에 내가 없다면
+			if (!usermessage.ReadUsers.containsKey(mUser.getUid())) {
+				//ReadUser 목록이 있는 곳으로 접근
+				FirebaseDatabase.getInstance().getReference()
+						.child("Messenger/chatRoom").child(ChatRoomKey)
+						.child("messages").child(MessageKey).child("ReadUsers")
+						.addListenerForSingleValueEvent(new ValueEventListener() {
+							@Override
+							public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+								// ReadUser 목록을 저장
+								Map<String, Boolean> readUsers = (Map<String, Boolean>) dataSnapshot.getValue();
+								// 내 UID 추가
+								readUsers.put(mUser.getUid(), true);
+								// ReadUser 목록 교체(내 UID 를 추가해서 저장)
+								FirebaseDatabase.getInstance().getReference()
+										.child("Messenger/chatRoom").child(ChatRoomKey)
+										.child("messages").child(MessageKey).child("ReadUsers")
+										.setValue(readUsers);
+								
+								// 현재 읽은 사람 수 에서 내가 읽었기 때문에 1을 뺌
+								Long count = usermessage.UnReadUserCount - 1;
+								
+								// 그 값을 데이터베이스에 저장
+								FirebaseDatabase.getInstance().getReference()
+										.child("Messenger/chatRoom").child(ChatRoomKey)
+										.child("messages").child(MessageKey).child("UnReadUserCount").setValue(count);
+								
+							}
 							
-							// 현재 읽은 사람 수 에서 내가 읽었기 때문에 1을 뺌
-							Long count = usermessage.UnReadUserCount - 1;
+							@Override
+							public void onCancelled(@NonNull DatabaseError databaseError) {
 							
-							// 그 값을 데이터베이스에 저장
-							FirebaseDatabase.getInstance().getReference()
-									.child("Messenger/chatRoom").child(ChatRoomKey)
-									.child("messages").child(MessageKey).child("UnReadUserCount").setValue(count);
-							
-						}
-						
-						@Override
-						public void onCancelled(@NonNull DatabaseError databaseError) {
-						
-						}
-					});
+							}
+						});
+			}
 		}
-		
-		
 	}
 }

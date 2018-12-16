@@ -2,9 +2,9 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/colorBackground"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/moneyflow_list_toolbarTop"
@@ -20,87 +20,99 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
 
-        android:layout_margin="4dp"
+        android:animateLayoutChanges="true"
         android:backgroundTint="@color/colorAccentLight"
         android:visibility="gone"
 
-        app:layout_constraintTop_toBottomOf="@id/moneyflow_list_toolbarTop"
         app:layout_constraintBottom_toTopOf="@id/moneyflowcalc"
-        app:layout_constraintVertical_bias="0"
-        >
+        app:layout_constraintTop_toBottomOf="@id/moneyflow_list_toolbarTop"
+        app:layout_constraintVertical_bias="0">
 
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/moneyflow_list_filterOnSpinner"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_row="0"
                 android:layout_column="0"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:overlapAnchor="false"
-                android:spinnerMode="dropdown"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:layout_gravity="start"
-
-                />
-
-            <LinearLayout
-                android:id="@+id/moneyflow_list_filter_datelayout"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_row="0"
-                android:layout_column="1"
-                android:layout_gravity="end"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
                 android:orientation="horizontal"
-                android:layout_columnWeight="1"
-                android:layout_margin="4dp"
-                android:visibility="gone"
                 >
                 <ImageButton
                     android:id="@+id/moneyflow_list_filter_dateBeforeButton"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_action_add"
-                    android:backgroundTint="@color/colorAccentLight"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="center"
+                    android:backgroundTint="@color/colorAccentLight"
+                    android:src="@drawable/ic_action_arrowleft"
                     />
+
                 <TextView
                     android:id="@+id/moneyflow_list_filter_dateText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2018년 12월"
-                    android:textSize="20sp"
                     android:layout_gravity="center"
+                    android:text="2018년 12월"
+                    android:textColor="@color/colorBackground"
+                    android:textSize="20sp"
                     />
+
 
                 <ImageButton
                     android:id="@+id/moneyflow_list_filter_dateAfterButton"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_action_add"
-                    android:backgroundTint="@color/colorAccentLight"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_gravity="center"
+                    android:backgroundTint="@color/colorAccentLight"
+                    android:src="@drawable/ic_action_arrowright"
                     />
             </LinearLayout>
 
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/moneyflow_list_filter_typeSpinner"
+
+
+            <RadioGroup
+                android:id="@+id/moneyflow_list_filter_typeRadioGroup"
                 android:layout_row="0"
                 android:layout_column="1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:overlapAnchor="false"
-                android:spinnerMode="dropdown"
-                android:layout_columnWeight="1"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="4dp"
-                android:layout_gravity="end"
-                android:visibility="gone"
-                />
+                android:orientation="horizontal"
+                >
+                <RadioButton
+                    android:id="@+id/moneyflow_list_filter_typeTotalRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="전체"
+                    android:textSize="14sp"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/colorBackground"
+                    android:buttonTint="@color/colorBackground"
+                    />
+                <RadioButton
+                    android:id="@+id/moneyflow_list_filter_typeExpenseRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="지출"
+                    android:textSize="14sp"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/colorBackground"
+                    android:buttonTint="@color/colorBackground"
+                    />
+                <RadioButton
+                    android:id="@+id/moneyflow_list_filter_typeIncomeRadio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="수입"
+                    android:textSize="14sp"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/colorBackground"
+                    android:buttonTint="@color/colorBackground"
+                    />
 
-
+            </RadioGroup>
 
 
         </GridLayout>
@@ -123,53 +135,53 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:layout_gravity="center"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
                 android:text="수입 : "
-                android:textSize="15sp"
-                android:layout_margin="4dp"/>
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/moneyflow_list_incomeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_margin="4dp"/>
+                android:layout_margin="4dp"
+                android:textSize="15sp" />
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
                 android:text="지출 : "
-                android:textSize="15sp"
-                android:layout_margin="4dp"/>
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/moneyflow_list_expenseText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_margin="4dp"/>
+                android:layout_margin="4dp"
+                android:textSize="15sp" />
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
                 android:text="잔액 : "
-                android:textSize="15sp"
-                android:layout_margin="4dp"/>
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/moneyflow_list_balanceText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_margin="4dp"/>
+                android:layout_margin="4dp"
+                android:textSize="15sp" />
 
 
         </LinearLayout>
@@ -180,8 +192,8 @@
         android:id="@+id/moneyflow_recycler_progress"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/colorBackground"
         android:layout_margin="8dp"
+        android:background="@color/colorBackground"
         android:visibility="gone"
 
         app:layout_constraintBottom_toTopOf="@id/moneyflow_list_bottomBar"
@@ -193,8 +205,7 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            />
+            android:layout_gravity="center" />
 
     </FrameLayout>
 
@@ -202,18 +213,18 @@
         android:id="@+id/moneyflow_list_recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:background="@color/colorBackground"
         android:scrollbars="vertical"
         android:visibility="visible"
-        android:background="@color/colorBackground"
         app:layout_constraintBottom_toTopOf="@id/moneyflow_list_bottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/moneyflowcalc"
         app:layout_constraintVertical_bias="0"
-        tools:listitem="@layout/moneyflow_list_row"/>
+        tools:listitem="@layout/moneyflow_list_row" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/moneyflow_list_fab"
@@ -223,15 +234,14 @@
         android:src="@drawable/ic_action_add"
 
         app:layout_constraintBottom_toTopOf="@id/moneyflow_list_bottomBar"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
         android:id="@+id/moneyflow_list_bottomBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:orientation="horizontal"
         android:background="@color/colorWhite"
+        android:orientation="horizontal"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="1">
@@ -240,45 +250,41 @@
             android:id="@+id/moneyflow_list_bottomBar_dashboardicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_action_dashboard_unclick"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
-            android:scaleType="fitCenter"
             android:layout_weight="1"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_dashboard_unclick" />
 
         <ImageButton
             android:id="@+id/moneyflow_list_bottomBar_listicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_action_list_unclick"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
-            android:scaleType="fitCenter"
             android:layout_weight="1"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_list_unclick" />
 
         <ImageButton
             android:id="@+id/moneyflow_list_bottomBar_messengericon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_action_messenger_unclick"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
-            android:scaleType="fitCenter"
             android:layout_weight="1"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_messenger_unclick" />
 
         <ImageButton
             android:id="@+id/moneyflow_list_bottomBar_myinfoicon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_action_myinfo_unclick"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_margin="8dp"
-            android:scaleType="fitCenter"
             android:layout_weight="1"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_myinfo_unclick" />
     </LinearLayout>
 
 

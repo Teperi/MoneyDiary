@@ -1,5 +1,8 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,7 +15,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -59,6 +65,8 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 	Calendar calendarNow;
 	Calendar filterDateStartCalendar;
 	Calendar filterDateEndCalendar;
+	// typeint 1 : 전체 보이기, 2 : 지출만 보이기, 3 : 수입만 보이기
+	int TypeRadioSelect = 1;
 	
 	/*
 	 * 뷰 생성 시
@@ -89,14 +97,11 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 		setSupportActionBar(mToolbar);
 		
 		
-		
 		// 네비게이션바
 		findViewById(R.id.moneyflow_list_bottomBar_dashboardicon).setOnClickListener(this);
 		findViewById(R.id.moneyflow_list_bottomBar_messengericon).setOnClickListener(this);
 		findViewById(R.id.moneyflow_list_bottomBar_myinfoicon).setOnClickListener(this);
 		((ImageButton) findViewById(R.id.moneyflow_list_bottomBar_listicon)).setImageResource(R.drawable.ic_action_list_clicked);
-		
-		
 		
 		
 		// DB 연결
@@ -125,7 +130,8 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 				.build();
 		
 		// 리사이클러 어뎁터 설정
-		mAdapter = new AdapterMoneyFlowList(options);
+		
+		mAdapter = new AdapterMoneyFlowList(options, TypeRadioSelect);
 		
 		// 어뎁터와 리사이클러뷰 연결
 		mRecycler.setAdapter(mAdapter);
@@ -142,9 +148,9 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 				Long incometotal = 0L;
 				Long expensetotal = 0L;
 				Long balancetotal = 0L;
-				for(DataSnapshot item : dataSnapshot.getChildren()) {
+				for (DataSnapshot item : dataSnapshot.getChildren()) {
 					DataMoneyFlowFB data = item.getValue(DataMoneyFlowFB.class);
-					if(data.type.equals("수입")) {
+					if (data.type.equals("수입")) {
 						incometotal += data.price;
 					} else if (data.type.equals("지출")) {
 						expensetotal += data.price;
@@ -157,12 +163,11 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 				((TextView) findViewById(R.id.moneyflow_list_expenseText)).setText(toNumFormat(expensetotal));
 				((TextView) findViewById(R.id.moneyflow_list_expenseText)).setTextColor(getColor(R.color.colorError));
 				((TextView) findViewById(R.id.moneyflow_list_balanceText)).setText(toNumFormat(balancetotal));
-				if(balancetotal <=0){
+				if (balancetotal <= 0) {
 					((TextView) findViewById(R.id.moneyflow_list_balanceText)).setTextColor(getColor(R.color.colorError));
 				} else {
 					((TextView) findViewById(R.id.moneyflow_list_balanceText)).setTextColor(getColor(R.color.colorPrimaryDark));
 				}
-				
 				
 				
 				// 어뎁터가 있으면 실시간 연결
@@ -190,7 +195,6 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 			mAdapter.stopListening();
 		}
 	}
-	
 	
 	
 	// 로딩 모양 보여주는 메소드
@@ -233,7 +237,7 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 				break;
 		}
 	}
-	
+
 //	public boolean toggleSelection(String key) {
 //		boolean b;
 //		if (selectedItems.get(key)!=null) {
@@ -274,15 +278,15 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 		getMenuInflater().inflate(R.menu.moneyflow_list_menu, menu);
 		return true;
 	}
-
+	
 	//	메뉴 버튼 클릭시 나올 상황 입력
 	//  일단 toast만 연결함 / 추후 Intent 기능 넣어야 함
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-
+			
 			case R.id.moneyflow_list_menu_filterlist:
-				if(filterSwitch) {
+				if (filterSwitch) {
 					filterSwitch = false;
 					findViewById(R.id.moneyflow_list_filterCardView).setVisibility(View.GONE);
 					
@@ -299,18 +303,20 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 							.setQuery(MoneyFlowQuery, DataMoneyFlowFB.class)
 							.build();
 					
-					
+					TypeRadioSelect = 1;
 					// 리사이클러 어뎁터 설정
-					mAdapter = new AdapterMoneyFlowList(options);
+					mAdapter = new AdapterMoneyFlowList(options, TypeRadioSelect);
 					
 					// 어뎁터와 리사이클러뷰 연결
 					mRecycler.setAdapter(mAdapter);
 					mAdapter.startListening();
 					mProgessStop();
 				} else {
+					// 필터 보이는 중 확인
 					filterSwitch = true;
-					findViewById(R.id.moneyflow_list_filterCardView).setVisibility(View.VISIBLE);
+					// 리사이클러 노출 잠시 멈추기
 					mAdapter.stopListening();
+					//로딩바 시작
 					mProgessStart();
 					// 날짜 확인
 					dateNow = new Date();
@@ -319,34 +325,201 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 					// 월별 보기를 위한 날짜 가져오기
 					filterDateStartCalendar = Calendar.getInstance(Locale.KOREA);
 					filterDateEndCalendar = Calendar.getInstance(Locale.KOREA);
-					filterDateStartCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH),1);
+					filterDateStartCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH), 1);
 					// 만약 12월인 경우 다음 해로 넘기기
-					if(calendarNow.get(Calendar.MONTH) >= 11) {
-						filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR)+1, 0,1);
+					if (calendarNow.get(Calendar.MONTH) >= 11) {
+						filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR) + 1, 0, 1);
 					} else {
-						filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH)+1,1);
+						filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH) + 1, 1);
 					}
-					// 쿼리 변경
-					MoneyFlowQuery = mDatabase.child("moneyflow").child(user.getUid())
-							.orderByChild("date")
-							.startAt(filterDateStartCalendar.getTimeInMillis())
-							.endAt(filterDateEndCalendar.getTimeInMillis()-60000L);
-					// 쿼리 변경값 옵션에 재설정
-					FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<DataMoneyFlowFB>()
-							.setQuery(MoneyFlowQuery,DataMoneyFlowFB.class)
-							.build();
+					// 데이터 다시 정렬해서 리사이클러뷰 뿌리기
+					monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, TypeRadioSelect);
 					
-					// 리사이클러 어뎁터 설정
-					mAdapter = new AdapterMoneyFlowList(options);
-					mRecycler.setAdapter(mAdapter);
-					// 다시 스타트 시키기
-					mAdapter.startListening();
-					mProgessStop();
+					// 1달 이전으로 가는 버튼을 눌렀을 경우
+					findViewById(R.id.moneyflow_list_filter_dateBeforeButton).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// 만약 지금이 1월이라면 -> 년도를 1년 줄여야함
+							if (calendarNow.get(Calendar.MONTH) == 0) {
+								calendarNow.set(calendarNow.get(Calendar.YEAR) - 1, 11, calendarNow.get(Calendar.DAY_OF_MONTH));
+								filterDateStartCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH), 1);
+								// 만약 12월인 경우 다음 해로 넘기기
+								if (calendarNow.get(Calendar.MONTH) >= 11) {
+									filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR) + 1, 0, 1);
+								} else {
+									filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH) + 1, 1);
+								}
+								monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, 1);
+							} else {
+								calendarNow.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH) - 1, calendarNow.get(Calendar.DAY_OF_MONTH));
+								filterDateStartCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH), 1);
+								// 만약 12월인 경우 다음 해로 넘기기
+								if (calendarNow.get(Calendar.MONTH) >= 11) {
+									filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR) + 1, 0, 1);
+								} else {
+									filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH) + 1, 1);
+								}
+								monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, TypeRadioSelect);
+							}
+						}
+					});
+					
+					// 1달 이후 보기 버튼을 눌렀을 경우
+					findViewById(R.id.moneyflow_list_filter_dateAfterButton).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// 만약 지금이 12월 이라면 -> 내년으로 넘겨야 함
+							if (calendarNow.get(Calendar.MONTH) == 11) {
+								calendarNow.set(calendarNow.get(Calendar.YEAR) + 1, 0, calendarNow.get(Calendar.DAY_OF_MONTH));
+								filterDateStartCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH), 1);
+								// 만약 12월인 경우 다음 해로 넘기기
+								if (calendarNow.get(Calendar.MONTH) >= 11) {
+									filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR) + 1, 0, 1);
+								} else {
+									filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH) + 1, calendarNow.get(Calendar.DAY_OF_MONTH));
+								}
+								monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, 1);
+							} else {
+								calendarNow.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH) + 1, 1);
+								filterDateStartCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH), 1);
+								// 만약 12월인 경우 다음 해로 넘기기
+								if (calendarNow.get(Calendar.MONTH) >= 11) {
+									filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR) + 1, 0, 1);
+								} else {
+									filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH) + 1, 1);
+								}
+								monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, TypeRadioSelect);
+							}
+						}
+					});
+					
+					// 만약 날짜 선택을 하기로 결정했다면
+					findViewById(R.id.moneyflow_list_filter_dateText).setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							DatePickerDialog.OnDateSetListener date;
+							// 날짜를 변경해주는 값 받아주는 변수
+							date = new DatePickerDialog.OnDateSetListener() {
+								@Override
+								public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+									// 새로운 날짜 받아오기
+									calendarNow.set(year, month, dayOfMonth);
+									filterDateStartCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH), 1);
+									// 만약 12월인 경우 다음 해로 넘기기
+									if (calendarNow.get(Calendar.MONTH) >= 11) {
+										filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR) + 1, 0, 1);
+									} else {
+										filterDateEndCalendar.set(calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH) + 1, 1);
+									}
+									monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, TypeRadioSelect);
+								}
+							};
+							new DatePickerDialog(v.getContext(), date, calendarNow.get(Calendar.YEAR), calendarNow.get(Calendar.MONTH), calendarNow.get(Calendar.DAY_OF_MONTH)).show();
+							
+						}
+					});
+					
+					// 라디오버튼 그룹 설정
+					RadioGroup typeGroup = findViewById(R.id.moneyflow_list_filter_typeRadioGroup);
+					typeGroup.check(R.id.moneyflow_list_filter_typeTotalRadio);
+					TypeRadioSelect = 1;
+					typeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+						@Override
+						public void onCheckedChanged(RadioGroup group, int checkedId) {
+							switch (checkedId) {
+								case R.id.moneyflow_list_filter_typeTotalRadio:
+									TypeRadioSelect = 1;
+									monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, TypeRadioSelect);
+									break;
+								case R.id.moneyflow_list_filter_typeExpenseRadio:
+									TypeRadioSelect = 2;
+									monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, TypeRadioSelect);
+									break;
+								case R.id.moneyflow_list_filter_typeIncomeRadio:
+									TypeRadioSelect = 3;
+									monthChangeQuery(filterDateStartCalendar, filterDateEndCalendar, TypeRadioSelect);
+									break;
+								default:
+									break;
+							}
+						}
+					});
+					
+					
 				}
 				return true;
-
+			
 			default:
 				return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	public void monthChangeQuery(Calendar StartCal, Calendar EndCal, int Typeint) {
+		// 쿼리 변경
+		MoneyFlowQuery = mDatabase.child("moneyflow").child(user.getUid())
+				.orderByChild("date")
+				.startAt(StartCal.getTimeInMillis())
+				.endAt(EndCal.getTimeInMillis() - 60000L);
+		// 쿼리 변경값 옵션에 재설정
+		FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<DataMoneyFlowFB>()
+				.setQuery(MoneyFlowQuery, DataMoneyFlowFB.class)
+				.build();
+		
+		// 리사이클러 어뎁터 설정
+		mAdapter = new AdapterMoneyFlowList(options, Typeint);
+		mRecycler.setAdapter(mAdapter);
+		
+		// 수입 지출 잔액 값 변경
+		mDatabase.child("moneyflow").child(user.getUid()).orderByChild("date")
+				.startAt(StartCal.getTimeInMillis())
+				.endAt(EndCal.getTimeInMillis() - 60000L)
+				.addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+						Long incometotal = 0L;
+						Long expensetotal = 0L;
+						Long balancetotal = 0L;
+						for (DataSnapshot item : dataSnapshot.getChildren()) {
+							DataMoneyFlowFB data = item.getValue(DataMoneyFlowFB.class);
+							if (data.type.equals("수입")) {
+								incometotal += data.price;
+							} else if (data.type.equals("지출")) {
+								expensetotal += data.price;
+							}
+						}
+						balancetotal = incometotal - expensetotal;
+						
+						((TextView) findViewById(R.id.moneyflow_list_incomeText)).setText(toNumFormat(incometotal));
+						((TextView) findViewById(R.id.moneyflow_list_incomeText)).setTextColor(getColor(R.color.colorPrimaryDark));
+						((TextView) findViewById(R.id.moneyflow_list_expenseText)).setText(toNumFormat(expensetotal));
+						((TextView) findViewById(R.id.moneyflow_list_expenseText)).setTextColor(getColor(R.color.colorError));
+						((TextView) findViewById(R.id.moneyflow_list_balanceText)).setText(toNumFormat(balancetotal));
+						if (balancetotal <= 0) {
+							((TextView) findViewById(R.id.moneyflow_list_balanceText)).setTextColor(getColor(R.color.colorError));
+						} else {
+							((TextView) findViewById(R.id.moneyflow_list_balanceText)).setTextColor(getColor(R.color.colorPrimaryDark));
+						}
+						
+						// 어뎁터가 있으면 실시간 연결
+						if (mAdapter != null) {
+							mAdapter.startListening();
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월", Locale.KOREA);
+							((TextView) findViewById(R.id.moneyflow_list_filter_dateText)).setText(sdf.format(calendarNow.getTime()));
+							
+							findViewById(R.id.moneyflow_list_filterCardView).setVisibility(View.VISIBLE);
+							
+							mProgessStop();
+						} else {
+							mProgessStop();
+						}
+					}
+					
+					@Override
+					public void onCancelled(@NonNull DatabaseError databaseError) {
+					
+					}
+				});
+	}
+	
+	
 }

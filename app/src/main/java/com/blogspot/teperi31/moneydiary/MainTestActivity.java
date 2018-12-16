@@ -109,6 +109,7 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_test);
+		
 		findViewById(R.id.activity_main_progressbar).setVisibility(View.VISIBLE);
 		findViewById(R.id.activity_main_ScrollView).setVisibility(View.GONE);
 		// 툴바 연결
@@ -346,6 +347,7 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 			
 			case R.id.main_menu_AppSetting:
 				Toast.makeText(this, "환경 설정", Toast.LENGTH_SHORT).show();
+				startActivity(new Intent(this, ChatBotTest.class));
 				return true;
 			
 			default:

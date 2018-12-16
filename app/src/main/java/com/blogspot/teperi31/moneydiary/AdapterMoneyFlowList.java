@@ -18,7 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class AdapterMoneyFlowList extends FirebaseRecyclerAdapter<DataMoneyFlowFB,AdapterMoneyFlowList.ViewHolderMoneyFlowFB> {
+public class AdapterMoneyFlowList extends FirebaseRecyclerAdapter<DataMoneyFlowFB, AdapterMoneyFlowList.ViewHolderMoneyFlowFB> {
+	// typeint 1 : 전체 보이기, 2 : 지출만 보이기, 3 : 수입만 보이기
+	int Typeint;
 	
 	public static class ViewHolderMoneyFlowFB extends RecyclerView.ViewHolder {
 		TextView DateView;
@@ -42,9 +44,11 @@ public class AdapterMoneyFlowList extends FirebaseRecyclerAdapter<DataMoneyFlowF
 		}
 	}
 	
-	public AdapterMoneyFlowList(@NonNull FirebaseRecyclerOptions<DataMoneyFlowFB> options) {
+	public AdapterMoneyFlowList(@NonNull FirebaseRecyclerOptions<DataMoneyFlowFB> options, int typeint) {
 		super(options);
+		this.Typeint = typeint;
 	}
+	
 	@NonNull
 	@Override
 	public ViewHolderMoneyFlowFB onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -54,46 +58,118 @@ public class AdapterMoneyFlowList extends FirebaseRecyclerAdapter<DataMoneyFlowF
 	
 	@Override
 	protected void onBindViewHolder(final ViewHolderMoneyFlowFB holder, int position, DataMoneyFlowFB model) {
-		String myFormat = "yyyy-MM-dd";
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
-		Date MFcalender = new Date(model.date);
-		
-		holder.DateView.setText(sdf.format(MFcalender));
-		holder.TypeView.setText(model.type);
-		holder.AccountView.setText(model.account);
-		holder.CategoryView.setText(model.category);
-		holder.UsageView.setText(model.usage);
-		holder.PriceView.setText(toNumFormat(model.price));
-		
-		if(model.type.equals("수입")) {
-			holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorPrimaryDark));
-		} else if (model.type.equals("지출")) {
-			holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.colorError));
-		} else {
-			holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(),R.color.colorBlack));
+		if(Typeint == 1){
+			String myFormat = "yyyy-MM-dd";
+			SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
+			Date MFcalender = new Date(model.date);
+			
+			holder.DateView.setText(sdf.format(MFcalender));
+			holder.TypeView.setText(model.type);
+			holder.AccountView.setText(model.account);
+			holder.CategoryView.setText(model.category);
+			holder.UsageView.setText(model.usage);
+			holder.PriceView.setText(toNumFormat(model.price));
+			
+			if (model.type.equals("수입")) {
+				holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorPrimaryDark));
+			} else if (model.type.equals("지출")) {
+				holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorError));
+			} else {
+				holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorBlack));
+			}
+			
+			// 키값 저장해서 에디트 페이지 갈 때 키값 넣어주기
+			DatabaseReference MFref = getRef(position);
+			final String MFKey = MFref.getKey();
+			holder.itemView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(v.getContext(), EditMoneyFlowDataFB.class);
+					intent.putExtra(EditMoneyFlowDataFB.EXTRA_MFDATA_KEY, MFKey);
+					holder.itemView.getContext().startActivity(intent);
+				}
+			});
+		} else if(Typeint == 2) {
+			if (model.type.equals("지출")){
+				String myFormat = "yyyy-MM-dd";
+				SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
+				Date MFcalender = new Date(model.date);
+				
+				holder.DateView.setText(sdf.format(MFcalender));
+				holder.TypeView.setText(model.type);
+				holder.AccountView.setText(model.account);
+				holder.CategoryView.setText(model.category);
+				holder.UsageView.setText(model.usage);
+				holder.PriceView.setText(toNumFormat(model.price));
+				
+				if (model.type.equals("수입")) {
+					holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorPrimaryDark));
+				} else if (model.type.equals("지출")) {
+					holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorError));
+				} else {
+					holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorBlack));
+				}
+				
+				// 키값 저장해서 에디트 페이지 갈 때 키값 넣어주기
+				DatabaseReference MFref = getRef(position);
+				final String MFKey = MFref.getKey();
+				holder.itemView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(v.getContext(), EditMoneyFlowDataFB.class);
+						intent.putExtra(EditMoneyFlowDataFB.EXTRA_MFDATA_KEY, MFKey);
+						holder.itemView.getContext().startActivity(intent);
+					}
+				});
+			} else {
+				holder.itemView.setVisibility(View.GONE);
+				holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0,0));
+			}
+		} else if (Typeint == 3) {
+			if (model.type.equals("수입")){
+				String myFormat = "yyyy-MM-dd";
+				SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
+				Date MFcalender = new Date(model.date);
+				
+				holder.DateView.setText(sdf.format(MFcalender));
+				holder.TypeView.setText(model.type);
+				holder.AccountView.setText(model.account);
+				holder.CategoryView.setText(model.category);
+				holder.UsageView.setText(model.usage);
+				holder.PriceView.setText(toNumFormat(model.price));
+				
+				if (model.type.equals("수입")) {
+					holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorPrimaryDark));
+				} else if (model.type.equals("지출")) {
+					holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorError));
+				} else {
+					holder.PriceView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.colorBlack));
+				}
+				
+				// 키값 저장해서 에디트 페이지 갈 때 키값 넣어주기
+				DatabaseReference MFref = getRef(position);
+				final String MFKey = MFref.getKey();
+				holder.itemView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(v.getContext(), EditMoneyFlowDataFB.class);
+						intent.putExtra(EditMoneyFlowDataFB.EXTRA_MFDATA_KEY, MFKey);
+						holder.itemView.getContext().startActivity(intent);
+					}
+				});
+			} else {
+				holder.itemView.setVisibility(View.GONE);
+				holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0,0));
+			}
 		}
 		
-		// 키값 저장해서 에디트 페이지 갈 때 키값 넣어주기
-		DatabaseReference MFref = getRef(position);
-		final String MFKey = MFref.getKey();
-		holder.itemView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(v.getContext(), EditMoneyFlowDataFB.class);
-				intent.putExtra(EditMoneyFlowDataFB.EXTRA_MFDATA_KEY, MFKey);
-				holder.itemView.getContext().startActivity(intent);
-			}
-		});
+		
+		
 	}
 	
 	// 1000 단위에 쉼표 찍어주는 함수
 	private static String toNumFormat(Long num) {
 		DecimalFormat df = new DecimalFormat("#,###");
 		return df.format(num);
-	}
-	
-	@Override
-	public void onDataChanged() {
-		super.onDataChanged();
 	}
 }

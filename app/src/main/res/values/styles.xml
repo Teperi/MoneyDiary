@@ -88,12 +88,19 @@
 
     <!--입력창 내 입력값 받는 부분 스타일-->
     <!--글씨크기 15sp, 줄 수 13-->
-    <!--추후 구현필요 기능 : 1줄 제한-->
     <style name="InputSubclassEditTextStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">15sp</item>
         <item name="android:ems">13</item>
+    </style>
+
+
+
+    <style name="MyRaidoButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="colorAccent">#0091ea</item>
+        <item name="android:textColorPrimaryDisableOnly">#f44336</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
     </style>
 
 

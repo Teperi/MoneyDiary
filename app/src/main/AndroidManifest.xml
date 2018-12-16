@@ -51,6 +51,7 @@
         <activity android:name=".SignupActivity"/>
         <activity android:name=".MainActivity"/>
         <activity android:name=".AppInfo"/>
+        <activity android:name=".ChatBotTest"/>
         <activity android:name=".InputMoneyFlowCreate"/>
         <activity android:name=".EditMoneyFlowData"/>
         <activity android:name=".RecyclerviewMoneyFlow"/>

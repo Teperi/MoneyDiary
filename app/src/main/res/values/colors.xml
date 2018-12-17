@@ -12,5 +12,6 @@
     <color name="colorBackground">#F5F5F5</color>
     <color name="colorGrayline">#b1bfca</color>
     <color name="colorGreen">#4db6ac</color>
+    <color name="colorYellow">#ffba46</color>
 
 </resources>

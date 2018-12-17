@@ -109,7 +109,7 @@ public class ViewHolderChatRecived extends RecyclerView.ViewHolder {
 	// 채팅 읽은 사람 수 계산해주는 메소드
 	// FirebaseRecyclerView 를 통해 변환된 데이터와 채팅 목록에서 Intent로 넘어온 채팅방 Key 값을 받아서 사용
 	void setReadCounter(final DataChatContent usermessage, final String ChatRoomKey, final String MessageKey) {
-		if(usermessage.getId().equals("chatbot")) {
+		if(usermessage.getId().equals("RSPbot")) {
 		
 		} else {
 			// 현재 유저 정보 저장
@@ -125,6 +125,7 @@ public class ViewHolderChatRecived extends RecyclerView.ViewHolder {
 							public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 								// ReadUser 목록을 저장
 								Map<String, Boolean> readUsers = (Map<String, Boolean>) dataSnapshot.getValue();
+								
 								// 내 UID 추가
 								readUsers.put(mUser.getUid(), true);
 								// ReadUser 목록 교체(내 UID 를 추가해서 저장)

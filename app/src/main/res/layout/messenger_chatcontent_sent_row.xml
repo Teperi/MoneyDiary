@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/messenger_chatcontent_sent_row_contentText"
-        android:background="@color/colorPrimaryLighit"
+        android:background="@drawable/chat_borderline_sent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxWidth="240dp"

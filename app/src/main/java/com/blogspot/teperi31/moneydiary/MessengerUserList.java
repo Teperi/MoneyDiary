@@ -24,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 * 이 앱에 가입한 전체 유저 리스트 보여주는 화면
@@ -63,13 +65,34 @@ public class MessengerUserList extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		
-		
-		
-		
 		// 유저 정보 가져오기
 		mUser = FirebaseAuth.getInstance().getCurrentUser();
 		// 데이터베이스 내 유저정보 가져오기
 		mDatabase = FirebaseDatabase.getInstance().getReference();
+		
+		// 챗봇 유저가 Database 에 존재하지 않는 경우 만들어주기
+		if (mDatabase.child("users").child("RSPbot").getKey().length() <= 0) {
+			DataUser datauser;
+			
+			datauser = new DataUser("RSPbot", "가위바위봇",null, null);
+			Map<String, Object> inputUserData = datauser.toMap();
+			Map<String, Object> childUpdates = new HashMap<>();
+			// Map 에 한번에 저장 후
+			childUpdates.put("/users/" + "RSPbot", inputUserData);
+			// 데이터베이스에 집어넣기
+			mDatabase.updateChildren(childUpdates);
+		} else if (mDatabase.child("users").child("Inputbot").getKey().length() <= 0) {
+			DataUser datauser;
+			
+			datauser = new DataUser("Inputbot", "입력봇",null, null);
+			Map<String, Object> inputUserData = datauser.toMap();
+			Map<String, Object> childUpdates = new HashMap<>();
+			// Map 에 한번에 저장 후
+			childUpdates.put("/users/" + "Inputbot", inputUserData);
+			// 데이터베이스에 집어넣기
+			mDatabase.updateChildren(childUpdates);
+		}
+		
 		
 		// 리사이클러뷰 연결
 		

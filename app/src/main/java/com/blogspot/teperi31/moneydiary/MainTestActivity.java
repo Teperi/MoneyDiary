@@ -347,7 +347,6 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 			
 			case R.id.main_menu_AppSetting:
 				Toast.makeText(this, "환경 설정", Toast.LENGTH_SHORT).show();
-				startActivity(new Intent(this, ChatBotTest.class));
 				return true;
 			
 			default:

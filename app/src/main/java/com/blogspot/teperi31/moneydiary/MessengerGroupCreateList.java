@@ -76,8 +76,12 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				for (DataSnapshot ds : dataSnapshot.getChildren()) {
 					DataUser user = ds.getValue(DataUser.class);
-					// 내 UID 뺴고 담도록 설정
-					if (!user.UID.equals(mUser.getUid())) {
+					// 내 UID 및 챗봇 UID 빼고 리스트 담기
+					if (user.UID.equals(mUser.getUid()) ||
+							user.UID.equals("RSPbot") ||
+							user.UID.equals("Inputbot")) {
+						
+					} else {
 						mUserList.add(user);
 					}
 				}
@@ -101,17 +105,18 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 						String ChatRoomKey = null;
 						// 그룹 채팅방이 한개도 없다면..
-						if(dataSnapshot.getChildrenCount() <= 0){
+						if (dataSnapshot.getChildrenCount() <= 0) {
 							// 그룹 채팅방 만들기
 							createGroupChatRoom(mAdapter.CheckedUserList);
 							
 						} else {
 							int count = 0;
-							loop1 : for (DataSnapshot item :
+							loop1:
+							for (DataSnapshot item :
 									dataSnapshot.getChildren()) {
 								DataMessengerUserRoom RoomInfo = item.getValue(DataMessengerUserRoom.class);
 								Set<String> CheckUserListSet = new HashSet<>();
-								for(int i =0 ; i<mAdapter.CheckedUserList.size();i++){
+								for (int i = 0; i < mAdapter.CheckedUserList.size(); i++) {
 									CheckUserListSet.add(mAdapter.CheckedUserList.get(i).UID);
 								}
 								CheckUserListSet.add(mUser.getUid());
@@ -131,7 +136,7 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 								count++;
 							}
 							// 다 비교하고 왔는데도 없으면?
-							if(count == dataSnapshot.getChildrenCount()){
+							if (count == dataSnapshot.getChildrenCount()) {
 								// 그룹 채팅방 만들기
 								createGroupChatRoom(mAdapter.CheckedUserList);
 								
@@ -149,6 +154,7 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 		});
 		
 	}
+	
 	// 뒤로가기 버튼 기능
 	@Override
 	public boolean onSupportNavigateUp() {
@@ -170,12 +176,12 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 				CheckedUserList.add(myUserInfo);
 				// UserList 만들기
 				Map<String, Object> UserList = new HashMap<>();
-				for(int i = 0; i < CheckedUserList.size();i++){
+				for (int i = 0; i < CheckedUserList.size(); i++) {
 					UserList.put(CheckedUserList.get(i).UID, true);
 				}
 				// 각각에 맞는 정보를 넣어서 Database에 넣어야 함
 				// 그룹채팅방은 사람 수가 그때 그때 달라지기 때문에 for문으로 해결함
-				for(int i = 0 ; i < CheckedUserList.size() ; i++) {
+				for (int i = 0; i < CheckedUserList.size(); i++) {
 					Map<String, Object> updateRoomList = new HashMap<>();
 					// 제목의 경우 현재 내 이름이 안들어가게 하기 위해 나를 제외한 인원이 있는 Arraylist 만들기
 					ArrayList<DataUser> titleUser = new ArrayList<>();
@@ -184,16 +190,16 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 					//타이틀 텍스트 만들기
 					String titleText = "";
 					// for 문으로 텍스트를 계속 뒤에 이어붙이는 형식으로 실행
-					for(int j =0; j < titleUser.size();j++){
-						if(titleText.length() <= 0 ){
+					for (int j = 0; j < titleUser.size(); j++) {
+						if (titleText.length() <= 0) {
 							titleText = (String) (titleUser.get(j).NickName);
 						} else {
-							titleText = (String) (titleText +", "+ titleUser.get(j).NickName);
+							titleText = (String) (titleText + ", " + titleUser.get(j).NickName);
 						}
 						
 					}
 					// 타이틀 텍스트 집어넣기
-					updateRoomList.put("title",titleText);
+					updateRoomList.put("title", titleText);
 					// 그룹 채팅방은 무조건 RoomType 이 Group
 					updateRoomList.put("RoomType", "Group");
 					// UserList는 위에서 만든 대로 실행
@@ -201,7 +207,7 @@ public class MessengerGroupCreateList extends AppCompatActivity {
 					// 키는 위에서 만든것 사용
 					updateRoomList.put("location", ChatRoomKey);
 					// 사이즈는 인원수로 실행
-					updateRoomList.put("UserCount",CheckedUserList.size());
+					updateRoomList.put("UserCount", CheckedUserList.size());
 					
 					mDatabase.child("UserRooms").child(CheckedUserList.get(i).UID).child(ChatRoomKey).updateChildren(updateRoomList);
 					

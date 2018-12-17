@@ -307,10 +307,53 @@ public class RecyclerViewMoneyFlowFB extends AppCompatActivity implements View.O
 					// 리사이클러 어뎁터 설정
 					mAdapter = new AdapterMoneyFlowList(options, TypeRadioSelect);
 					
-					// 어뎁터와 리사이클러뷰 연결
-					mRecycler.setAdapter(mAdapter);
-					mAdapter.startListening();
-					mProgessStop();
+					// 수입 지출 잔액 값 변경
+					mDatabase.child("moneyflow").child(user.getUid()).orderByChild("date")
+							.addListenerForSingleValueEvent(new ValueEventListener() {
+								@Override
+								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+									Long incometotal = 0L;
+									Long expensetotal = 0L;
+									Long balancetotal = 0L;
+									for (DataSnapshot item : dataSnapshot.getChildren()) {
+										DataMoneyFlowFB data = item.getValue(DataMoneyFlowFB.class);
+										if (data.type.equals("수입")) {
+											incometotal += data.price;
+										} else if (data.type.equals("지출")) {
+											expensetotal += data.price;
+										}
+									}
+									balancetotal = incometotal - expensetotal;
+									
+									((TextView) findViewById(R.id.moneyflow_list_incomeText)).setText(toNumFormat(incometotal));
+									((TextView) findViewById(R.id.moneyflow_list_incomeText)).setTextColor(getColor(R.color.colorPrimaryDark));
+									((TextView) findViewById(R.id.moneyflow_list_expenseText)).setText(toNumFormat(expensetotal));
+									((TextView) findViewById(R.id.moneyflow_list_expenseText)).setTextColor(getColor(R.color.colorError));
+									((TextView) findViewById(R.id.moneyflow_list_balanceText)).setText(toNumFormat(balancetotal));
+									if (balancetotal <= 0) {
+										((TextView) findViewById(R.id.moneyflow_list_balanceText)).setTextColor(getColor(R.color.colorError));
+									} else {
+										((TextView) findViewById(R.id.moneyflow_list_balanceText)).setTextColor(getColor(R.color.colorPrimaryDark));
+									}
+									
+									// 어뎁터가 있으면 실시간 연결
+									if (mAdapter != null) {
+										// 어뎁터와 리사이클러뷰 연결
+										mRecycler.setAdapter(mAdapter);
+										mAdapter.startListening();
+										mProgessStop();
+									} else {
+										mProgessStop();
+									}
+								}
+								
+								@Override
+								public void onCancelled(@NonNull DatabaseError databaseError) {
+								
+								}
+							});
+					
+					
 				} else {
 					// 필터 보이는 중 확인
 					filterSwitch = true;

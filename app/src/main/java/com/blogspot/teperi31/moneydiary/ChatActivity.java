@@ -2,6 +2,7 @@ package com.blogspot.teperi31.moneydiary;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,7 +44,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChatActivity extends AppCompatActivity {
+import ai.api.AIListener;
+import ai.api.AIDataService;
+import ai.api.AIServiceException;
+import ai.api.android.AIConfiguration;
+import ai.api.android.AIService;
+import ai.api.model.AIError;
+import ai.api.model.AIRequest;
+import ai.api.model.AIResponse;
+import ai.api.model.ResponseMessage;
+import ai.api.model.Result;
+
+public class ChatActivity extends AppCompatActivity implements AIListener {
 	// Child 정보
 	public static final String MESSAGES_CHILD = "messages";
 	private static final int REQUEST_INVITE = 1;
@@ -83,12 +95,17 @@ public class ChatActivity extends AppCompatActivity {
 	private DatabaseReference mDatabaseOtherUserList;
 	private FirebaseMessaging fm;
 	
+	// 가위바위봇 가져오는 변수
+	private AIService aiService;
+	AIDataService aiDataService;
+	AIRequest aiRequest;
+	
 	//채팅방에 있는 다른 유저 UID 저장
 	private Map<String, Boolean> OtherUIDInfo = new HashMap<>();
 	ArrayList<String> OtherUIDList = new ArrayList<>();
 	
 	private String ChatRoomKey;
-	
+	private String BotType;
 	
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,14 +162,36 @@ public class ChatActivity extends AppCompatActivity {
 		mDatabaseOtherUserRoom = FirebaseDatabase.getInstance().getReference().child("UserRooms");
 		
 		
+		
+		
 		// 쿼리로 가져오기
 		// 가져올 데이터 쿼리
 		ChatRoomKey = getIntent().getStringExtra("ChatRoomKey");
 		if (ChatRoomKey == null) {
 			Log.w("test", "채팅방을 만들 때 키가 안넘어 왔다는데?");
+		} else if(mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").child("RSPbot").getKey().length() > 0) {
+			BotType = "RSPbot";
+		} else if (mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").child("Inputbot").getKey().length() > 0) {
+			BotType = "Inputbot";
 		} else {
-			Log.d("test", "너 키가 뭐니 : " + ChatRoomKey);
+			BotType = "No";
 		}
+		
+		
+		if(BotType.equals("RSPbot")){
+			// AI 설정 (가위바위봇 설정)
+			final AIConfiguration config = new AIConfiguration("368bd415dab144a4a5bad975c7eed151",
+					AIConfiguration.SupportedLanguages.Korean,
+					AIConfiguration.RecognitionEngine.System);
+			// 설정된 봇 가져오기
+			aiService = AIService.getService(this, config);
+			aiService.setListener(this);
+			
+			aiDataService = new AIDataService(config);
+			
+			aiRequest = new AIRequest();
+		}
+		
 		
 		// 상대방 UserList 받아오기
 		mDatabaseOtherUserList = FirebaseDatabase.getInstance().getReference().child("UserRooms").child(mFirebaseUser.getUid()).child(ChatRoomKey).child("UserList");
@@ -232,8 +271,7 @@ public class ChatActivity extends AppCompatActivity {
 			
 			
 		};
-		// 아직 얘가 뭐하는건지는 정확히 파악을 못했는데.....
-		// TODO : 파악하기 / 파악해서 안읽은 포지션으로 보내는 방법 찾기
+		// 가장 아래로 내려주는 부분
 		mFirebaseChatContentAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 			@Override
 			public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -308,15 +346,29 @@ public class ChatActivity extends AppCompatActivity {
 						final String LastText = mSendText.getText().toString();
 						final Long LastTime = System.currentTimeMillis();
 						// Chat message 저장
-						final DataChatContent dataChatContent = new
-								DataChatContent(mFirebaseUser.getUid(),
-								LastText,
-								mUserNickname,
-								mUserPhoto,
-								null /* no image */,
-								LastTime,
-								dataSnapshot.getValue(DataMessengerUserRoom.class).UserCount,
-								key);
+						// 만약 챗봇이라면 읽는 수 없애기
+						final DataChatContent dataChatContent;
+						if(BotType.equals("No")){
+							dataChatContent = new
+									DataChatContent(mFirebaseUser.getUid(),
+									LastText,
+									mUserNickname,
+									mUserPhoto,
+									null /* no image */,
+									LastTime,
+									dataSnapshot.getValue(DataMessengerUserRoom.class).UserCount,
+									key);
+						} else {
+							dataChatContent = new
+									DataChatContent(mFirebaseUser.getUid(),
+									LastText,
+									mUserNickname,
+									mUserPhoto,
+									null /* no image */,
+									LastTime,
+									1L,
+									key);
+						}
 						// 데이터 넣어주고
 						mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
 								.child(key).setValue(dataChatContent);
@@ -331,20 +383,25 @@ public class ChatActivity extends AppCompatActivity {
 							mDatabaseOtherUserRoom.child(UID).child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
 								@Override
 								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-									// 만약 안읽은 메시지 수가 없으면
-									if (!dataSnapshot.child("UnReadMessageCount").exists()) {
-										// 안읽은 수 1개
-										dataSnapshot.child("UnReadMessageCount").getRef().setValue(1);
+									if(BotType.equals("No")){
+										// 만약 안읽은 메시지 수가 없으면
+										if (!dataSnapshot.child("UnReadMessageCount").exists()) {
+											// 안읽은 수 1개
+											dataSnapshot.child("UnReadMessageCount").getRef().setValue(1);
+										}
+										// 만약 안읽은 메시지 수가 있다면
+										else {
+											// 안읽은 수 +1
+											dataSnapshot.child("UnReadMessageCount").getRef().setValue((Long) dataSnapshot.child("UnReadMessageCount").getValue() + 1);
+										}
+										// 최근 온 채팅 글
+										dataSnapshot.child("lastMessage").getRef().setValue(LastText);
+										// 최근 온 채팅 시간
+										dataSnapshot.child("lastTime").getRef().setValue(LastTime);
+									} else {
+									
 									}
-									// 만약 안읽은 메시지 수가 있다면
-									else {
-										// 안읽은 수 +1
-										dataSnapshot.child("UnReadMessageCount").getRef().setValue((Long) dataSnapshot.child("UnReadMessageCount").getValue() + 1);
-									}
-									// 최근 온 채팅 글
-									dataSnapshot.child("lastMessage").getRef().setValue(LastText);
-									// 최근 온 채팅 시간
-									dataSnapshot.child("lastTime").getRef().setValue(LastTime);
+									
 								}
 								
 								@Override
@@ -353,6 +410,69 @@ public class ChatActivity extends AppCompatActivity {
 								}
 							});
 						}
+						
+						if(BotType.equals("RSPbot")){
+							aiService.startListening();
+							
+							String message = mSendText.getText().toString();
+							if(!message.equals("")){
+								aiRequest.setQuery(message);
+								new AsyncTask<AIRequest,Void,AIResponse>(){
+									
+									@Override
+									protected AIResponse doInBackground(AIRequest... aiRequests) {
+										final AIRequest request = aiRequests[0];
+										try {
+											Log.d("DialogFlowAsyncTask","Request" + aiRequest.toString());
+											final AIResponse response = aiDataService.request(aiRequest);
+											return response;
+										} catch (AIServiceException e) {
+										}
+										return null;
+									}
+									@Override
+									protected void onPostExecute(AIResponse response) {
+										if (response != null) {
+											Result result = response.getResult();
+											String reply = result.getFulfillment().getSpeech();
+											Log.i("test",String.valueOf(reply.length()));
+											if(reply.length() <= 0) {
+												for(int i = 0; i<result.getFulfillment().getMessages().size();i++){
+													ResponseMessage.ResponseSpeech Messages = (ResponseMessage.ResponseSpeech) result.getFulfillment().getMessages().get(i);
+													DataChatContent botChatMessage = new DataChatContent ("RSPbot",
+															Messages.getSpeech().toString().replace("[","").replace("]",""),
+															"가위바위봇",
+															null,
+															null,
+															System.currentTimeMillis(),
+															1L,
+															"RSPbot");
+													String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+															.push().getKey();
+													mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+															.child(key).setValue(botChatMessage);
+												}
+											} else {
+												DataChatContent botChatMessage = new DataChatContent("RSPbot",
+														reply,
+														"가위바위봇",
+														null,
+														null,
+														System.currentTimeMillis(),
+														1L,
+														"bot");
+												String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+														.push().getKey();
+												mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+														.child(key).setValue(botChatMessage);
+											}
+											
+										}
+									}
+								}.execute(aiRequest);
+							}
+						}
+						
 						// 텍스트 다 지우고
 						mSendText.setText("");
 					}
@@ -471,5 +591,35 @@ public class ChatActivity extends AppCompatActivity {
 						}
 					}
 				});
+	}
+	
+	@Override
+	public void onResult(AIResponse result) {
+	
+	}
+	
+	@Override
+	public void onError(AIError error) {
+	
+	}
+	
+	@Override
+	public void onAudioLevel(float level) {
+	
+	}
+	
+	@Override
+	public void onListeningStarted() {
+	
+	}
+	
+	@Override
+	public void onListeningCanceled() {
+	
+	}
+	
+	@Override
+	public void onListeningFinished() {
+	
 	}
 }

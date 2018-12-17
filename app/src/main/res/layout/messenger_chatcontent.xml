@@ -11,6 +11,33 @@
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/styleAppBar" />
 
+    <LinearLayout
+        android:id="@+id/messenger_chatcontent_progresslinearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/messenger_chatcontent_recyclerview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/messenger_chatcontent_toolbarTop"
+        >
+
+        <ProgressBar
+            android:id="@+id/messenger_chatcontent_ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="-4dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminate="true"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            />
+
+    </LinearLayout>
+
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messenger_chatcontent_recyclerview"
         android:layout_width="match_parent"
@@ -22,23 +49,10 @@
         app:layout_constraintBottom_toTopOf="@id/messenger_chatcontent_sendLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/messenger_chatcontent_toolbarTop"
+        app:layout_constraintTop_toBottomOf="@id/messenger_chatcontent_progresslinearlayout"
         app:layout_constraintVertical_bias="0" />
 
-    <ProgressBar
-        android:id="@+id/messenger_chatcontent_ProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:visibility="gone"
 
-        app:layout_constraintBottom_toTopOf="@id/messenger_chatcontent_sendLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/messenger_chatcontent_toolbarTop"
-        />
 
     <LinearLayout
         android:id="@+id/messenger_chatcontent_sendLayout"
@@ -53,21 +67,21 @@
         app:layout_constraintTop_toBottomOf="@id/messenger_chatcontent_toolbarTop"
         app:layout_constraintVertical_bias="1">
 
-        <ImageView
-            android:id="@+id/messenger_chatcontent_addImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:clickable="true"
-            android:background="@color/colorPrimaryDark"
-            android:src="@drawable/ic_action_add" />
+        <!--<ImageView-->
+            <!--android:id="@+id/messenger_chatcontent_addImageView"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_margin="8dp"-->
+            <!--android:clickable="true"-->
+            <!--android:background="@color/colorPrimaryDark"-->
+            <!--android:src="@drawable/ic_action_add" />-->
 
         <EditText
             android:id="@+id/messenger_chatcontent_addEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:hint="Enter message"
+            android:hint="메시지를 입력하세요."
             android:layout_weight="1" />
 
         <android.support.design.button.MaterialButton

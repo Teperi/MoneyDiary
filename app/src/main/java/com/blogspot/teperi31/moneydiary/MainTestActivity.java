@@ -345,9 +345,9 @@ public class MainTestActivity extends AppCompatActivity implements View.OnClickL
 				overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
 				return true;
 			
-			case R.id.main_menu_AppSetting:
-				Toast.makeText(this, "환경 설정", Toast.LENGTH_SHORT).show();
-				return true;
+//			case R.id.main_menu_AppSetting:
+//				Toast.makeText(this, "환경 설정", Toast.LENGTH_SHORT).show();
+//				return true;
 			
 			default:
 				return super.onOptionsItemSelected(item);

@@ -62,7 +62,7 @@ public class AdapterMessengerGroupCreateList extends RecyclerView.Adapter<Adapte
 	@Override
 	public void onBindViewHolder(@NonNull final AdapterMessengerGroupCreateList.myViewHolder holder, final int i) {
 		// TODO : 사진 개인별 사진으로 바꿔주는 기능 추가해야 함
-		holder.ProfileImage.setImageResource(R.drawable.cat3);
+		holder.ProfileImage.setImageResource(R.drawable.previewimage);
 		// 내 닉네임 가져오기
 		holder.ProfileName.setText(UList.get(i).NickName);
 		holder.itemView.setOnClickListener(new View.OnClickListener() {

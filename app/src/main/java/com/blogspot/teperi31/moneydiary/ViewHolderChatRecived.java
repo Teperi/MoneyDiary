@@ -86,7 +86,7 @@ public class ViewHolderChatRecived extends RecyclerView.ViewHolder {
 		messengerTextView.setText(usermessage.getName());
 		if (usermessage.getPhotoUrl() == null) {
 			messengerImageView.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(),
-					R.drawable.cat3));
+					R.drawable.previewimage));
 		} else {
 			Glide.with(itemView.getContext())
 					.load(usermessage.getPhotoUrl())

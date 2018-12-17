@@ -40,7 +40,7 @@ public class ViewHolderChatRoomList extends RecyclerView.ViewHolder {
 		SimpleDateFormat sdf = new SimpleDateFormat("hh:mm",Locale.KOREA);
 		
 		//TODO : 이미지 프로필 이미지로 받아오기
-		profileImage.setImageResource(R.drawable.cat3);
+		profileImage.setImageResource(R.drawable.previewimage);
 		chatRoomTitle.setText(Data.title);
 		if(Data.RoomType.equals("Group")){
 			userCount.setVisibility(View.VISIBLE);

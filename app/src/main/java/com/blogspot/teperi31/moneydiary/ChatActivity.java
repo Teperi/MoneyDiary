@@ -1,5 +1,6 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +17,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -146,6 +150,10 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 		mTopBar = findViewById(R.id.messenger_chatcontent_toolbarTop);
 		setSupportActionBar(mTopBar);
 		
+		
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
+		
 		// 리사이클러뷰 연결 & 고정
 		mRecycler = findViewById(R.id.messenger_chatcontent_recyclerview);
 		mRecycler.setHasFixedSize(true);
@@ -172,13 +180,13 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 			Log.w("test", "채팅방을 만들 때 키가 안넘어 왔다는데?");
 		}
 		
-		mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").addListenerForSingleValueEvent(new ValueEventListener() {
+		mDatabaseMyUserRoom.child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				BotType = "No";
-				for(DataSnapshot item : dataSnapshot.getChildren()){
-					if(item.getKey().equals("RSPbot")){
-						Log.i("test",mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").child("RSPbot").getKey() );
+				for (DataSnapshot item : dataSnapshot.child("UserList").getChildren()) {
+					if (item.getKey().equals("RSPbot")) {
+						Log.i("test", mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").child("RSPbot").getKey());
 						BotType = "RSPbot";
 					} else if (item.getKey().equals("Inputbot")) {
 						BotType = "Inputbot";
@@ -212,6 +220,8 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 					aiRequest = new AIRequest();
 				}
 				
+				mTopBar.setTitle(dataSnapshot.child("title").getValue().toString());
+				
 			}
 			
 			@Override
@@ -219,10 +229,6 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 			
 			}
 		});
-		
-		
-		
-		
 		
 		
 		// 상대방 UserList 받아오기
@@ -292,7 +298,6 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 			// 뷰홀더와 같이 모양 따라가기
 			@Override
 			protected void onBindViewHolder(RecyclerView.ViewHolder holder, int position, DataChatContent model) {
-				mProgressBar.setVisibility(View.INVISIBLE);
 				if (getItemViewType(position) == MY_MESSAGE) {
 					// ChatRoomKey를 넘겨줘서 ChatRoomKey 안의 UnReadCount 에 접근할 수 있도록 함
 					((ViewHolderChatSent) holder).bindToChat(model, ChatRoomKey);
@@ -346,25 +351,25 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 			public void afterTextChanged(Editable editable) {
 			}
 		});
-		
-		// 이미지 전송
-		mSendImage = findViewById(R.id.messenger_chatcontent_addImageView);
-		mSendImage.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-				intent.addCategory(Intent.CATEGORY_OPENABLE);
-				intent.setType("image/*");
-				startActivityForResult(intent, REQUEST_IMAGE);
-			}
-		});
-		
+
+//		// 이미지 전송
+//		mSendImage = findViewById(R.id.messenger_chatcontent_addImageView);
+//		mSendImage.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View view) {
+//				Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//				intent.addCategory(Intent.CATEGORY_OPENABLE);
+//				intent.setType("image/*");
+//				startActivityForResult(intent, REQUEST_IMAGE);
+//			}
+//		});
 		
 		// 전송 버튼 누를 경우
 		mSendButton = findViewById(R.id.messenger_chatcontent_sendButton);
 		mSendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				mProgressBar.setVisibility(View.VISIBLE);
 				// 데이터가 2번 이상 들어가지 않도록 버튼 비활성화
 				mSendButton.setEnabled(false);
 				// 데이터 넣어주는 부분
@@ -433,7 +438,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 									} else {
 									
 									}
-									
+									mProgressBar.setVisibility(View.GONE);
 								}
 								
 								@Override
@@ -454,7 +459,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 									@Override
 									protected void onPreExecute() {
 										super.onPreExecute();
-										mSendText.setText("가위바위봇이 당신의 데이터를 읽고 있어요...");
+										mSendText.setHint("가위바위봇이 당신의 데이터를 읽고 있어요...");
 										mSendButton.setEnabled(false);
 									}
 									
@@ -492,6 +497,9 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 													
 													mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
 															.child(key).setValue(botChatMessage);
+													// 마지막 채팅 내용 채팅방에 띄우기 위해 저장 - 내 채팅방
+													mDatabaseMyUserRoom.child(ChatRoomKey).child("lastMessage").setValue(botChatMessage.getText());
+													mDatabaseMyUserRoom.child(ChatRoomKey).child("lastTime").setValue(botChatMessage.getDateTime());
 												}
 											} else {
 												String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
@@ -506,9 +514,15 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 														key);
 												mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
 														.child(key).setValue(botChatMessage);
+												// 마지막 채팅 내용 채팅방에 띄우기 위해 저장 - 내 채팅방
+												mDatabaseMyUserRoom.child(ChatRoomKey).child("lastMessage").setValue(botChatMessage.getText());
+												mDatabaseMyUserRoom.child(ChatRoomKey).child("lastTime").setValue(botChatMessage.getDateTime());
 											}
 											
 										}
+										// 텍스트 다 지우고
+										mSendText.setHint("메시지를 입력하세요.");
+										mProgressBar.setVisibility(View.GONE);
 									}
 								}.execute(aiRequest);
 							}
@@ -523,7 +537,8 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 									@Override
 									protected void onPreExecute() {
 										super.onPreExecute();
-										mSendText.setText("입력봇이 당신의 데이터를 읽고 있어요...");
+										
+										mSendText.setHint("입력봇이 당신의 데이터를 읽고 있어요...");
 										mSendButton.setEnabled(false);
 									}
 									
@@ -556,19 +571,22 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 												key);
 										mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
 												.child(key).setValue(botChatMessage);
+										// 마지막 채팅 내용 채팅방에 띄우기 위해 저장 - 내 채팅방
+										mDatabaseMyUserRoom.child(ChatRoomKey).child("lastMessage").setValue(botChatMessage.getText());
+										mDatabaseMyUserRoom.child(ChatRoomKey).child("lastTime").setValue(botChatMessage.getDateTime());
 										
-										if(result.getParameters().get("date") != null && result.getParameters().get("MFaccount") != null && result.getParameters().get("MFcategory") != null && result.getParameters().get("number") != null) {
+										if (result.getParameters().get("date") != null && result.getParameters().get("MFaccount") != null && result.getParameters().get("MFcategory") != null && result.getParameters().get("number") != null) {
 											// key 는 새로운 키 생성
 											String mfkey = mDatabase.child("moneyflow").child(mFirebaseUser.getUid()).push().getKey();
 											// 데이터베이스에 데이터 목록을 추가
 											//데이터가 들어갈 순서 : String type, Long date, String account, String category, Long price, String usage
 											String dateString = result.getParameters().get("date").toString();
-											dateString = dateString.replace("\"","");
-											SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.KOREA);
+											dateString = dateString.replace("\"", "");
+											SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.KOREA);
 											Date dateinput = new Date();
-											try{
+											try {
 												dateinput = sdf.parse(dateString);
-											} catch (Exception e){
+											} catch (Exception e) {
 												e.printStackTrace();
 											}
 											Log.d("test", sdf.format(dateinput));
@@ -588,9 +606,13 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 											// HashMap 데이터베이스에 집어넣기
 											mDatabase.updateChildren(childUpdates);
 											
+											
 										}
-										
+										// 텍스트 다 지우고
+										mSendText.setHint("메시지를 입력하세요.");
+										mProgressBar.setVisibility(View.GONE);
 									}
+									
 								}.execute(aiRequest);
 							}
 						}
@@ -744,5 +766,70 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 	@Override
 	public void onListeningFinished() {
 	
+	}
+	
+	@Override
+	public boolean onSupportNavigateUp() {
+		finish();
+		return super.onSupportNavigateUp();
+	}
+	
+	//	toolbar 에 메뉴 띄워주는 함수
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.actionmode_setting, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			
+			case R.id.actionmodeDelete:
+				AlertDialog.Builder cancelaction = new AlertDialog.Builder(ChatActivity.this);
+				
+				cancelaction.setPositiveButton("머무르기", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+				
+				cancelaction.setNegativeButton("지우기", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+							@Override
+							public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+								dataSnapshot.child("UserRooms").child(mFirebaseUser.getUid()).child(ChatRoomKey).getRef().removeValue(new DatabaseReference.CompletionListener() {
+									@Override
+									public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+										for(String UID : OtherUIDList) {
+											dataSnapshot.child("UserRooms").child(UID).child(ChatRoomKey).getRef().removeValue();
+										}
+										dataSnapshot.child("Messenger").child("chatRoom").child(ChatRoomKey).getRef().removeValue();
+										finish();
+									}
+								});
+								
+							}
+							
+							@Override
+							public void onCancelled(@NonNull DatabaseError databaseError) {
+							
+							}
+						});
+						
+					}
+				});
+				
+				AlertDialog cancelpopup = cancelaction.create();
+				cancelpopup.setTitle("경고");
+				cancelpopup.setMessage("채팅방을 지우시겠습니까?\n지울 경우 모든 데이터가 사라지고,\n나와 대화한 상대방한테도 지워집니다.");
+				cancelpopup.show();
+				return true;
+			
+			default:
+				return true;
+		}
 	}
 }

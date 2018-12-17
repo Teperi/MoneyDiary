@@ -27,7 +27,7 @@ public class ViewHolderChatUserList extends RecyclerView.ViewHolder {
 		if(userdata.Photo !=null) {
 			Glide.with(profilePhoto.getContext()).load(Uri.parse(userdata.Photo)).into(profilePhoto);
 		} else {
-			profilePhoto.setImageResource(R.drawable.cat3);
+			profilePhoto.setImageResource(R.drawable.previewimage);
 		}
 	}
 }

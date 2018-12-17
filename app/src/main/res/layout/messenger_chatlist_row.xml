@@ -18,7 +18,7 @@
             android:layout_height="50dp"
             android:layout_margin="8dp"
             android:layout_gravity="start|center_vertical"
-            android:src="@drawable/cat3"
+            android:src="@drawable/previewimage"
             />
         <LinearLayout
             android:layout_width="wrap_content"

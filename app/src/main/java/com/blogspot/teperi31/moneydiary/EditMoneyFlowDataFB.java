@@ -1,13 +1,18 @@
 package com.blogspot.teperi31.moneydiary;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -408,6 +413,50 @@ public class EditMoneyFlowDataFB extends AppCompatActivity {
 	public boolean onSupportNavigateUp() {
 		finish();
 		return super.onSupportNavigateUp();
+	}
+	
+	//	toolbar 에 메뉴 띄워주는 함수
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.actionmode_setting, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			
+			case R.id.actionmodeDelete:
+				final AlertDialog.Builder cancelaction = new AlertDialog.Builder(EditMoneyFlowDataFB.this);
+				
+				cancelaction.setPositiveButton("머무르기", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+				
+				cancelaction.setNegativeButton("지우기", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						mDatabase.child("moneyflow").child(user.getUid()).child(mMFListKey).removeValue(new DatabaseReference.CompletionListener() {
+							@Override
+							public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+								cancelaction.getContext().startActivity(new Intent(cancelaction.getContext(), RecyclerViewMoneyFlowFB.class));
+								finish();
+							}
+						});
+					}
+				});
+				
+				AlertDialog cancelpopup = cancelaction.create();
+				cancelpopup.setTitle("경고");
+				cancelpopup.setMessage("가계부 기록을 지우시겠습니까?");
+				cancelpopup.show();
+				return true;
+			
+			default:
+				return true;
+		}
 	}
 }
 

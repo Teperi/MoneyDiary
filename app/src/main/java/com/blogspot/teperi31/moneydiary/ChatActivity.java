@@ -40,8 +40,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import ai.api.AIListener;
@@ -87,6 +90,8 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 	private LinearLayoutManager mLayoutManager;
 	private FirebaseRecyclerAdapter<DataChatContent, RecyclerView.ViewHolder> mFirebaseChatContentAdapter;
 	
+	// 챗봇 입력봇 데이터 넣어주기
+	private DatabaseReference mDatabase;
 	
 	// 채팅 데이터
 	private DatabaseReference mDatabaseChatRoom;
@@ -113,6 +118,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 		setContentView(R.layout.messenger_chatcontent);
 		
 		mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+		mDatabase = FirebaseDatabase.getInstance().getReference();
 		// 유저가 없으면 로그인 창으로 바로 이동
 		if (mFirebaseUser == null) {
 			Toast.makeText(this, "로그인을 해주세요.", Toast.LENGTH_SHORT).show();
@@ -131,7 +137,6 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 		
 		// 푸시 메시지 연결
 		fm = FirebaseMessaging.getInstance();
-		
 		
 		
 		// 화면 내 버튼들과 변수 연결
@@ -161,36 +166,63 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 		// 상대방 UserRoom 연결용
 		mDatabaseOtherUserRoom = FirebaseDatabase.getInstance().getReference().child("UserRooms");
 		
-		
-		
-		
-		// 쿼리로 가져오기
-		// 가져올 데이터 쿼리
+		// 봇인지 아닌지 구분하기
 		ChatRoomKey = getIntent().getStringExtra("ChatRoomKey");
 		if (ChatRoomKey == null) {
 			Log.w("test", "채팅방을 만들 때 키가 안넘어 왔다는데?");
-		} else if(mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").child("RSPbot").getKey().length() > 0) {
-			BotType = "RSPbot";
-		} else if (mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").child("Inputbot").getKey().length() > 0) {
-			BotType = "Inputbot";
-		} else {
-			BotType = "No";
 		}
 		
+		mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				BotType = "No";
+				for(DataSnapshot item : dataSnapshot.getChildren()){
+					if(item.getKey().equals("RSPbot")){
+						Log.i("test",mDatabaseMyUserRoom.child(ChatRoomKey).child("UserList").child("RSPbot").getKey() );
+						BotType = "RSPbot";
+					} else if (item.getKey().equals("Inputbot")) {
+						BotType = "Inputbot";
+					}
+				}
+				if (BotType.equals("RSPbot")) {
+					Log.i("test", "가위바위봇 설정하기");
+					// AI 설정 (가위바위봇 설정)
+					final AIConfiguration config = new AIConfiguration("368bd415dab144a4a5bad975c7eed151",
+							AIConfiguration.SupportedLanguages.Korean,
+							AIConfiguration.RecognitionEngine.System);
+					// 설정된 봇 가져오기
+					aiService = AIService.getService(ChatActivity.this, config);
+					aiService.setListener(ChatActivity.this);
+					
+					aiDataService = new AIDataService(config);
+					
+					aiRequest = new AIRequest();
+				} else if (BotType.equals("Inputbot")) {
+					Log.i("test", "입력봇 설정하기");
+					// AI 설정 (가위바위봇 설정)
+					final AIConfiguration config = new AIConfiguration("fe1ea227eaa945a4940fd3e3c08f71bf",
+							AIConfiguration.SupportedLanguages.Korean,
+							AIConfiguration.RecognitionEngine.System);
+					// 설정된 봇 가져오기
+					aiService = AIService.getService(ChatActivity.this, config);
+					aiService.setListener(ChatActivity.this);
+					
+					aiDataService = new AIDataService(config);
+					
+					aiRequest = new AIRequest();
+				}
+				
+			}
+			
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+			
+			}
+		});
 		
-		if(BotType.equals("RSPbot")){
-			// AI 설정 (가위바위봇 설정)
-			final AIConfiguration config = new AIConfiguration("368bd415dab144a4a5bad975c7eed151",
-					AIConfiguration.SupportedLanguages.Korean,
-					AIConfiguration.RecognitionEngine.System);
-			// 설정된 봇 가져오기
-			aiService = AIService.getService(this, config);
-			aiService.setListener(this);
-			
-			aiDataService = new AIDataService(config);
-			
-			aiRequest = new AIRequest();
-		}
+		
+		
+		
 		
 		
 		// 상대방 UserList 받아오기
@@ -348,7 +380,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 						// Chat message 저장
 						// 만약 챗봇이라면 읽는 수 없애기
 						final DataChatContent dataChatContent;
-						if(BotType.equals("No")){
+						if (BotType.equals("No")) {
 							dataChatContent = new
 									DataChatContent(mFirebaseUser.getUid(),
 									LastText,
@@ -383,7 +415,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 							mDatabaseOtherUserRoom.child(UID).child(ChatRoomKey).addListenerForSingleValueEvent(new ValueEventListener() {
 								@Override
 								public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-									if(BotType.equals("No")){
+									if (BotType.equals("No")) {
 										// 만약 안읽은 메시지 수가 없으면
 										if (!dataSnapshot.child("UnReadMessageCount").exists()) {
 											// 안읽은 수 1개
@@ -411,48 +443,59 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 							});
 						}
 						
-						if(BotType.equals("RSPbot")){
+						if (BotType.equals("RSPbot")) {
 							aiService.startListening();
 							
 							String message = mSendText.getText().toString();
-							if(!message.equals("")){
+							if (!message.equals("")) {
 								aiRequest.setQuery(message);
-								new AsyncTask<AIRequest,Void,AIResponse>(){
+								new AsyncTask<AIRequest, Void, AIResponse>() {
+									
+									@Override
+									protected void onPreExecute() {
+										super.onPreExecute();
+										mSendText.setText("가위바위봇이 당신의 데이터를 읽고 있어요...");
+										mSendButton.setEnabled(false);
+									}
 									
 									@Override
 									protected AIResponse doInBackground(AIRequest... aiRequests) {
 										final AIRequest request = aiRequests[0];
 										try {
-											Log.d("DialogFlowAsyncTask","Request" + aiRequest.toString());
+											Log.d("DialogFlowAsyncTask", "Request" + aiRequest.toString());
 											final AIResponse response = aiDataService.request(aiRequest);
 											return response;
 										} catch (AIServiceException e) {
 										}
 										return null;
 									}
+									
 									@Override
 									protected void onPostExecute(AIResponse response) {
 										if (response != null) {
 											Result result = response.getResult();
 											String reply = result.getFulfillment().getSpeech();
-											Log.i("test",String.valueOf(reply.length()));
-											if(reply.length() <= 0) {
-												for(int i = 0; i<result.getFulfillment().getMessages().size();i++){
+											Log.i("test", String.valueOf(reply.length()));
+											if (reply.length() <= 0) {
+												for (int i = 0; i < result.getFulfillment().getMessages().size(); i++) {
 													ResponseMessage.ResponseSpeech Messages = (ResponseMessage.ResponseSpeech) result.getFulfillment().getMessages().get(i);
-													DataChatContent botChatMessage = new DataChatContent ("RSPbot",
-															Messages.getSpeech().toString().replace("[","").replace("]",""),
+													String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+															.push().getKey();
+													DataChatContent botChatMessage = new DataChatContent("RSPbot",
+															Messages.getSpeech().toString().replace("[", "").replace("]", ""),
 															"가위바위봇",
 															null,
 															null,
 															System.currentTimeMillis(),
 															1L,
-															"RSPbot");
-													String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
-															.push().getKey();
+															key);
+													
 													mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
 															.child(key).setValue(botChatMessage);
 												}
 											} else {
+												String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+														.push().getKey();
 												DataChatContent botChatMessage = new DataChatContent("RSPbot",
 														reply,
 														"가위바위봇",
@@ -460,9 +503,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 														null,
 														System.currentTimeMillis(),
 														1L,
-														"bot");
-												String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
-														.push().getKey();
+														key);
 												mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
 														.child(key).setValue(botChatMessage);
 											}
@@ -471,10 +512,92 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 									}
 								}.execute(aiRequest);
 							}
+						} else if (BotType.equals("Inputbot")) {
+							aiService.startListening();
+							
+							String message = mSendText.getText().toString();
+							if (!message.equals("")) {
+								aiRequest.setQuery(message);
+								new AsyncTask<AIRequest, Void, AIResponse>() {
+									
+									@Override
+									protected void onPreExecute() {
+										super.onPreExecute();
+										mSendText.setText("입력봇이 당신의 데이터를 읽고 있어요...");
+										mSendButton.setEnabled(false);
+									}
+									
+									@Override
+									protected AIResponse doInBackground(AIRequest... aiRequests) {
+										final AIRequest request = aiRequests[0];
+										try {
+											Log.d("DialogFlowAsyncTask", "Request" + aiRequest.toString());
+											final AIResponse response = aiDataService.request(aiRequest);
+											return response;
+										} catch (AIServiceException e) {
+										}
+										return null;
+									}
+									
+									@Override
+									protected void onPostExecute(AIResponse response) {
+										
+										Result result = response.getResult();
+										String reply = result.getFulfillment().getSpeech();
+										String key = mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+												.push().getKey();
+										DataChatContent botChatMessage = new DataChatContent("Inputbot",
+												reply,
+												"입력봇",
+												null,
+												null,
+												System.currentTimeMillis(),
+												2L,
+												key);
+										mDatabaseChatRoom.child(ChatRoomKey).child(MESSAGES_CHILD)
+												.child(key).setValue(botChatMessage);
+										
+										if(result.getParameters().get("date") != null && result.getParameters().get("MFaccount") != null && result.getParameters().get("MFcategory") != null && result.getParameters().get("number") != null) {
+											// key 는 새로운 키 생성
+											String mfkey = mDatabase.child("moneyflow").child(mFirebaseUser.getUid()).push().getKey();
+											// 데이터베이스에 데이터 목록을 추가
+											//데이터가 들어갈 순서 : String type, Long date, String account, String category, Long price, String usage
+											String dateString = result.getParameters().get("date").toString();
+											dateString = dateString.replace("\"","");
+											SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.KOREA);
+											Date dateinput = new Date();
+											try{
+												dateinput = sdf.parse(dateString);
+											} catch (Exception e){
+												e.printStackTrace();
+											}
+											Log.d("test", sdf.format(dateinput));
+											
+											DataMoneyFlowFB newData = new DataMoneyFlowFB("지출",
+													dateinput.getTime(),
+													result.getParameters().get("MFaccount").getAsString(),
+													result.getParameters().get("MFcategory").getAsString(),
+													result.getParameters().get("number").getAsLong(),
+													result.getParameters().get("MFcategory").getAsString());
+											// JSON 에 전달할 수 있는 유형의 Map 만들기
+											Map<String, Object> InputValues = newData.toMap();
+											
+											Map<String, Object> childUpdates = new HashMap<>();
+											
+											childUpdates.put("/moneyflow/" + mFirebaseUser.getUid() + "/" + mfkey, InputValues);
+											// HashMap 데이터베이스에 집어넣기
+											mDatabase.updateChildren(childUpdates);
+											
+										}
+										
+									}
+								}.execute(aiRequest);
+							}
 						}
 						
 						// 텍스트 다 지우고
 						mSendText.setText("");
+						
 					}
 					
 					@Override

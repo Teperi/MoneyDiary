@@ -93,6 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="-6dp"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminate="true"
             />
 
     </FrameLayout>

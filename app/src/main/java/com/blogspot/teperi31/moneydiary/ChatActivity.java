@@ -770,7 +770,7 @@ public class ChatActivity extends AppCompatActivity implements AIListener {
 	
 	@Override
 	public boolean onSupportNavigateUp() {
-		finish();
+		ChatActivity.super.onBackPressed();
 		return super.onSupportNavigateUp();
 	}
 	

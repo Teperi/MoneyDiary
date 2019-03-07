@@ -1,3 +1,3 @@
 # teamnova_Android_MoneyDairy
 
-팀노바 기초과제:가계부 만들기
+포트폴리오: 안드로이드 가계부 & 챗봇 앱 개발
